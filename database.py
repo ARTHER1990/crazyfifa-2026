@@ -18,6 +18,10 @@ def get_gspread_client():
         creds_info = st.secrets["gcp_service_account"]
         if isinstance(creds_info, str):
             creds_info = json.loads(creds_info)
+        else:
+            creds_info = dict(creds_info)
+        if "private_key" in creds_info:
+            creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
         creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
     return gspread.authorize(creds)
 
