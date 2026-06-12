@@ -427,19 +427,28 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
 
     upcoming = all_matches[all_matches['status'] != 'Finished'].sort_values('match_time')
     if not upcoming.empty:
-        now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
-        today = now_th.date()
-        tomorrow = today + pd.Timedelta(days=1)
-        upcoming_filtered = upcoming[(upcoming['match_dt'].dt.date >= today) & (upcoming['match_dt'].dt.date <= tomorrow)]
-        if not upcoming_filtered.empty:
-            unique_dates = upcoming_filtered['match_dt'].dt.date.unique()
-            for d in unique_dates:
-                st.markdown(f"### 📅 ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}")
-                day_matches = upcoming_filtered[upcoming_filtered['match_dt'].dt.date == d]
-                for _, row in day_matches.iterrows():
-                    render_match(row, username)
-        else:
-            st.info("ไม่มีการแข่งขันในช่วงวันนี้และพรุ่งนี้ครับ")
+        # แสดงตารางการแข่งขันที่กำลังจะมาถึงทั้งหมดโดยจัดกลุ่มตามวัน
+        unique_dates = upcoming['match_dt'].dt.date.unique()
+        for d in unique_dates:
+            now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+            today = now_th.date()
+            tomorrow = today + pd.Timedelta(days=1)
+            day_after = today + pd.Timedelta(days=2)
+            
+            label_suffix = ""
+            if d == today:
+                label_suffix = " (วันนี้)"
+            elif d == tomorrow:
+                label_suffix = " (วันพรุ่งนี้)"
+            elif d == day_after:
+                label_suffix = " (วันมะรืนนี้)"
+                
+            st.markdown(f"### 📅 ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}{label_suffix}")
+            day_matches = upcoming[upcoming['match_dt'].dt.date == d]
+            for _, row in day_matches.iterrows():
+                render_match(row, username)
+    else:
+        st.info("ไม่มีการแข่งขันที่กำลังจะมาถึงในขณะนี้ครับ")
 
 # 3. หน้า Leaderboard
 elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
