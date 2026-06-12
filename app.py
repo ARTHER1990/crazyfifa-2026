@@ -276,14 +276,24 @@ footer {{visibility: hidden;}}
     .stNumberInput {{
         margin-bottom: 5px !important;
     }}
+    /* ปลดล็อกให้ Sidebar บนมือถือสามารถเลื่อนแนวตั้งได้เมื่อเนื้อหาล้นจอ */
+    [data-testid="stSidebar"] {{
+        overflow-y: auto !important;
+    }}
+    /* ย่อขนาดหัวข้อล็อกอินใน Sidebar */
+    [data-testid="stSidebar"] h2 {{
+        font-size: 1.1rem !important;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }}
     /* ย่อขนาดและจัดกระชับปุ่มเลือกเมนูหลักใน Sidebar เพื่อให้เห็นครบทุกเมนูโดยไม่ต้องเลื่อน */
     div[role="radiogroup"] > label {{
-        padding: 6px 12px !important;
-        margin-bottom: 5px !important;
-        border-radius: 8px !important;
+        padding: 5px 10px !important;
+        margin-bottom: 4px !important;
+        border-radius: 6px !important;
     }}
     div[role="radiogroup"] > label span {{
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
     }}
 }}
 </style>
