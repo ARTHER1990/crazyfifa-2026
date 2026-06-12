@@ -236,7 +236,7 @@ st.markdown(f"""
     content: "";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(255, 255, 255, 0.96); /* ปรับให้เห็นภาพชัดขึ้นเล็กน้อย */
+    background-color: rgba(14, 20, 16, 0.9); /* ปรับเป็นสีเขียวดำทึบโปร่งแสง 90% ให้เข้ากับธีมหลัก */
     z-index: -1;
 }}
 [data-testid="stAppViewContainer"] > section:nth-child(2) {{
@@ -366,7 +366,8 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         is_locked = datetime.now() > m_time or status == 'Finished'
 
         with st.container():
-            col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
+            # ปรับสัดส่วนคอลัมน์เพื่อความลงตัว และให้ปุ่มกับช่องกรอกข้อมูลอยู่ในระดับแนวนอนเดียวกัน
+            col1, col2, col3, col4 = st.columns([4, 2, 2, 2])
             with col1:
                 st.subheader(f"{home_display} 🆚 {away_display}")
                 st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
@@ -374,13 +375,34 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             has_pred = match_id in user_preds
             default_h, default_a = user_preds.get(match_id, (0, 0))
             with col2:
-                pred_h = st.number_input(f"{home_display}", min_value=0, step=1, value=int(default_h), key=f"h_{match_id}", disabled=is_locked)
+                # ซ่อน label เพื่อให้กล่องกรอกข้อมูลทีมเหย้าชิดด้านบนและอยู่ในระดับเดียวกับปุ่ม
+                pred_h = st.number_input(
+                    label=f"คะแนน {home}",
+                    min_value=0,
+                    step=1,
+                    value=int(default_h),
+                    key=f"h_{match_id}",
+                    disabled=is_locked,
+                    label_visibility="collapsed"
+                )
+                st.caption(f"⚽ {home_display}")
             with col3:
-                pred_a = st.number_input(f"{away_display}", min_value=0, step=1, value=int(default_a), key=f"a_{match_id}", disabled=is_locked)
+                # ซ่อน label เพื่อให้กล่องกรอกข้อมูลทีมเยือนชิดด้านบนและอยู่ในระดับเดียวกับปุ่ม
+                pred_a = st.number_input(
+                    label=f"คะแนน {away}",
+                    min_value=0,
+                    step=1,
+                    value=int(default_a),
+                    key=f"a_{match_id}",
+                    disabled=is_locked,
+                    label_visibility="collapsed"
+                )
+                st.caption(f"⚽ {away_display}")
             with col4:
                 if not is_locked:
                     btn_label = "อัปเดตผลทาย" if has_pred else "บันทึกผลทาย"
-                    if st.button(btn_label, key=f"btn_{match_id}"):
+                    # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
+                    if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True):
                         db.save_prediction(username, match_id, pred_h, pred_a)
                         st.success(f"บันทึกสำเร็จ!")
                         st.rerun()
