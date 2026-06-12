@@ -416,7 +416,7 @@ menu = st.sidebar.radio("เมนูหลัก", menu_options)
 
 # 2. หน้าทายผลการแข่งขัน
 if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
-    st.header("📅 ตารางการแข่งขันและทายผล")
+    st.markdown("## <span class='bouncing-icon'>⚽</span> ตารางการแข่งขันและทายผล", unsafe_allow_html=True)
     all_matches = db.get_matches()
     all_matches['match_dt'] = pd.to_datetime(all_matches['match_time'])
     
@@ -471,8 +471,8 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
                     if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True):
                         db.save_prediction(username, match_id, pred_h, pred_a)
-                        st.toast(f"⚽ บันทึกผลทาย {home} vs {away} เรียบร้อยแล้ว!")
-                        st.rerun()
+                        st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
+                        # ไม่เรียก st.rerun() เพื่อให้ toast แสดงผลค้างอย่างเสถียรบนมือถือและคอมพิวเตอร์
                     if has_pred:
                         st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
                 else:
