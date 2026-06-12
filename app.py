@@ -114,7 +114,8 @@ st.markdown(f"""
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
-        opacity: 0.2; /* ปรับลดความเข้มลงเหลือ 20% เพื่อความละมุน */
+        opacity: 0.18; /* ปรับระดับความจางให้ลงตัว */
+        filter: grayscale(100%) contrast(110%) brightness(85%); /* แปลงเป็นขาวดำเพื่อย้อมให้กลืนไปกับพื้นหลังสีเขียวตุ่นได้อย่างแนบเนียน */
         pointer-events: none;
         z-index: -2; /* ปรับไปอยู่หลังสุด */
     }}
