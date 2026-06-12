@@ -253,6 +253,28 @@ footer {{visibility: hidden;}}
     background-color: transparent !important;
     box-shadow: none !important;
 }}
+
+/* รองรับการแสดงผลบนโทรศัพท์มือถือ (Mobile Responsive) */
+@media (max-width: 768px) {{
+    .main-title {{
+        font-size: 2.0rem !important;
+    }}
+    .header-wrapper {{
+        height: 120px !important;
+    }}
+    .trophy-wrapper {{
+        font-size: 2.0rem !important;
+        margin-left: 10px !important;
+    }}
+    [data-testid="stAppViewContainer"] {{
+        background-size: cover !important;
+        background-position: center top !important;
+    }}
+    /* ดันช่องกรอกข้อมูลและปุ่มให้ดูกระชับขึ้นบนหน้าจอมือถือ */
+    .stNumberInput {{
+        margin-bottom: 5px !important;
+    }}
+}}
 </style>
 
 <div class='header-wrapper'>
