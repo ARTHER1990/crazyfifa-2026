@@ -1,0 +1,24 @@
+# Streamlit secrets (Credentials)
+.streamlit/secrets.toml
+.secrets/
+
+# Databases and logs
+*.db
+*.db-journal
+*.log
+streamlit_log.txt
+
+# Python env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# OS/System files
+.DS_Store
+Icon?
+Icon\r
+*Icon*
