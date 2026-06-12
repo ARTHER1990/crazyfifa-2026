@@ -235,6 +235,19 @@ st.markdown(f"""
     margin-right: 8px;
 }}
 
+/* แต่งปุ่มแบบ Primary (บันทึกแล้ว) ให้แสดงผลเป็นสีเขียวพรีเมี่ยมสวยสะดุดตา */
+button[data-testid="baseButton-primary"] {{
+    background: linear-gradient(90deg, #2e7d32 0%, #1b5e20 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #4caf50 !important;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4) !important;
+    font-weight: bold !important;
+}}
+button[data-testid="baseButton-primary"]:hover {{
+    background: linear-gradient(90deg, #388e3c 0%, #2e7d32 100%) !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.6) !important;
+}}
+
 /* ระบบพื้นหลัง UFO เวอร์ชั่นย้อนกลับ (Step -3) - แก้ไขชิดขอบบนและขยายใหญ่ */
 [data-testid="stAppViewContainer"] {{
     background-image: url('data:image/webp;base64,{ufo_base64}');
@@ -467,12 +480,18 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                 # ดันปุ่มลงมาขนานกับช่องกรอกข้อมูลที่มี Label ด้านบนเฉพาะบน Desktop
                 st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                 if not is_locked:
-                    btn_label = "อัปเดตผลทาย" if has_pred else "บันทึกผลทาย"
+                    # ปรับข้อความและสีปุ่มตามสถานะการทายผล (ทายแล้วปุ่มจะเขียวเด่นชัด)
+                    if has_pred:
+                        btn_label = "✅ บันทึกแล้ว (แก้ไข)"
+                        btn_type = "primary"
+                    else:
+                        btn_label = "บันทึกผลทาย"
+                        btn_type = "secondary"
+                        
                     # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
-                    if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True):
+                    if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True, type=btn_type):
                         db.save_prediction(username, match_id, pred_h, pred_a)
                         st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
-                        # ไม่เรียก st.rerun() เพื่อให้ toast แสดงผลค้างอย่างเสถียรบนมือถือและคอมพิวเตอร์
                     if has_pred:
                         st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
                 else:
