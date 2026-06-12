@@ -93,7 +93,7 @@ st.markdown(f"""
         );
         animation: shimmer-fade 12s infinite linear;
         pointer-events: none;
-        z-index: 0;
+        z-index: -1; /* ปรับไปอยู่ข้างหลังสุดเพื่อไม่ให้บดบังการคลิกของ UI */
         filter: blur(45px); /* เพิ่มความฟุ้งให้เนียนที่สุด */
     }}
 
@@ -116,13 +116,15 @@ st.markdown(f"""
         background-position: center;
         opacity: 0.2; /* ปรับลดความเข้มลงเหลือ 20% เพื่อความละมุน */
         pointer-events: none;
-        z-index: 0;
+        z-index: -2; /* ปรับไปอยู่หลังสุด */
     }}
 
-    [data-testid="stSidebar"] * {{
+    /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{
         color: #e2e8f0 !important;
-        position: relative;
-        z-index: 1;
+    }}
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h4 {{
+        color: #ffffff !important;
     }}
     
     /* ปรับแต่งปุ่มเมนู พร้อมขอบเงินโครเมี่ยม */
@@ -273,6 +275,15 @@ footer {{visibility: hidden;}}
     /* ดันช่องกรอกข้อมูลและปุ่มให้ดูกระชับขึ้นบนหน้าจอมือถือ */
     .stNumberInput {{
         margin-bottom: 5px !important;
+    }}
+    /* ย่อขนาดและจัดกระชับปุ่มเลือกเมนูหลักใน Sidebar เพื่อให้เห็นครบทุกเมนูโดยไม่ต้องเลื่อน */
+    div[role="radiogroup"] > label {{
+        padding: 6px 12px !important;
+        margin-bottom: 5px !important;
+        border-radius: 8px !important;
+    }}
+    div[role="radiogroup"] > label span {{
+        font-size: 0.85rem !important;
     }}
 }}
 </style>
