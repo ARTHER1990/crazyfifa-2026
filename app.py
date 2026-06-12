@@ -276,6 +276,10 @@ footer {{visibility: hidden;}}
     .stNumberInput {{
         margin-bottom: 5px !important;
     }}
+    /* ซ่อนช่องว่างดันปุ่มเมื่ออยู่ในจอมือถือ */
+    .desktop-spacer {{
+        display: none !important;
+    }}
     /* ล็อก Sidebar หลักไม่ให้แสงเงาทะลุออกนอกขอบเขตด้านล่าง */
     [data-testid="stSidebar"] {{
         overflow: hidden !important;
@@ -419,39 +423,39 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         is_locked = now_th > m_time or status == 'Finished'
 
         with st.container():
-            # ปรับสัดส่วนคอลัมน์เพื่อความลงตัว และให้ปุ่มกับช่องกรอกข้อมูลอยู่ในระดับแนวนอนเดียวกัน
-            col1, col2, col3, col4 = st.columns([4, 2, 2, 2])
-            with col1:
-                st.subheader(f"{home_display} 🆚 {away_display}")
-                st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
+            # แถวแรก: แสดงคู่แข่งขันและเวลาเตะตัวใหญ่สวยงามชัดเจน
+            st.subheader(f"{home_display} 🆚 {away_display}")
+            st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
+            
             user_preds = db.get_user_predictions(username)
             has_pred = match_id in user_preds
             default_h, default_a = user_preds.get(match_id, (0, 0))
-            with col2:
-                # ซ่อน label เพื่อให้กล่องกรอกข้อมูลทีมเหย้าชิดด้านบนและอยู่ในระดับเดียวกับปุ่ม
+            
+            # แถวสอง: แสดงช่องกรอกคะแนนของทั้งสองทีมพร้อมปุ่มบันทึกผล
+            # บน Desktop จะเรียงขนานกันสวยงาม 3 คอลัมน์ บนมือถือจะยุบตัวสแต็กแนวตั้งอย่างเป็นระเบียบเข้าใจง่าย
+            col1, col2, col3 = st.columns([3, 3, 2])
+            with col1:
+                # ใช้ label บอกชื่อประเทศพร้อมธงชาติเหนือช่องกรอกข้อมูลโดยตรงเพื่อให้เข้าใจง่ายบนมือถือ
                 pred_h = st.number_input(
-                    label=f"คะแนน {home}",
+                    label=home_display,
                     min_value=0,
                     step=1,
                     value=int(default_h),
                     key=f"h_{match_id}",
-                    disabled=is_locked,
-                    label_visibility="collapsed"
+                    disabled=is_locked
                 )
-                st.caption(f"⚽ {home_display}")
-            with col3:
-                # ซ่อน label เพื่อให้กล่องกรอกข้อมูลทีมเยือนชิดด้านบนและอยู่ในระดับเดียวกับปุ่ม
+            with col2:
                 pred_a = st.number_input(
-                    label=f"คะแนน {away}",
+                    label=away_display,
                     min_value=0,
                     step=1,
                     value=int(default_a),
                     key=f"a_{match_id}",
-                    disabled=is_locked,
-                    label_visibility="collapsed"
+                    disabled=is_locked
                 )
-                st.caption(f"⚽ {away_display}")
-            with col4:
+            with col3:
+                # ดันปุ่มลงมาขนานกับช่องกรอกข้อมูลที่มี Label ด้านบนเฉพาะบน Desktop
+                st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                 if not is_locked:
                     btn_label = "อัปเดตผลทาย" if has_pred else "บันทึกผลทาย"
                     # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
