@@ -16,9 +16,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 image_full_path = os.path.join(current_dir, "ต่างดาว_optimized.webp")
 ufo_base64 = get_base64_image(image_full_path)
 
-# โหลดภาพ Artwork P1
-p1_path = os.path.join(current_dir, "P1_optimized.png")
-p1_base64 = get_base64_image(p1_path)
+# โหลดภาพ Artwork Messi บน Sidebar
+messi_path = os.path.join(current_dir, "messi_optimized.png")
+messi_base64 = get_base64_image(messi_path)
 
 # ฟังก์ชันสำหรับเพลง
 def get_audio_html(audio_path):
@@ -102,7 +102,7 @@ st.markdown(f"""
         100% {{ transform: translate(30%, 30%); }}
     }}
 
-    /* สร้างเลเยอร์ภาพ Artwork P1 (Custom Artwork Overlay) */
+    /* สร้างเลเยอร์ภาพ Artwork Messi (Custom Artwork Overlay) */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -110,7 +110,7 @@ st.markdown(f"""
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("data:image/png;base64,{p1_base64}");
+        background-image: url("data:image/png;base64,{messi_base64}");
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
