@@ -1,6 +1,6 @@
 import streamlit as st
 import database as db
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 import base64
 import os
@@ -363,7 +363,8 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
 
         m_time = datetime.strptime(row['match_time'], '%Y-%m-%d %H:%M:%S')
         status = row['status']
-        is_locked = datetime.now() > m_time or status == 'Finished'
+        now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+        is_locked = now_th > m_time or status == 'Finished'
 
         with st.container():
             # ปรับสัดส่วนคอลัมน์เพื่อความลงตัว และให้ปุ่มกับช่องกรอกข้อมูลอยู่ในระดับแนวนอนเดียวกัน
@@ -426,7 +427,8 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
 
     upcoming = all_matches[all_matches['status'] != 'Finished'].sort_values('match_time')
     if not upcoming.empty:
-        today = datetime.now().date()
+        now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+        today = now_th.date()
         tomorrow = today + pd.Timedelta(days=1)
         upcoming_filtered = upcoming[(upcoming['match_dt'].dt.date >= today) & (upcoming['match_dt'].dt.date <= tomorrow)]
         if not upcoming_filtered.empty:
@@ -476,7 +478,8 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
     history = db.get_prediction_history()
     if not history.empty:
         history['date'] = pd.to_datetime(history['match_time']).dt.date
-        today = datetime.now().date()
+        now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+        today = now_th.date()
         tomorrow = today + pd.Timedelta(days=1)
         filtered_history = history[history['date'] <= tomorrow]
         if not filtered_history.empty:
