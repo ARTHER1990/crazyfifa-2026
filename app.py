@@ -243,7 +243,8 @@ st.markdown(f"""
     background-color: transparent !important;
 }}
 
-/* ซ่อนแถบ Deploy, เมนู 3 จุด และ Toolbar แต่ยังคงเก็บปุ่มเปิด Sidebar ไว้ */
+/* ซ่อนแถบเครื่องมือพัฒนาของ Streamlit ทั้งหมดทางขวา (Share, Star, Edit, Deploy, Menu) */
+[data-testid="stHeaderActionElements"] {{display:none !important;}}
 .stAppDeployButton {{display:none !important;}}
 [data-testid="stHeaderActionButton"] {{display:none !important;}}
 #MainMenu {{display:none !important;}}
