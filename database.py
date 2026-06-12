@@ -22,7 +22,6 @@ def get_gspread_client():
             creds_info = dict(creds_info)
         if "private_key" in creds_info:
             creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
-        raise ValueError(f"Keys: {list(creds_info.keys())}, private_key_repr: {repr(creds_info.get('private_key', ''))[:80]}")
         creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
     return gspread.authorize(creds)
 
