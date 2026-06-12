@@ -225,6 +225,16 @@ st.markdown(f"""
     100% {{ transform: translate3d(0px, -5px, 0) rotate(810deg) scale(0.2); opacity: 0; }}
 }}
 
+@keyframes bounce {{
+    0%, 100% {{ transform: translateY(0); }}
+    50% {{ transform: translateY(-8px); }}
+}}
+.bouncing-icon {{
+    display: inline-block;
+    animation: bounce 1.5s infinite ease-in-out;
+    margin-right: 8px;
+}}
+
 /* ระบบพื้นหลัง UFO เวอร์ชั่นย้อนกลับ (Step -3) - แก้ไขชิดขอบบนและขยายใหญ่ */
 [data-testid="stAppViewContainer"] {{
     background-image: url('data:image/webp;base64,{ufo_base64}');
@@ -461,9 +471,10 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
                     if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True):
                         db.save_prediction(username, match_id, pred_h, pred_a)
-                        st.success(f"บันทึกสำเร็จ!")
+                        st.toast(f"⚽ บันทึกผลทาย {home} vs {away} เรียบร้อยแล้ว!")
                         st.rerun()
-                    if has_pred: st.caption("✅ บันทึกแล้ว")
+                    if has_pred:
+                        st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
                 else:
                     if status == 'Finished':
                         st.warning("🏁 สิ้นสุดการแข่งขัน")
@@ -499,7 +510,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             elif d == day_after:
                 label_suffix = " (วันมะรืนนี้)"
                 
-            st.markdown(f"### 📅 ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}{label_suffix}")
+            st.markdown(f"### <span class='bouncing-icon'>⚽</span> ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}{label_suffix}", unsafe_allow_html=True)
             day_matches = upcoming[upcoming['match_dt'].dt.date == d]
             for _, row in day_matches.iterrows():
                 render_match(row, username)
