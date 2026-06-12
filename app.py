@@ -276,9 +276,14 @@ footer {{visibility: hidden;}}
     .stNumberInput {{
         margin-bottom: 5px !important;
     }}
-    /* ปลดล็อกให้ Sidebar บนมือถือสามารถเลื่อนแนวตั้งได้เมื่อเนื้อหาล้นจอ */
+    /* ล็อก Sidebar หลักไม่ให้แสงเงาทะลุออกนอกขอบเขตด้านล่าง */
     [data-testid="stSidebar"] {{
+        overflow: hidden !important;
+    }}
+    /* ปล่อยให้เฉพาะเนื้อหาภายใน Sidebar เลื่อนแนวตั้งได้ และจะหยุดทันทีเมื่อสุดเนื้อหา */
+    [data-testid="stSidebarUserContent"] {{
         overflow-y: auto !important;
+        max-height: 100vh !important;
     }}
     /* ย่อขนาดหัวข้อล็อกอินใน Sidebar */
     [data-testid="stSidebar"] h2 {{
