@@ -243,12 +243,15 @@ st.markdown(f"""
     background-color: transparent !important;
 }}
 
-/* ซ่อนแถบ Deploy และ Toolbar ทั้งหมด */
-header {{visibility: hidden;}}
-#MainMenu {{visibility: hidden;}}
+/* ซ่อนแถบ Deploy, เมนู 3 จุด และ Toolbar แต่ยังคงเก็บปุ่มเปิด Sidebar ไว้ */
+.stAppDeployButton {{display:none !important;}}
+[data-testid="stHeaderActionButton"] {{display:none !important;}}
+#MainMenu {{display:none !important;}}
 footer {{visibility: hidden;}}
-.stAppDeployButton {{display:none;}}
-[data-testid="stHeader"] {{display:none;}}
+[data-testid="stHeader"] {{
+    background-color: transparent !important;
+    box-shadow: none !important;
+}}
 </style>
 
 <div class='header-wrapper'>
