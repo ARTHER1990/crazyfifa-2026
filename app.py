@@ -428,7 +428,7 @@ if st.session_state.authenticated:
         st.components.v1.html(get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
 
-menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
 if st.session_state.username == "Art":
     menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
 menu = st.sidebar.radio("เมนูหลัก", menu_options)
@@ -525,9 +525,9 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
 
     finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
     if not finished.empty:
-        st.markdown("### 🏁 เกมของวันก่อนที่จบลง")
-        for _, row in finished.iterrows():
-            render_match(row, username)
+        with st.expander("🏁 ดูผลการแข่งขันนัดก่อนหน้าที่สิ้นสุดลงแล้ว (คลิกเพื่อขยายดู)"):
+            for _, row in finished.iterrows():
+                render_match(row, username)
 
     upcoming = all_matches[all_matches['status'] != 'Finished'].sort_values('match_time')
     if not upcoming.empty:
@@ -554,7 +554,55 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
     else:
         st.info("ไม่มีการแข่งขันที่กำลังจะมาถึงในขณะนี้ครับ")
 
-# 3. หน้า Leaderboard
+# 3. หน้าผลการแข่งขันย้อนหลัง
+elif menu == "📜 ผลการแข่งขันย้อนหลัง":
+    st.header("📜 ผลการแข่งขันย้อนหลังทั้งหมด")
+    st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้ว")
+    st.markdown("---")
+    
+    all_matches = db.get_matches()
+    finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
+    
+    if finished.empty:
+        st.info("ยังไม่มีการแข่งขันใดที่สิ้นสุดลงในขณะนี้ครับ")
+    else:
+        # จัดกลุ่มการแข่งขันย้อนหลังตามวันที่เตะเพื่อความเป็นระเบียบและให้เปิดดูง่าย
+        finished['match_dt'] = pd.to_datetime(finished['match_time'])
+        unique_dates = finished['match_dt'].dt.date.unique()
+        
+        for d in unique_dates:
+            st.subheader(f"📅 วันที่ {d.strftime('%d/%m/%Y')}")
+            day_matches = finished[finished['match_dt'].dt.date == d]
+            
+            for _, row in day_matches.iterrows():
+                home = row['home_team']
+                away = row['away_team']
+                home_display = get_team_display(home)
+                away_display = get_team_display(away)
+                h_score = int(row['home_score']) if row['home_score'] != "" else 0
+                a_score = int(row['away_score']) if row['away_score'] != "" else 0
+                
+                expander_label = f"⚽ {home_display}  {h_score} - {a_score}  {away_display}"
+                
+                with st.expander(expander_label):
+                    st.markdown(f"### 🏟️ {home_display} vs {away_display}")
+                    st.write(f"📅 **เวลาแข่งขัน:** {pd.to_datetime(row['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
+                    
+                    winner_name = home if h_score > a_score else (away if a_score > h_score else "เสมอ")
+                    winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
+                    st.write(f"🏆 **ผลการแข่งขัน:** {winner_display}")
+                    
+                    st.markdown("---")
+                    st.markdown("⚽ **รายชื่อผู้ยิงประตู:**")
+                    if row['scorers'] and row['scorers'].strip() != "":
+                        scorers_list = [s.strip() for s in row['scorers'].split(',')]
+                        for s in scorers_list:
+                            st.write(f"- {s}")
+                    else:
+                        st.write("ไม่มีข้อมูลการยิงประตู")
+            st.divider()
+
+# 4. หน้า Leaderboard
 elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
     st.header("🏆 ทำเนียบยอดนักทายผล")
     st.info("💡 **กฎการให้คะแนน:**\n- ✅ ทายถูกฝั่ง: 1 คะแนน\n- 🎯 ทายถูกเป๊ะ (รวมเสมอ): 3 คะแนน\n- ❌ ทายผิด: 0 คะแนน")
