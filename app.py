@@ -46,7 +46,12 @@ FLAG_MAP = {
     'Spain': '🇪🇸', 'Morocco': '🇲🇦', 'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Australia': '🇦🇺',
     'Qatar': '🇶🇦', 'Switzerland': '🇨🇭', 'Brazil': '🇧🇷', 'Haiti': '🇭🇹',
     'Scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'Turkey': '🇹🇷', 'Argentina': '🇦🇷', 'France': '🇫🇷',
-    'Germany': '🇩🇪', 'Japan': '🇯🇵', 'Portugal': '🇵🇹', 'Netherlands': '🇳🇱'
+    'Germany': '🇩🇪', 'Japan': '🇯🇵', 'Portugal': '🇵🇹', 'Netherlands': '🇳🇱',
+    'Curaçao': '🇨🇼', 'Côte d\'Ivoire': '🇨🇮', 'Ecuador': '🇪🇨', 'Sweden': '🇸🇪',
+    'Tunisia': '🇹🇳', 'Cape Verde': '🇨🇻', 'Belgium': '🇧🇪', 'Egypt': '🇪🇬',
+    'Saudi Arabia': '🇸🇦', 'Uruguay': '🇺🇾', 'Iran': '🇮🇷', 'New Zealand': '🇳🇿',
+    'Korea Republic': '🇰🇷', 'Czechia': '🇨🇿', 'Türkiye': '🇹🇷', 'Cabo Verde': '🇨🇻', 'IR Iran': '🇮🇷',
+    'Ivory Coast': '🇨🇮'
 }
 
 def get_team_display(team_name):
@@ -455,6 +460,14 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             has_pred = match_id in user_preds
             default_h, default_a = user_preds.get(match_id, (0, 0))
             
+            # กำหนดคะแนนที่จะแสดงในช่องกรอก (ถ้าเกมจบแล้ว ให้แสดงสกอร์จริงในช่องที่ปิดการแก้ไข)
+            if status == 'Finished':
+                val_h = int(row['home_score']) if row['home_score'] != "" else 0
+                val_a = int(row['away_score']) if row['away_score'] != "" else 0
+            else:
+                val_h = int(default_h)
+                val_a = int(default_a)
+            
             # แถวสอง: แสดงช่องกรอกคะแนนของทั้งสองทีมพร้อมปุ่มบันทึกผล
             # บน Desktop จะเรียงขนานกันสวยงาม 3 คอลัมน์ บนมือถือจะยุบตัวสแต็กแนวตั้งอย่างเป็นระเบียบเข้าใจง่าย
             col1, col2, col3 = st.columns([3, 3, 2])
@@ -464,7 +477,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     label=home_display,
                     min_value=0,
                     step=1,
-                    value=int(default_h),
+                    value=val_h,
                     key=f"h_{match_id}",
                     disabled=is_locked
                 )
@@ -473,7 +486,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     label=away_display,
                     min_value=0,
                     step=1,
-                    value=int(default_a),
+                    value=val_a,
                     key=f"a_{match_id}",
                     disabled=is_locked
                 )
@@ -502,6 +515,10 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                         winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
                         st.info(f"🏆 **ชนะ:** {winner_display} ({int(row['home_score'])}-{int(row['away_score'])})")
                         if row['scorers']: st.caption(f"⚽ **คนยิง:** {row['scorers']}")
+                        if has_pred:
+                            st.info(f"🎯 **คุณทายผลไว้:** {int(default_h)} - {int(default_a)}")
+                        else:
+                            st.info("🎯 **คุณไม่ได้ทายคู่นี้ไว้**")
                     else:
                         st.warning("🔒 ปิดรับผลทาย")
             st.divider()

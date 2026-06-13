@@ -191,7 +191,7 @@ def update_scores_logic():
                     points = 1
             df_p.at[idx, 'points_earned'] = points
             
-    ws_p.update([df_p.columns.values.tolist()] + df_p.values.tolist())
+    ws_p.update([df_p.columns.values.tolist()] + df_p.astype(str).values.tolist())
     
     ws_u = get_worksheet('users')
     data_u = ws_u.get_all_values()
@@ -199,7 +199,7 @@ def update_scores_logic():
     
     for idx, u in df_u.iterrows():
         user_points = df_p[df_p['username'] == u['username']]['points_earned'].astype(int).sum()
-        df_u.at[idx, 'total_score'] = user_points
+        df_u.at[idx, 'total_score'] = int(user_points)
         
-    ws_u.update([df_u.columns.values.tolist()] + df_u.values.tolist())
+    ws_u.update([df_u.columns.values.tolist()] + df_u.astype(str).values.tolist())
     st.cache_data.clear()
