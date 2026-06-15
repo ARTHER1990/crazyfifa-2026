@@ -84,13 +84,16 @@ db.init_db()
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
-<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัด (Waving Effect) -->
-<svg style="display:none">
-  <filter id="waving-filter">
-    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.08" numOctaves="1" result="noise">
-      <animate attributeName="baseFrequency" values="0.01 0.08; 0.01 0.15; 0.01 0.08" dur="5s" repeatCount="indefinite" />
+<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) -->
+<svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
+  <filter id="slow-waving-filter" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" result="turbulence">
+      <animate attributeName="baseFrequency" 
+               values="0.015 0.05; 0.015 0.07; 0.015 0.05" 
+               dur="10s" 
+               repeatCount="indefinite" />
     </feTurbulence>
-    <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" />
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G" />
   </filter>
 </svg>
 
@@ -101,17 +104,16 @@ st.markdown(f"""
         font-family: 'Kanit', sans-serif;
     }}
     
-    /* ปรับแต่ง Sidebar ให้ดูพรีเมี่ยม โทนเขียวตุ่น พร้อมแสงเงาเลื่อนผ่าน */
+    /* ปรับแต่ง Sidebar ให้ดูพรีเมี่ยม โทนเขียวตุ่น */
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
-        background-size: 200% 200%;
         position: relative;
         overflow: hidden;
-        border-right: none; /* ลบเส้นขอบเงินออกเพื่อความ Minimal */
-        box-shadow: 2px 0 15px rgba(0,0,0,0.3); /* คงเงาไว้ให้ดูมีมิติ */
+        border-right: none;
+        box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
     
-    /* สร้างเลเยอร์แสงเงาเลื่อนผ่าน - ปรับปรุงให้เป็นสีเหลืองออกเขียวตุ่นๆ (Muted Lime Glow) */
+    /* สร้างเลเยอร์แสงเงาเลื่อนผ่าน (Shimmer) */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
@@ -129,8 +131,8 @@ st.markdown(f"""
         );
         animation: shimmer-fade 12s infinite linear;
         pointer-events: none;
-        z-index: -1; /* ปรับไปอยู่ข้างหลังสุดเพื่อไม่ให้บดบังการคลิกของ UI */
-        filter: blur(45px); /* เพิ่มความฟุ้งให้เนียนที่สุด */
+        z-index: -1;
+        filter: blur(45px);
     }}
 
     @keyframes shimmer-fade {{
@@ -138,7 +140,7 @@ st.markdown(f"""
         100% {{ transform: translate(30%, 30%); }}
     }}
 
-    /* สร้างเลเยอร์ภาพ Artwork พื้นหลัง Sidebar (Custom Artwork Overlay) */
+    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -150,18 +152,11 @@ st.markdown(f"""
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
-        opacity: 0.22; /* ปรับระดับความจางให้ลงตัวสำหรับภาพใหม่ */
-        filter: grayscale(100%) contrast(110%) brightness(85%) url(#waving-filter); /* ใช้ SVG Filter เพื่อทำเอฟเฟกต์สะบัด */
+        opacity: 0.22;
+        filter: grayscale(100%) contrast(110%) brightness(85%) url(#slow-waving-filter); /* ใช้ SVG Filter กวนพิกเซล */
         pointer-events: none;
-        z-index: -2; /* ปรับไปอยู่หลังสุด */
-        
-        /* เพิ่มการเคลื่อนไหวเบาๆ เสริมเข้าไป */
-        animation: subtle-drift 10s ease-in-out infinite;
-    }}
-
-    @keyframes subtle-drift {{
-        0%, 100% {{ transform: scale(1.05) translate(0, 0); }}
-        50% {{ transform: scale(1.1) translate(-10px, 5px); }}
+        z-index: -2; /* ล็อคไว้หลังสุดไม่ให้รบกวนเมนู */
+        transform: scale(1.1); /* ขยายเผื่อขอบจากการบิดเบี้ยวของ Filter */
     }}
 
     /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
