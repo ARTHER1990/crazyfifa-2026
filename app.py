@@ -495,7 +495,26 @@ menu = st.sidebar.radio("เมนูหลัก", menu_options)
 
 # 2. หน้าทายผลการแข่งขัน
 if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
-    st.markdown("## <span class='bouncing-icon'>⚽</span> ตารางการแข่งขันและทายผล", unsafe_allow_html=True)
+    # ระบบป๊อปอัปเล็กแสดงข้อมูลยอดผู้เล่น Top 3
+    try:
+        leaderboard_df = db.get_leaderboard()
+        if not leaderboard_df.empty:
+            top_3 = leaderboard_df.head(3)
+            # โชว์ Toast แจ้งเตือนมุมขวาล่างเมื่อเข้าหน้าแรกในเซสชันนั้นๆ ครั้งแรก
+            if 'top3_toast_shown' not in st.session_state:
+                leaders_str = " | ".join([f"🏆 {row['username']} ({int(row['total_score'])} แต้ม)" for _, row in top_3.iterrows()])
+                st.toast(f"🔥 ยอดนักทำนายท็อปฟอร์ม 3 อันดับแรก: {leaders_str}", icon="🏆")
+                st.session_state.top3_toast_shown = True
+            
+            # ปุ่มป๊อปอัปขนาดเล็กที่คลิกเพื่อเปิดดูทำเนียบผู้นำได้ตลอดเวลา
+            with st.popover("🏆 ทำเนียบยอดนักทำนายท็อปฟอร์ม (Top 3)"):
+                st.markdown("<h4 style='color: #FFD700; margin-bottom: 10px; font-family: Kanit;'>🔥 ทำเนียบยอดนักทำนาย Top 3</h4>", unsafe_allow_html=True)
+                for idx, (_, row) in enumerate(top_3.iterrows(), 1):
+                    medal = "🥇" if idx == 1 else ("🥈" if idx == 2 else "🥉")
+                    st.markdown(f"{medal} **{row['username']}** : `{int(row['total_score'])} คะแนน`")
+    except Exception as e:
+        pass
+
     all_matches = db.get_matches()
     all_matches['match_dt'] = pd.to_datetime(all_matches['match_time'])
     
