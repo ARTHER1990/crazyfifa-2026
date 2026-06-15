@@ -193,7 +193,8 @@ def get_prediction_history():
         real = f"{row['home_score']}-{row['away_score']}" if row['status'] == 'Finished' else ( "Live" if row['status'] == 'Live' else "Upcoming")
         res.append({
             'username': row['username'],
-            'match': f"{row['home_team']} vs {row['away_team']}",
+            'home_team': row['home_team'],
+            'away_team': row['away_team'],
             'prediction': f"{row['pred_home']}-{row['pred_away']}",
             'real_score': real,
             'points': row['points_earned'],

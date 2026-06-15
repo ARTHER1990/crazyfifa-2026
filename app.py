@@ -710,10 +710,15 @@ elif menu == "📑 ประวัติการทายผล":
             status_tag = f" {'(วันนี้)' if is_today else ('(พรุ่งนี้)' if is_tomorrow else '')}"
             
             with st.expander(f"🗓️ {date_str}{status_tag}", expanded=is_today):
-                day_history = history[history['date'] == d]
+                day_history = history[history['date'] == d].copy()
+                # เพิ่มธงชาติในชื่อทีมสำหรับตารางประวัติ
+                day_history['แมตช์'] = day_history.apply(
+                    lambda r: f"{get_team_display(r['home_team'])} vs {get_team_display(r['away_team'])}", axis=1
+                )
+                
                 st.dataframe(
-                    day_history[['username', 'match', 'prediction', 'real_score', 'points']].rename(
-                        columns={'username': 'ผู้เล่น', 'match': 'แมตช์', 'prediction': 'ทาย', 'real_score': 'ผลจริง', 'points': 'แต้ม'}
+                    day_history[['username', 'แมตช์', 'prediction', 'real_score', 'points']].rename(
+                        columns={'username': 'ผู้เล่น', 'prediction': 'ทาย', 'real_score': 'ผลจริง', 'points': 'แต้ม'}
                     ), 
                     use_container_width=True, 
                     hide_index=True
