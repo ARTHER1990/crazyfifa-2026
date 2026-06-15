@@ -275,12 +275,12 @@ st.markdown(f"""
 }}
 
 @keyframes goal-physics {{
-    0% {{ transform: translate3d(-700px, 0px, 0) rotate(0deg) scale(0.3); opacity: 0; }}
-    5% {{ transform: translate3d(-600px, 0px, 0) rotate(30deg) scale(1.0); opacity: 1; }}
-    18% {{ transform: translate3d(-350px, -10px, 0) rotate(180deg); }}
-    28% {{ transform: translate3d(-150px, 10px, 0) rotate(360deg); }}
-    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(1.0); opacity: 1; }}
-    37% {{ transform: translate3d(5px, -20px, 0) rotate(570deg) scale(0.8); opacity: 0.8; }}
+    0% {{ transform: translate3d(-700px, 80px, 0) rotate(0deg) scale(2.2); opacity: 0; }}
+    5% {{ transform: translate3d(-600px, 60px, 0) rotate(30deg) scale(2.2); opacity: 1; }}
+    18% {{ transform: translate3d(-350px, -80px, 0) rotate(180deg) scale(1.6); }}
+    28% {{ transform: translate3d(-150px, 20px, 0) rotate(360deg) scale(1.2); }}
+    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(0.9); opacity: 1; }}
+    37% {{ transform: translate3d(5px, -20px, 0) rotate(570deg) scale(0.6); opacity: 0.8; }}
     40% {{ transform: translate3d(10px, 0px, 0) rotate(600deg) scale(0); opacity: 0; }}
     100% {{ transform: translate3d(10px, 0px, 0) scale(0); opacity: 0; }}
 }}
