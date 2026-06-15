@@ -11,6 +11,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapi
 LOCAL_KEY_PATH = '.secrets/directed-graph-494807-i7-f79a56b5b375.json'
 SHEET_URL = 'https://docs.google.com/spreadsheets/d/1MWZoajy6xNEQunVccEqNcb4iV4124qRxrDS5pHLf57c/edit'
 
+@st.cache_resource
 def get_gspread_client():
     if os.path.exists(LOCAL_KEY_PATH):
         creds = Credentials.from_service_account_file(LOCAL_KEY_PATH, scopes=SCOPES)
@@ -25,9 +26,13 @@ def get_gspread_client():
         creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
     return gspread.authorize(creds)
 
-def get_worksheet(name):
+@st.cache_resource
+def get_spreadsheet():
     client = get_gspread_client()
-    sh = client.open_by_url(SHEET_URL)
+    return client.open_by_url(SHEET_URL)
+
+def get_worksheet(name):
+    sh = get_spreadsheet()
     return sh.worksheet(name)
 
 def init_db():
@@ -35,21 +40,36 @@ def init_db():
 
 @st.cache_data(ttl=60)
 def get_users_df():
-    ws = get_worksheet('users')
-    data = ws.get_all_values()
-    return pd.DataFrame(data[1:], columns=data[0])
+    try:
+        ws = get_worksheet('users')
+        data = ws.get_all_values()
+        if not data: return pd.DataFrame(columns=['username', 'total_score', 'pin'])
+        return pd.DataFrame(data[1:], columns=data[0])
+    except Exception as e:
+        print(f"Error fetching users: {e}")
+        return pd.DataFrame(columns=['username', 'total_score', 'pin'])
 
 @st.cache_data(ttl=60)
 def get_matches():
-    ws = get_worksheet('matches')
-    data = ws.get_all_values()
-    return pd.DataFrame(data[1:], columns=data[0])
+    try:
+        ws = get_worksheet('matches')
+        data = ws.get_all_values()
+        if not data: return pd.DataFrame(columns=['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers'])
+        return pd.DataFrame(data[1:], columns=data[0])
+    except Exception as e:
+        print(f"Error fetching matches: {e}")
+        return pd.DataFrame(columns=['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers'])
 
 @st.cache_data(ttl=60)
 def get_predictions_df():
-    ws = get_worksheet('predictions')
-    data = ws.get_all_values()
-    return pd.DataFrame(data[1:], columns=data[0])
+    try:
+        ws = get_worksheet('predictions')
+        data = ws.get_all_values()
+        if not data: return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
+        return pd.DataFrame(data[1:], columns=data[0])
+    except Exception as e:
+        print(f"Error fetching predictions: {e}")
+        return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
 
 def sync_results_from_web():
     results = [
@@ -82,18 +102,22 @@ def sync_results_from_web():
                 updated_count += 1
                 
     if updated_count > 0:
+        ws.clear()
         ws.update([df.columns.values.tolist()] + df.values.tolist())
         update_scores_logic()
-    st.cache_data.clear() # ล้างแคชเพื่อให้ดึงข้อมูลใหม่
+    st.cache_data.clear()
+    st.cache_resource.clear()
     return updated_count
 
 def normalize_name(username):
+    # ... (เหมือนเดิม)
     name = username.strip()
     return 'Art' if name.lower() == 'art' else name
 
 def has_pin(username):
     name = normalize_name(username)
     df = get_users_df()
+    if df.empty: return False
     user_row = df[df['username'] == name]
     return not user_row.empty and user_row.iloc[0]['pin'] != ""
 
@@ -113,6 +137,7 @@ def get_or_create_user(username, pin=None):
 def verify_user(username, pin):
     name = normalize_name(username)
     df = get_users_df()
+    if df.empty: return False
     user_row = df[df['username'] == name]
     return not user_row.empty and str(user_row.iloc[0]['pin']) == str(pin)
 
@@ -124,35 +149,48 @@ def save_prediction(username, match_id, pred_home, pred_away):
     mask = (df['username'] == name) & (df['match_id'].astype(str) == str(match_id))
     if mask.any():
         idx = df.index[mask][0] + 2
-        ws.update(f'C{idx}:D{idx}', [[pred_home, pred_away]])
+        # ใช้ update แบบระบุ range เพื่อความปลอดภัยใน gspread 6.x
+        ws.update(f'C{idx}:D{idx}', [[int(pred_home), int(pred_away)]])
     else:
-        ws.append_row([name, match_id, pred_home, pred_away, 0])
+        ws.append_row([name, match_id, int(pred_home), int(pred_away), 0])
     st.cache_data.clear()
 
 def get_user_predictions(username):
     name = normalize_name(username)
     df = get_predictions_df()
+    if df.empty: return {}
     user_preds = df[df['username'] == name]
-    return {int(row['match_id']): (row['pred_home'], row['pred_away']) for _, row in user_preds.iterrows()}
+    preds = {}
+    for _, row in user_preds.iterrows():
+        try:
+            m_id = int(row['match_id'])
+            p_h = int(row['pred_home']) if row['pred_home'] != "" else 0
+            p_a = int(row['pred_away']) if row['pred_away'] != "" else 0
+            preds[m_id] = (p_h, p_a)
+        except:
+            continue
+    return preds
 
 def get_leaderboard():
     df_u = get_users_df()
     df_p = get_predictions_df()
+    if df_u.empty: return pd.DataFrame(columns=['username', 'total_score', 'pin'])
     
-    active_users = df_p['username'].unique()
+    active_users = df_p['username'].unique() if not df_p.empty else []
     df_u = df_u[df_u['username'].isin(active_users)]
-    df_u['total_score'] = pd.to_numeric(df_u['total_score'], errors='coerce').fillna(0)
+    df_u['total_score'] = pd.to_numeric(df_u['total_score'], errors='coerce').fillna(0).astype(int)
     return df_u.sort_values('total_score', ascending=False)
 
 def get_prediction_history():
     df_p = get_predictions_df()
     df_m = get_matches()
+    if df_p.empty or df_m.empty: return pd.DataFrame()
     
     merged = df_p.merge(df_m, left_on='match_id', right_on='id')
     
     res = []
     for _, row in merged.iterrows():
-        real = f"{row['home_score']}-{row['away_score']}" if row['status'] == 'Finished' else ( "กำลังแข่งขัน" if row['status'] == 'Live' else "ยังไม่เริ่ม")
+        real = f"{row['home_score']}-{row['away_score']}" if row['status'] == 'Finished' else ( "Live" if row['status'] == 'Live' else "Upcoming")
         res.append({
             'username': row['username'],
             'match': f"{row['home_team']} vs {row['away_team']}",
@@ -172,24 +210,23 @@ def update_scores_logic():
     data_p = ws_p.get_all_values()
     df_p = pd.DataFrame(data_p[1:], columns=data_p[0])
     
-    # แปลง ID เป็น int เพื่อกรองอย่างปลอดภัย
     df_m['id_int'] = pd.to_numeric(df_m['id'], errors='coerce').fillna(0).astype(int)
     df_p['match_id_int'] = pd.to_numeric(df_p['match_id'], errors='coerce').fillna(0).astype(int)
     
-    # คำนวณคะแนนเฉพาะแมตช์ ID >= 12 เป็นต้นไป (ล้างผลแมตช์ 1-11 เพื่อเริ่มเล่นใหม่พร้อมกันวันนี้)
     finished = df_m[(df_m['status'] == 'Finished') & (df_m['id_int'] >= 12)]
     
-    # บังคับแต้มแมตช์ 1-11 ให้กลายเป็น 0 แต้มทั้งหมด
     mask_old = df_p['match_id_int'] < 12
     df_p.loc[mask_old, 'points_earned'] = '0'
     
     for _, m in finished.iterrows():
         m_id = str(m['id'])
-        r_h, r_a = int(m['home_score']), int(m['away_score'])
+        r_h = int(m['home_score']) if str(m['home_score']).strip() != "" else 0
+        r_a = int(m['away_score']) if str(m['away_score']).strip() != "" else 0
         
         mask = df_p['match_id'].astype(str) == m_id
         for idx, p in df_p[mask].iterrows():
-            p_h, p_a = int(p['pred_home']), int(p['pred_away'])
+            p_h = int(p['pred_home']) if str(p['pred_home']).strip() != "" else 0
+            p_a = int(p['pred_away']) if str(p['pred_away']).strip() != "" else 0
             points = 0
             if p_h == r_h and p_a == r_a:
                 points = 3
@@ -200,17 +237,23 @@ def update_scores_logic():
                     points = 1
             df_p.at[idx, 'points_earned'] = str(points)
             
-    # ลบคอลัมน์ชั่วคราวก่อนอัปเดตลง Google Sheets
     df_p_save = df_p.drop(columns=['match_id_int'])
-    ws_p.update([df_p_save.columns.values.tolist()] + df_p_save.astype(str).values.tolist())
+    # ล้างชีตก่อนอัปเดตเพื่อป้องกันข้อมูลเก่าค้าง
+    ws_p.clear()
+    ws_p.update([df_p_save.columns.values.tolist()] + df_p_save.values.tolist())
     
     ws_u = get_worksheet('users')
     data_u = ws_u.get_all_values()
     df_u = pd.DataFrame(data_u[1:], columns=data_u[0])
     
+    # คำนวณคะแนนใหม่
+    df_p['points_earned_int'] = pd.to_numeric(df_p['points_earned'], errors='coerce').fillna(0).astype(int)
     for idx, u in df_u.iterrows():
-        user_points = df_p[df_p['username'] == u['username']]['points_earned'].astype(int).sum()
-        df_u.at[idx, 'total_score'] = int(user_points)
+        user_points = df_p[df_p['username'] == u['username']]['points_earned_int'].sum()
+        df_u.at[idx, 'total_score'] = str(int(user_points))
         
-    ws_u.update([df_u.columns.values.tolist()] + df_u.astype(str).values.tolist())
+    ws_u.clear()
+    ws_u.update([df_u.columns.values.tolist()] + df_u.values.tolist())
     st.cache_data.clear()
+    st.cache_resource.clear()
+

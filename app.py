@@ -402,7 +402,13 @@ if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
 st.sidebar.header("👤 เข้าสู่ระบบ")
-existing_users = db.get_leaderboard()['username'].tolist()
+try:
+    leaderboard_df = db.get_leaderboard()
+    existing_users = leaderboard_df['username'].tolist() if not leaderboard_df.empty else []
+except Exception as e:
+    st.sidebar.error(f"⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้: {e}")
+    existing_users = []
+
 options = ["เลือกชื่อของคุณ..."] + existing_users + ["➕ เพิ่มผู้เล่นใหม่..."]
 
 default_idx = 0
@@ -469,7 +475,7 @@ if st.session_state.authenticated:
         st.components.v1.html(get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
 
-menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
 if st.session_state.username == "Art":
     menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
 menu = st.sidebar.radio("เมนูหลัก", menu_options)
@@ -552,9 +558,11 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                 else:
                     if status == 'Finished':
                         st.warning("🏁 สิ้นสุดการแข่งขัน")
-                        winner_name = home if row['home_score'] > row['away_score'] else (away if row['away_score'] > row['home_score'] else "เสมอ")
+                        h_score_val = int(row['home_score']) if row['home_score'] != "" else 0
+                        a_score_val = int(row['away_score']) if row['away_score'] != "" else 0
+                        winner_name = home if h_score_val > a_score_val else (away if a_score_val > h_score_val else "เสมอ")
                         winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
-                        st.info(f"🏆 **ชนะ:** {winner_display} ({int(row['home_score'])}-{int(row['away_score'])})")
+                        st.info(f"🏆 **ชนะ:** {winner_display} ({h_score_val}-{a_score_val})")
                         if row['scorers']: st.caption(f"⚽ **คนยิง:** {row['scorers']}")
                         if has_pred:
                             st.info(f"🎯 **คุณทายผลไว้:** {int(default_h)} - {int(default_a)}")
@@ -674,23 +682,42 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
                 "คะแนนสะสม": st.column_config.NumberColumn("คะแนนสะสม", width="medium")
             }
         )
-    
+
+# 5. หน้าประวัติการทายผล (แยกออกมาตามคำปรึกษาคุณอาร์ต)
+elif menu == "📑 ประวัติการทายผล":
+    st.header("📑 ประวัติการทายผล")
+    st.info("💡 ตรวจสอบผลการทายย้อนหลังและแต้มที่ได้รับในแต่ละแมตช์")
     st.markdown("---")
-    st.subheader("📜 ประวัติการทายผล")
+    
     history = db.get_prediction_history()
-    if not history.empty:
+    if history.empty:
+        st.info("ยังไม่มีประวัติการทายผลในระบบครับ")
+    else:
+        # ระบบ Filter ค้นหาชื่อตนเอง
+        search_user = st.text_input("🔍 ค้นหาตามชื่อผู้เล่น:", placeholder="พิมพ์ชื่อเพื่อกรองข้อมูล...")
+        if search_user:
+            history = history[history['username'].str.contains(search_user, case=False)]
+            
         history['date'] = pd.to_datetime(history['match_time']).dt.date
         now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
         today = now_th.date()
         tomorrow = today + pd.Timedelta(days=1)
-        filtered_history = history[history['date'] <= tomorrow]
-        if not filtered_history.empty:
-            unique_dates = filtered_history['date'].unique()
-            for d in unique_dates:
-                is_today, is_tomorrow = (d == today), (d == tomorrow)
-                with st.expander(f"🗓️ {d.strftime('%d/%m/%Y')} {'(วันนี้)' if is_today else ('(พรุ่งนี้)' if is_tomorrow else '')}", expanded=is_today):
-                    day_history = filtered_history[filtered_history['date'] == d]
-                    st.dataframe(day_history[['username', 'match', 'prediction', 'real_score', 'points']].rename(columns={'username': 'ผู้เล่น', 'match': 'แมตช์', 'prediction': 'ทาย', 'real_score': 'ผลจริง', 'points': 'แต้ม'}), use_container_width=True, hide_index=True)
+        
+        unique_dates = sorted(history['date'].unique(), reverse=True)
+        for d in unique_dates:
+            is_today, is_tomorrow = (d == today), (d == tomorrow)
+            date_str = d.strftime('%d/%m/%Y')
+            status_tag = f" {'(วันนี้)' if is_today else ('(พรุ่งนี้)' if is_tomorrow else '')}"
+            
+            with st.expander(f"🗓️ {date_str}{status_tag}", expanded=is_today):
+                day_history = history[history['date'] == d]
+                st.dataframe(
+                    day_history[['username', 'match', 'prediction', 'real_score', 'points']].rename(
+                        columns={'username': 'ผู้เล่น', 'match': 'แมตช์', 'prediction': 'ทาย', 'real_score': 'ผลจริง', 'points': 'แต้ม'}
+                    ), 
+                    use_container_width=True, 
+                    hide_index=True
+                )
 
 # 4. หน้า Admin
 elif menu == "💎 ห้องควบคุมระบบ (Admin)":
