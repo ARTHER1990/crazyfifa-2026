@@ -113,32 +113,32 @@ st.markdown(f"""
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
     
-    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - ปรับเพิ่มความชัดให้เห็นนวลๆ */
+    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - แก้ไขให้วิ่งทะลุไม่ค้างที่ขอบ */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
-        top: -20%;
-        left: -200%;
-        width: 300px; /* เพิ่มขนาดพื้นที่แสง */
-        height: 140%;
+        top: -50%; /* ขยายพื้นที่ด้านบนเพื่อให้คลุมแนวเฉียง */
+        left: 0;
+        width: 400px; /* เพิ่มความกว้างแสง */
+        height: 200%;
         background: linear-gradient(
             to right, 
             rgba(255, 255, 255, 0) 0%, 
             rgba(255, 255, 255, 0.15) 50%, 
             rgba(255, 255, 255, 0) 100%
         );
-        transform: rotate(-45deg);
-        filter: blur(35px); /* ลดความฟุ้งลงเล็กน้อยเพื่อให้เห็นแสงชัดขึ้น */
-        mix-blend-mode: soft-light; /* ใช้ soft-light เพื่อให้แสงดูนวลสว่างขึ้นบนพื้นเข้ม */
-        animation: light-sweep 6s infinite ease-in-out; /* ลดเวลาต่อรอบเหลือ 6 วินาทีเพื่อให้วิ่งบ่อยขึ้น */
+        transform: translateX(-150%) rotate(-45deg); /* เริ่มต้นนอกจอ */
+        filter: blur(40px);
+        mix-blend-mode: soft-light;
+        animation: light-sweep 6s infinite ease-in-out;
         pointer-events: none;
         z-index: -1;
     }}
 
     @keyframes light-sweep {{
-        0% {{ left: -200%; }}
-        30% {{ left: 200%; }} /* วิ่งผ่านใน 1.8 วินาที (30% ของ 6s) */
-        100% {{ left: 200%; }} /* พักเพียง 4.2 วินาที */
+        0% {{ transform: translateX(-200%) rotate(-45deg); }}
+        30% {{ transform: translateX(400%) rotate(-45deg); }} /* วิ่งทะลุออกไปไกลๆ */
+        100% {{ transform: translateX(400%) rotate(-45deg); }}
     }}
 
     /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
