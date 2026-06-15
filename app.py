@@ -230,45 +230,29 @@ st.markdown(f"""
     text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
     letter-spacing: 2px;
 }}
+/* ระบบพลุ 3D แบบอนุภาคสมจริง (Volumetric 3D Particle Eruption) - พุ่งพริ้วจากหลังถ้วย */
 .trophy-wrapper {{
     position: relative;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-left: 20px;
-}}
-.animated-ball {{
-    position: absolute;
-    font-size: 1.5rem;
-    z-index: 15;
-    animation: goal-physics 5s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
-    will-change: transform;
-}}
-.firework-particle {{
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #FFD700;
-    border-radius: 50%;
-    opacity: 0;
+    perspective: 1200px; /* สร้างมิติความลึกสำหรับแกน Z */
     z-index: 5;
-    pointer-events: none;
-    top: 10px; 
-}}
-.white-p {{ background: #FFFFFF; width: 3px; height: 3px; }}
-
-/* ระบบพลุ 3D แบบอนุภาคสมจริง (Volumetric 3D Particle Eruption) - พุ่งพริ้วจากหลังถ้วย */
-.trophy-wrapper {{
-    position: relative;
-    display: inline-block;
-    perspective: 1000px; /* สร้างมิติความลึกสำหรับแกน Z */
 }}
 
 .animated-ball {{
-    position: relative;
-    z-index: 5;
-    animation: bounce 1.5s infinite ease-in-out;
+    position: absolute;
+    font-size: 1.6rem;
+    z-index: 10;
+    animation: bounce 1.2s infinite ease-in-out;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+}}
+
+@keyframes bounce {{
+    0%, 100% {{ transform: translateY(0) scale(1); }}
+    50% {{ transform: translateY(-15px) scale(1.1); }}
 }}
 
 /* สร้างอนุภาคประกายไฟ (Spark Particles) แบบ 3D */
@@ -276,14 +260,15 @@ st.markdown(f"""
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 4px;
-    height: 15px;
-    background: linear-gradient(to top, rgba(255, 215, 0, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 215, 0, 1) 100%);
-    border-radius: 2px;
-    filter: blur(1px) drop-shadow(0 0 5px rgba(255, 223, 0, 0.8));
+    width: 3px;
+    height: 12px;
+    background: linear-gradient(to top, rgba(255, 215, 0, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 215, 0, 1) 100%);
+    border-radius: 4px;
+    filter: blur(0.5px) drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
     opacity: 0;
     pointer-events: none;
     transform-origin: bottom center;
+    z-index: -1; /* ให้อยู่หลังถ้วยและบอล */
 }}
 
 /* กำหนดการเคลื่อนไหวแบบ Eruption กระจายทรงพัดและลึกแกน Z */
@@ -292,29 +277,29 @@ st.markdown(f"""
         transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0);
         opacity: 0;
     }}
-    10% {{ opacity: 1; }}
+    15% {{ opacity: 1; }}
     100% {{ 
-        transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.2);
+        transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.3);
         opacity: 0;
     }}
 }}
 
 /* ตั้งค่าตัวแปรแต่ละอนุภาค (Angle, Distance, Z-depth) */
-.p1 {{ --angle: -40deg; --tx: -120px; --ty: -250px; --tz: 200px; animation: eruption-3d 3s infinite ease-out; }}
-.p2 {{ --angle: -20deg; --tx: -60px; --ty: -300px; --tz: -100px; animation: eruption-3d 3.2s infinite ease-out 0.2s; }}
-.p3 {{ --angle: 0deg; --tx: 0px; --ty: -320px; --tz: 150px; animation: eruption-3d 2.8s infinite ease-out 0.4s; }}
-.p4 {{ --angle: 20deg; --tx: 60px; --ty: -300px; --tz: -50px; animation: eruption-3d 3.1s infinite ease-out 0.1s; }}
-.p5 {{ --angle: 40deg; --tx: 120px; --ty: -250px; --tz: 100px; animation: eruption-3d 2.9s infinite ease-out 0.3s; }}
-.p6 {{ --angle: -10deg; --tx: -30px; --ty: -280px; --tz: 50px; animation: eruption-3d 3.3s infinite ease-out 0.5s; }}
-.p7 {{ --angle: 10deg; --tx: 30px; --ty: -280px; --tz: -150px; animation: eruption-3d 3.0s infinite ease-out 0.6s; }}
+.p1 {{ --angle: -45deg; --tx: -150px; --ty: -300px; --tz: 300px; animation: eruption-3d 2.5s infinite ease-out; }}
+.p2 {{ --angle: -25deg; --tx: -80px; --ty: -350px; --tz: -150px; animation: eruption-3d 2.8s infinite ease-out 0.3s; }}
+.p3 {{ --angle: 0deg; --tx: 0px; --ty: -380px; --tz: 200px; animation: eruption-3d 2.4s infinite ease-out 0.6s; }}
+.p4 {{ --angle: 25deg; --tx: 80px; --ty: -350px; --tz: -80px; animation: eruption-3d 2.7s infinite ease-out 0.15s; }}
+.p5 {{ --angle: 45deg; --tx: 150px; --ty: -300px; --tz: 150px; animation: eruption-3d 2.6s infinite ease-out 0.45s; }}
+.p6 {{ --angle: -15deg; --tx: -40px; --ty: -320px; --tz: 100px; animation: eruption-3d 2.9s infinite ease-out 0.7s; }}
+.p7 {{ --angle: 15deg; --tx: 40px; --ty: -320px; --tz: -200px; animation: eruption-3d 2.5s infinite ease-out 0.9s; }}
 
-/* เพิ่มประกายไฟยิบยับเสริม (Bloom/Glow) */
+/* ประกายไฟยิบยับเสริม (Bloom Glow) */
 .white-p {{
-    width: 2px;
-    height: 2px;
-    background: #fff;
-    box-shadow: 0 0 10px #fff, 0 0 20px #ffd700;
-    border-radius: 50%;
+    width: 4px !important;
+    height: 4px !important;
+    background: #fff !important;
+    box-shadow: 0 0 12px #fff, 0 0 25px #ffd700 !important;
+    border-radius: 50% !important;
 }}
 
 @keyframes goal-physics {{
