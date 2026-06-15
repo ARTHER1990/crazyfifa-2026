@@ -172,7 +172,16 @@ def update_scores_logic():
     data_p = ws_p.get_all_values()
     df_p = pd.DataFrame(data_p[1:], columns=data_p[0])
     
-    finished = df_m[df_m['status'] == 'Finished']
+    # แปลง ID เป็น int เพื่อกรองอย่างปลอดภัย
+    df_m['id_int'] = pd.to_numeric(df_m['id'], errors='coerce').fillna(0).astype(int)
+    df_p['match_id_int'] = pd.to_numeric(df_p['match_id'], errors='coerce').fillna(0).astype(int)
+    
+    # คำนวณคะแนนเฉพาะแมตช์ ID >= 12 เป็นต้นไป (ล้างผลแมตช์ 1-11 เพื่อเริ่มเล่นใหม่พร้อมกันวันนี้)
+    finished = df_m[(df_m['status'] == 'Finished') & (df_m['id_int'] >= 12)]
+    
+    # บังคับแต้มแมตช์ 1-11 ให้กลายเป็น 0 แต้มทั้งหมด
+    mask_old = df_p['match_id_int'] < 12
+    df_p.loc[mask_old, 'points_earned'] = '0'
     
     for _, m in finished.iterrows():
         m_id = str(m['id'])
@@ -189,9 +198,11 @@ def update_scores_logic():
                 real_win = (r_h > r_a) - (r_h < r_a)
                 if pred_win == real_win:
                     points = 1
-            df_p.at[idx, 'points_earned'] = points
+            df_p.at[idx, 'points_earned'] = str(points)
             
-    ws_p.update([df_p.columns.values.tolist()] + df_p.astype(str).values.tolist())
+    # ลบคอลัมน์ชั่วคราวก่อนอัปเดตลง Google Sheets
+    df_p_save = df_p.drop(columns=['match_id_int'])
+    ws_p.update([df_p_save.columns.values.tolist()] + df_p_save.astype(str).values.tolist())
     
     ws_u = get_worksheet('users')
     data_u = ws_u.get_all_values()
