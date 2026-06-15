@@ -258,19 +258,63 @@ st.markdown(f"""
 }}
 .white-p {{ background: #FFFFFF; width: 3px; height: 3px; }}
 
-.p1 {{ animation: burst 5s infinite; --tx: -120px; --ty: -150px; }}
-.p2 {{ animation: burst 5s infinite; --tx: 120px; --ty: -150px; animation-delay: 0.1s; }}
-.p3 {{ animation: burst 5s infinite; --tx: -60px; --ty: -200px; animation-delay: 0.05s; }}
-.p4 {{ animation: burst 5s infinite; --tx: 60px; --ty: -200px; animation-delay: 0.15s; }}
-.p5 {{ animation: burst 5s infinite; --tx: 0px; --ty: -230px; }}
-.p6 {{ animation: burst 5s infinite; --tx: -180px; --ty: -80px; animation-delay: 0.2s; }}
-.p7 {{ animation: burst 5s infinite; --tx: 180px; --ty: -80px; animation-delay: 0.25s; }}
+/* ระบบพลุ 3D แบบอนุภาคสมจริง (Volumetric 3D Particle Eruption) - พุ่งพริ้วจากหลังถ้วย */
+.trophy-wrapper {{
+    position: relative;
+    display: inline-block;
+    perspective: 1000px; /* สร้างมิติความลึกสำหรับแกน Z */
+}}
 
-@keyframes burst {{
-    0%, 82% {{ transform: translate3d(0, 0, 0) scale(1); opacity: 0; }}
-    84% {{ opacity: 1; }}
-    94% {{ transform: translate3d(var(--tx), var(--ty), 0) scale(0.1); opacity: 0; }}
-    100% {{ opacity: 0; }}
+.animated-ball {{
+    position: relative;
+    z-index: 5;
+    animation: bounce 1.5s infinite ease-in-out;
+}}
+
+/* สร้างอนุภาคประกายไฟ (Spark Particles) แบบ 3D */
+.firework-particle {{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 15px;
+    background: linear-gradient(to top, rgba(255, 215, 0, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 215, 0, 1) 100%);
+    border-radius: 2px;
+    filter: blur(1px) drop-shadow(0 0 5px rgba(255, 223, 0, 0.8));
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: bottom center;
+}}
+
+/* กำหนดการเคลื่อนไหวแบบ Eruption กระจายทรงพัดและลึกแกน Z */
+@keyframes eruption-3d {{
+    0% {{ 
+        transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0);
+        opacity: 0;
+    }}
+    10% {{ opacity: 1; }}
+    100% {{ 
+        transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.2);
+        opacity: 0;
+    }}
+}}
+
+/* ตั้งค่าตัวแปรแต่ละอนุภาค (Angle, Distance, Z-depth) */
+.p1 {{ --angle: -40deg; --tx: -120px; --ty: -250px; --tz: 200px; animation: eruption-3d 3s infinite ease-out; }}
+.p2 {{ --angle: -20deg; --tx: -60px; --ty: -300px; --tz: -100px; animation: eruption-3d 3.2s infinite ease-out 0.2s; }}
+.p3 {{ --angle: 0deg; --tx: 0px; --ty: -320px; --tz: 150px; animation: eruption-3d 2.8s infinite ease-out 0.4s; }}
+.p4 {{ --angle: 20deg; --tx: 60px; --ty: -300px; --tz: -50px; animation: eruption-3d 3.1s infinite ease-out 0.1s; }}
+.p5 {{ --angle: 40deg; --tx: 120px; --ty: -250px; --tz: 100px; animation: eruption-3d 2.9s infinite ease-out 0.3s; }}
+.p6 {{ --angle: -10deg; --tx: -30px; --ty: -280px; --tz: 50px; animation: eruption-3d 3.3s infinite ease-out 0.5s; }}
+.p7 {{ --angle: 10deg; --tx: 30px; --ty: -280px; --tz: -150px; animation: eruption-3d 3.0s infinite ease-out 0.6s; }}
+
+/* เพิ่มประกายไฟยิบยับเสริม (Bloom/Glow) */
+.white-p {{
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 10px #fff, 0 0 20px #ffd700;
+    border-radius: 50%;
 }}
 
 @keyframes goal-physics {{
