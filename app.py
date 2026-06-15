@@ -217,7 +217,8 @@ st.markdown(f"""
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 180px;
+    height: 140px;
+    margin-top: -35px;
     overflow: visible;
     position: relative;
     z-index: 10;
@@ -511,7 +512,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             leaders_html = " &nbsp;&nbsp;|&nbsp;&nbsp; ".join(leaders_list)
             
             # เพิ่มระยะห่างไม่ให้เบียดชิดกับป้ายแบนเนอร์ CRAZYFIFA 2026 หัวข้อหลักด้านบน
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
             
             # เรนเดอร์กล่องแสดงทำเนียบผู้เล่น Top 3 แบบเรียบง่ายขนาดกะทัดรัด (ไม่ต้องคลิกเปิด)
             st.markdown(
