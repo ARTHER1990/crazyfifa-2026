@@ -242,7 +242,7 @@ st.markdown(f"""
     position: absolute;
     font-size: 1.5rem;
     z-index: 15;
-    animation: goal-physics 5s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
+    animation: goal-physics 4s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
     will-change: transform;
 }}
 .firework-particle {{
@@ -258,32 +258,31 @@ st.markdown(f"""
 }}
 .white-p {{ background: #FFFFFF; width: 3px; height: 3px; }}
 
-.p1 {{ animation: burst 5s infinite; --tx: -120px; --ty: -150px; }}
-.p2 {{ animation: burst 5s infinite; --tx: 120px; --ty: -150px; animation-delay: 0.1s; }}
-.p3 {{ animation: burst 5s infinite; --tx: -60px; --ty: -200px; animation-delay: 0.05s; }}
-.p4 {{ animation: burst 5s infinite; --tx: 60px; --ty: -200px; animation-delay: 0.15s; }}
-.p5 {{ animation: burst 5s infinite; --tx: 0px; --ty: -230px; }}
-.p6 {{ animation: burst 5s infinite; --tx: -180px; --ty: -80px; animation-delay: 0.2s; }}
-.p7 {{ animation: burst 5s infinite; --tx: 180px; --ty: -80px; animation-delay: 0.25s; }}
+.p1 {{ animation: burst 4s infinite; --tx: -120px; --ty: -150px; }}
+.p2 {{ animation: burst 4s infinite; --tx: 120px; --ty: -150px; animation-delay: 0.03s; }}
+.p3 {{ animation: burst 4s infinite; --tx: -60px; --ty: -200px; animation-delay: 0.01s; }}
+.p4 {{ animation: burst 4s infinite; --tx: 60px; --ty: -200px; animation-delay: 0.04s; }}
+.p5 {{ animation: burst 4s infinite; --tx: 0px; --ty: -230px; }}
+.p6 {{ animation: burst 4s infinite; --tx: -180px; --ty: -80px; animation-delay: 0.05s; }}
+.p7 {{ animation: burst 4s infinite; --tx: 180px; --ty: -80px; animation-delay: 0.07s; }}
 
 @keyframes burst {{
-    0%, 82% {{ transform: translate3d(0, 0, 0) scale(1); opacity: 0; }}
-    84% {{ opacity: 1; }}
-    94% {{ transform: translate3d(var(--tx), var(--ty), 0) scale(0.1); opacity: 0; }}
+    0%, 34% {{ transform: translate3d(0, 0, 0) scale(1); opacity: 0; }}
+    35% {{ opacity: 1; }}
+    45% {{ transform: translate3d(var(--tx), var(--ty), 0) scale(0.8); opacity: 0.9; }}
+    55% {{ transform: translate3d(calc(var(--tx) * 1.2), calc(var(--ty) * 1.2), 0) scale(0.1); opacity: 0; }}
     100% {{ opacity: 0; }}
 }}
 
 @keyframes goal-physics {{
-    0% {{ transform: translate3d(-500px, -150px, 0) rotate(0deg) scale(0); opacity: 0; }}
-    5% {{ transform: translate3d(-480px, -120px, 0) rotate(20deg) scale(1); opacity: 1; }}
-    25% {{ transform: translate3d(-350px, 30px, 0) rotate(180deg); }}
-    35% {{ transform: translate3d(-280px, -40px, 0) rotate(270deg); }}
-    50% {{ transform: translate3d(-150px, 30px, 0) rotate(450deg); }}
-    60% {{ transform: translate3d(-80px, -20px, 0) rotate(540deg); }}
-    75% {{ transform: translate3d(0px, 30px, 0) rotate(720deg); }}
-    82% {{ transform: translate3d(0px, -10px, 0) rotate(810deg) scale(1); opacity: 1; }}
-    92% {{ transform: translate3d(0px, -10px, 0) rotate(810deg) scale(0.7); opacity: 1; }}
-    100% {{ transform: translate3d(0px, -5px, 0) rotate(810deg) scale(0.2); opacity: 0; }}
+    0% {{ transform: translate3d(-700px, 0px, 0) rotate(0deg) scale(0.3); opacity: 0; }}
+    5% {{ transform: translate3d(-600px, 0px, 0) rotate(30deg) scale(1.0); opacity: 1; }}
+    18% {{ transform: translate3d(-350px, -10px, 0) rotate(180deg); }}
+    28% {{ transform: translate3d(-150px, 10px, 0) rotate(360deg); }}
+    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(1.0); opacity: 1; }}
+    37% {{ transform: translate3d(5px, -20px, 0) rotate(570deg) scale(0.8); opacity: 0.8; }}
+    40% {{ transform: translate3d(10px, 0px, 0) rotate(600deg) scale(0); opacity: 0; }}
+    100% {{ transform: translate3d(10px, 0px, 0) scale(0); opacity: 0; }}
 }}
 
 @keyframes bounce {{
