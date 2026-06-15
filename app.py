@@ -230,6 +230,50 @@ st.markdown(f"""
     text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
     letter-spacing: 2px;
 }}
+/* ระบบแอนิเมชันลูกบอลพุ่งจากซ้ายไปจอดที่ถ้วย (3D Ball Travel & Landing) */
+.animated-ball {{
+    position: absolute;
+    font-size: 1.8rem;
+    z-index: 10;
+    animation: ball-3d-journey 6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}}
+
+@keyframes ball-3d-journey {{
+    0% {{ 
+        transform: translate3d(-1500px, 100px, 1000px) rotate(0deg) scale(0.5); 
+        opacity: 0; 
+    }}
+    10% {{ 
+        transform: translate3d(-1200px, -150px, 800px) rotate(180deg) scale(1.2); 
+        opacity: 1; 
+    }}
+    30% {{ 
+        transform: translate3d(-600px, 80px, 500px) rotate(540deg) scale(1.8); /* วิ่งพาดผ่านตัวหนังสือ (จุดที่ใกล้จอที่สุด) */
+    }}
+    50% {{ 
+        transform: translate3d(-200px, -100px, 200px) rotate(900deg) scale(1.3); 
+    }}
+    70% {{ 
+        transform: translate3d(0, 0, 0) rotate(1260deg) scale(1); /* จอดที่ถ้วย */
+    }}
+    75% {{ 
+        transform: translate3d(0, -25px, 0) rotate(1260deg); /* เด้งโชว์ 1 ครั้งที่ถ้วย */
+    }}
+    80% {{ 
+        transform: translate3d(0, 0, 0) rotate(1260deg); 
+    }}
+    95% {{ 
+        transform: translate3d(0, 0, 0) rotate(1260deg); 
+        opacity: 1; 
+    }}
+    100% {{ 
+        transform: translate3d(0, 0, 0) rotate(1260deg); 
+        opacity: 0; 
+    }}
+}}
+
 /* ระบบพลุ 3D แบบอนุภาคสมจริง (Volumetric 3D Particle Eruption) - พุ่งพริ้วจากหลังถ้วย */
 .trophy-wrapper {{
     position: relative;
@@ -238,21 +282,9 @@ st.markdown(f"""
     align-items: center;
     font-size: 3.5rem;
     margin-left: 20px;
-    perspective: 1200px; /* สร้างมิติความลึกสำหรับแกน Z */
+    perspective: 1500px; /* เพิ่มมิติความลึกให้ชัดเจนขึ้น */
     z-index: 5;
-}}
-
-.animated-ball {{
-    position: absolute;
-    font-size: 1.6rem;
-    z-index: 10;
-    animation: bounce 1.2s infinite ease-in-out;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-}}
-
-@keyframes bounce {{
-    0%, 100% {{ transform: translateY(0) scale(1); }}
-    50% {{ transform: translateY(-15px) scale(1.1); }}
+    overflow: visible; /* มั่นใจว่าบอลวิ่งทะลุขอบ wrapper ได้ */
 }}
 
 /* สร้างอนุภาคประกายไฟ (Spark Particles) แบบ 3D */
