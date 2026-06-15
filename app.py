@@ -144,6 +144,25 @@ st.markdown(f"""
         filter: grayscale(100%) contrast(110%) brightness(85%); /* ย้อมให้กลืนไปกับพื้นหลังสีเขียวตุ่น */
         pointer-events: none;
         z-index: -2; /* ปรับไปอยู่หลังสุด */
+        
+        /* เพิ่มกิมมิกการกระพือช้าๆ เหมือนผืนธง (Waving Flag Animation) */
+        animation: waving-flag 8s ease-in-out infinite;
+        transform-origin: center center;
+    }}
+
+    @keyframes waving-flag {{
+        0%, 100% {{ 
+            transform: scale(1.0) skew(0deg, 0deg); 
+        }}
+        25% {{ 
+            transform: scale(1.05) skew(1deg, 0.5deg); 
+        }}
+        50% {{ 
+            transform: scale(1.02) skew(-0.5deg, -0.5deg); 
+        }}
+        75% {{ 
+            transform: scale(1.06) skew(0.5deg, 1deg); 
+        }}
     }}
 
     /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
