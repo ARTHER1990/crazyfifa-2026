@@ -265,7 +265,48 @@ st.markdown(f"""
     }}
 }}
 
-/* ระบบพลุ 3D แบบอนุภาคสมจริง (Volumetric 3D Particle Eruption) - พุ่งพริ้วจากหลังถ้วย */
+/* เอฟเฟกต์เปลวไฟลุกพุ่งจากยอดถ้วย (Trophy Flame Eruption) */
+.trophy-flame {{
+    position: absolute;
+    top: 15%; /* อยู่ตรงส่วนยอดของถ้วย */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 40px;
+    background: radial-gradient(ellipse at bottom, rgba(255, 69, 0, 1) 0%, rgba(255, 140, 0, 0.8) 40%, rgba(255, 255, 0, 0) 80%);
+    filter: blur(4px) contrast(150%);
+    opacity: 0;
+    z-index: 4;
+    pointer-events: none;
+    animation: flame-ignite 5s infinite ease-in-out;
+}}
+
+@keyframes flame-ignite {{
+    0%, 59% {{ 
+        opacity: 0; 
+        height: 0;
+        transform: translateX(-50%) scale(0.5);
+    }}
+    60% {{ 
+        opacity: 1; 
+        height: 40px;
+        transform: translateX(-50%) scale(1.2);
+    }}
+    65% {{
+        height: 55px;
+        transform: translateX(-50%) scale(1.1) skewX(-2deg);
+    }}
+    80% {{
+        opacity: 1;
+        height: 45px;
+        transform: translateX(-50%) scale(1) skewX(2deg);
+    }}
+    100% {{ 
+        opacity: 0; 
+        height: 0;
+        transform: translateX(-50%) scale(0.5);
+    }}
+}}
 .trophy-wrapper {{
     position: relative;
     display: inline-flex;
@@ -452,6 +493,7 @@ footer {{visibility: hidden;}}
     <div class='main-title'>CRAZYFIFA 2026</div>
     <div class='trophy-wrapper'>
         🏆
+        <div class='trophy-flame'></div> <!-- เลเยอร์เปลวไฟลุกพุ่ง -->
         <span class='animated-ball'>⚽</span>
         <div class='firework-particle p1'></div>
         <div class='firework-particle p2'></div>
