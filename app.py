@@ -130,15 +130,15 @@ st.markdown(f"""
         transform: rotate(-45deg);
         filter: blur(35px); /* ลดความฟุ้งลงเล็กน้อยเพื่อให้เห็นแสงชัดขึ้น */
         mix-blend-mode: soft-light; /* ใช้ soft-light เพื่อให้แสงดูนวลสว่างขึ้นบนพื้นเข้ม */
-        animation: light-sweep 10s infinite ease-in-out;
+        animation: light-sweep 6s infinite ease-in-out; /* ลดเวลาต่อรอบเหลือ 6 วินาทีเพื่อให้วิ่งบ่อยขึ้น */
         pointer-events: none;
         z-index: -1;
     }}
 
     @keyframes light-sweep {{
         0% {{ left: -200%; }}
-        15% {{ left: 200%; }} /* วิ่งผ่านอย่างนุ่มนวล */
-        100% {{ left: 200%; }} /* เว้นระยะพักสายตา */
+        30% {{ left: 200%; }} /* วิ่งผ่านใน 1.8 วินาที (30% ของ 6s) */
+        100% {{ left: 200%; }} /* พักเพียง 4.2 วินาที */
     }}
 
     /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
