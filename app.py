@@ -113,24 +113,24 @@ st.markdown(f"""
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
     
-    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - ปรับให้นุ่มนวลฟุ้งกลืนไปกับพื้นหลัง */
+    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - ปรับเพิ่มความชัดให้เห็นนวลๆ */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
         top: -20%;
-        left: -200%; /* เริ่มต้นไกลขึ้นเล็กน้อยเพื่อให้ความกว้างที่ฟุ้งไม่แลบเข้าจอ */
-        width: 250px; /* ขยายความกว้างให้แสงกระจาย */
+        left: -200%;
+        width: 300px; /* เพิ่มขนาดพื้นที่แสง */
         height: 140%;
         background: linear-gradient(
             to right, 
             rgba(255, 255, 255, 0) 0%, 
-            rgba(255, 255, 255, 0.04) 50%, 
+            rgba(255, 255, 255, 0.15) 50%, 
             rgba(255, 255, 255, 0) 100%
         );
-        transform: rotate(-45deg); /* ใช้การหมุนแทนการ skew เพื่อความนุ่มนวลของทรงแสง */
-        filter: blur(50px); /* กระจายแสงให้ฟุ้งที่สุดลบขอบทั้งหมด */
-        mix-blend-mode: overlay; /* ผสานแสงเข้ากับพื้นหลังสีเข้ม */
-        animation: light-sweep 12s infinite ease-in-out; /* ปรับเวลาให้นานขึ้นเล็กน้อยเพื่อความนุ่มนวล */
+        transform: rotate(-45deg);
+        filter: blur(35px); /* ลดความฟุ้งลงเล็กน้อยเพื่อให้เห็นแสงชัดขึ้น */
+        mix-blend-mode: soft-light; /* ใช้ soft-light เพื่อให้แสงดูนวลสว่างขึ้นบนพื้นเข้ม */
+        animation: light-sweep 10s infinite ease-in-out;
         pointer-events: none;
         z-index: -1;
     }}
