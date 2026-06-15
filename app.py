@@ -83,32 +83,51 @@ def get_team_display(team_name):
 db.init_db()
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
-st.html(f"""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap');
+st.markdown(f"""
+<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) - ปรับให้นุ่มนวลขึ้นไม่ลายตา -->
+<svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
+  <filter id="slow-waving-filter" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="1" result="turbulence">
+      <animate attributeName="baseFrequency" 
+               values="0.01 0.03; 0.01 0.04; 0.01 0.03" 
+               dur="12s" 
+               repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="12" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
 
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
+    
     html, body, [class*="css"] {{
         font-family: 'Kanit', sans-serif;
     }}
-
-    /* --- Sidebar Custom Styles (Premium Shimmer & Flag Effect) --- */
+    
+    /* ปรับแต่ง Sidebar ให้ดูพรีเมี่ยม โทนเขียวตุ่น */
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
         position: relative;
-        overflow: hidden;
+        overflow: hidden; /* ป้องกันแสงแลบออกนอกขอบ */
         border-right: none;
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
-
+    
+    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - แก้ไขให้วิ่งทะลุไม่ค้างที่ขอบ */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
-        top: -50%;
+        top: -50%; /* ขยายพื้นที่ด้านบนเพื่อให้คลุมแนวเฉียง */
         left: 0;
-        width: 400px;
+        width: 400px; /* เพิ่มความกว้างแสง */
         height: 200%;
-        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
-        transform: translateX(-150%) rotate(-45deg);
+        background: linear-gradient(
+            to right, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 255, 255, 0.15) 50%, 
+            rgba(255, 255, 255, 0) 100%
+        );
+        transform: translateX(-150%) rotate(-45deg); /* เริ่มต้นนอกจอ */
         filter: blur(40px);
         mix-blend-mode: soft-light;
         animation: light-sweep 6s infinite ease-in-out;
@@ -118,10 +137,11 @@ st.html(f"""
 
     @keyframes light-sweep {{
         0% {{ transform: translateX(-200%) rotate(-45deg); }}
-        30% {{ transform: translateX(400%) rotate(-45deg); }}
+        30% {{ transform: translateX(400%) rotate(-45deg); }} /* วิ่งทะลุออกไปไกลๆ */
         100% {{ transform: translateX(400%) rotate(-45deg); }}
     }}
 
+    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -134,314 +154,258 @@ st.html(f"""
         background-size: cover;
         background-position: center;
         opacity: 0.22;
-        filter: grayscale(100%) contrast(110%) brightness(85%);
+        filter: grayscale(100%) contrast(110%) brightness(85%) url(#slow-waving-filter); /* ใช้ SVG Filter กวนพิกเซล */
         pointer-events: none;
-        z-index: -2;
-        transform: scale(1.1);
+        z-index: -2; /* ล็อคไว้หลังสุดไม่ให้รบกวนเมนู */
+        transform: scale(1.1); /* ขยายเผื่อขอบจากการบิดเบี้ยวของ Filter */
     }}
 
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{ color: #e2e8f0 !important; }}
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h4 {{ color: #ffffff !important; }}
-
+    /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {{
+        color: #e2e8f0 !important;
+    }}
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h4 {{
+        color: #ffffff !important;
+    }}
+    
+    /* ปรับแต่งปุ่มเมนู พร้อมขอบเงินโครเมี่ยม */
     div[role="radiogroup"] > label {{
         background: rgba(255, 255, 255, 0.03);
-        border: 1px solid #c0c0c066;
+        border: 1px solid #c0c0c066; /* ขอบเงินโครเมี่ยมจางๆ */
         padding: 10px 15px;
         border-radius: 12px;
         margin-bottom: 8px;
         transition: all 0.3s ease;
     }}
+    div[role="radiogroup"] > label:hover {{
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid #c0c0c0; /* ขัดขอบเงินให้ชัดขึ้นเมื่อ hover */
+        transform: translateX(5px);
+    }}
     div[role="radiogroup"] > label[data-selected="true"] {{
         background: linear-gradient(90deg, #5c7a67 0%, #3d5244 100%) !important;
-        border: 1.5px solid #ffffff;
+        border: 1.5px solid #ffffff; /* ขอบสีขาวสว่างแบบโครเมี่ยมสะท้อนแสง */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }}
-
-    /* --- High-Fidelity 3D Header Composition --- */
-    .header-container {{
-        position: relative;
-        width: 100%;
-        height: 400px;
-        background-color: #000;
-        /* Dark premium linear gradient overlay on UFO background */
-        background-image: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.95) 100%), url('data:image/webp;base64,{ufo_base64}');
-        background-size: cover;
-        background-position: center;
-        border-radius: 25px;
-        overflow: visible;
-        margin-bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-        border: 1px solid rgba(255, 215, 0, 0.1);
+    div[role="radiogroup"] > label[data-selected="true"] span {{
+        color: #ffffff !important;
+        font-weight: 600;
     }}
 
-    .top-right-icon {{
-        position: absolute;
-        top: 30px;
-        right: 35px;
-        font-size: 2.5rem;
-        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.7));
-        opacity: 0.95;
-        z-index: 50;
+    /* ปรับแต่งช่องกรอกคะแนน (st.number_input) ให้ดูโมเดิร์นคลีนและมีมิติ */
+    div[data-testid="stNumberInput"] {{
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 5px 8px !important;
+        transition: all 0.3s ease !important;
+    }}
+    div[data-testid="stNumberInput"]:hover {{
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }}
+    /* ปรับตัวอักษร Label ของช่องกรอกข้อมูลให้ดูมีระเบียบและไม่รกรุงรัง */
+    div[data-testid="stNumberInput"] label p {{
+        font-size: 0.9rem !important;
+        color: #a0aec0 !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.5px !important;
     }}
 
-    .trophy-group-3d {{
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        perspective: 2000px;
-        z-index: 20;
-    }}
+    .header-wrapper {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 180px;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
+}}
+.main-title {{
+    color: #FFD700;
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+    letter-spacing: 2px;
+}}
+.trophy-wrapper {{
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-left: 20px;
+}}
+.animated-ball {{
+    position: absolute;
+    font-size: 1.5rem;
+    z-index: 15;
+    animation: goal-physics 5s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
+    will-change: transform;
+}}
+.firework-particle {{
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #FFD700;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 5;
+    pointer-events: none;
+    top: 10px; 
+}}
+.white-p {{ background: #FFFFFF; width: 3px; height: 3px; }}
 
-    .gold-trophy-main {{
-        font-size: 10rem;
-        position: relative;
-        z-index: 30;
-        filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
-    }}
+.p1 {{ animation: burst 5s infinite; --tx: -120px; --ty: -150px; }}
+.p2 {{ animation: burst 5s infinite; --tx: 120px; --ty: -150px; animation-delay: 0.1s; }}
+.p3 {{ animation: burst 5s infinite; --tx: -60px; --ty: -200px; animation-delay: 0.05s; }}
+.p4 {{ animation: burst 5s infinite; --tx: 60px; --ty: -200px; animation-delay: 0.15s; }}
+.p5 {{ animation: burst 5s infinite; --tx: 0px; --ty: -230px; }}
+.p6 {{ animation: burst 5s infinite; --tx: -180px; --ty: -80px; animation-delay: 0.2s; }}
+.p7 {{ animation: burst 5s infinite; --tx: 180px; --ty: -80px; animation-delay: 0.25s; }}
 
-    /* Volumetric Fire Eruption - 3 layered fire elements */
-    .volumetric-fire {{
-        position: absolute;
-        bottom: 50px; /* วางพิกัดให้อยู่กึ่งกลางตัวถ้วยพอดี */
-        left: 50%;
-        transform: translateX(-50%) scale(0);
-        transform-origin: bottom center;
-        mix-blend-mode: screen;
-        opacity: 0;
-    }}
-    .fire-outer {{
-        width: 100px;
-        height: 140px;
-        background: radial-gradient(circle at 50% 85%, rgba(255, 69, 0, 0.85) 0%, rgba(255, 0, 0, 0.3) 60%, transparent 80%);
-        filter: blur(6px) contrast(150%);
-        animation: fire-burst-outer 5s infinite ease-in-out;
-        z-index: 29; /* Placed slightly behind the trophy */
-    }}
-    .fire-medium {{
-        width: 70px;
-        height: 110px;
-        background: radial-gradient(circle at 50% 85%, orange 0%, red 50%, transparent 80%);
-        filter: blur(4px) contrast(180%);
-        animation: fire-burst-medium 5s infinite ease-in-out;
-        z-index: 31; /* Placed in front of the trophy */
-    }}
-    .fire-inner {{
-        width: 40px;
-        height: 80px;
-        background: radial-gradient(circle at 50% 85%, #fff 0%, gold 40%, transparent 80%);
-        filter: blur(2px) contrast(200%);
-        animation: fire-burst-inner 5s infinite ease-in-out;
-        z-index: 32; /* Brightest inner flame core */
-    }}
+@keyframes burst {{
+    0%, 82% {{ transform: translate3d(0, 0, 0) scale(1); opacity: 0; }}
+    84% {{ opacity: 1; }}
+    94% {{ transform: translate3d(var(--tx), var(--ty), 0) scale(0.1); opacity: 0; }}
+    100% {{ opacity: 0; }}
+}}
 
-    @keyframes fire-burst-outer {{
-        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-        60% {{ opacity: 0.95; transform: translateX(-50%) scale(1) rotate(-5deg); }}
-        70% {{ opacity: 0.85; transform: translateX(-50%) scale(1.15) rotate(5deg) skewX(5deg); }}
-        80% {{ opacity: 0.8; transform: translateX(-50%) scale(1.0) rotate(-3deg) skewX(-5deg); }}
-        90% {{ opacity: 0.45; transform: translateX(-50%) scale(0.8) rotate(0deg); }}
-        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-    }}
-    @keyframes fire-burst-medium {{
-        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-        60% {{ opacity: 0.98; transform: translateX(-50%) scale(1) rotate(5deg); }}
-        70% {{ opacity: 0.9; transform: translateX(-50%) scale(1.2) rotate(-5deg) skewX(-3deg); }}
-        80% {{ opacity: 0.85; transform: translateX(-50%) scale(1.05) rotate(3deg) skewX(3deg); }}
-        90% {{ opacity: 0.4; transform: translateX(-50%) scale(0.7) rotate(0deg); }}
-        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-    }}
-    @keyframes fire-burst-inner {{
-        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-        60% {{ opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }}
-        70% {{ opacity: 0.95; transform: translateX(-50%) scale(1.25) rotate(3deg); }}
-        80% {{ opacity: 0.9; transform: translateX(-50%) scale(1.1) rotate(-3deg); }}
-        90% {{ opacity: 0.35; transform: translateX(-50%) scale(0.6) rotate(0deg); }}
-        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
-    }}
+@keyframes goal-physics {{
+    0% {{ transform: translate3d(-500px, -150px, 0) rotate(0deg) scale(0); opacity: 0; }}
+    5% {{ transform: translate3d(-480px, -120px, 0) rotate(20deg) scale(1); opacity: 1; }}
+    25% {{ transform: translate3d(-350px, 30px, 0) rotate(180deg); }}
+    35% {{ transform: translate3d(-280px, -40px, 0) rotate(270deg); }}
+    50% {{ transform: translate3d(-150px, 30px, 0) rotate(450deg); }}
+    60% {{ transform: translate3d(-80px, -20px, 0) rotate(540deg); }}
+    75% {{ transform: translate3d(0px, 30px, 0) rotate(720deg); }}
+    82% {{ transform: translate3d(0px, -10px, 0) rotate(810deg) scale(1); opacity: 1; }}
+    92% {{ transform: translate3d(0px, -10px, 0) rotate(810deg) scale(0.7); opacity: 1; }}
+    100% {{ transform: translate3d(0px, -5px, 0) rotate(810deg) scale(0.2); opacity: 0; }}
+}}
 
-    /* Intricate 3D Fireworks */
-    .firework-bg {{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 5;
-        pointer-events: none;
-    }}
-    .firework-particle {{
-        position: absolute;
-        top: 35%; /* Explodes at trophy center */
-        left: 50%;
-        width: 3px;
-        height: 12px;
-        background: linear-gradient(to top, transparent, var(--color));
-        border-radius: 3px;
-        filter: blur(0.5px) drop-shadow(0 0 6px var(--color));
-        opacity: 0;
-        animation: fireworks-eruption 5s infinite ease-out;
-        animation-delay: var(--delay);
-        z-index: 5;
-    }}
-    @keyframes fireworks-eruption {{
-        0%, 58% {{ transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0); opacity: 0; }}
-        60% {{ opacity: 1; }}
-        75% {{ opacity: 0.9; }}
-        100% {{ transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.3); opacity: 0; }}
-    }}
+@keyframes bounce {{
+    0%, 100% {{ transform: translateY(0); }}
+    50% {{ transform: translateY(-8px); }}
+}}
+.bouncing-icon {{
+    display: inline-block;
+    animation: bounce 1.5s infinite ease-in-out;
+    margin-right: 8px;
+}}
 
-    /* Golden Banner Title - premium golden text */
-    .banner-title-bottom {{
-        margin-top: 15px;
-        font-family: 'Kanit', sans-serif;
-        font-weight: 800;
-        font-size: 4rem;
-        letter-spacing: 10px;
-        text-transform: uppercase;
-        background: linear-gradient(90deg, #FFE875 0%, #F39C12 50%, #FFE875 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: #FFD700;
-        filter: drop-shadow(0 0 15px rgba(243, 156, 18, 0.6));
-        z-index: 60;
-        position: relative;
-    }}
+/* แต่งปุ่มแบบ Primary (บันทึกแล้ว) ให้แสดงผลเป็นสีเขียวพรีเมี่ยมสวยสะดุดตา */
+button[data-testid="baseButton-primary"] {{
+    background: linear-gradient(90deg, #2e7d32 0%, #1b5e20 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #4caf50 !important;
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.4) !important;
+    font-weight: bold !important;
+}}
+button[data-testid="baseButton-primary"]:hover {{
+    background: linear-gradient(90deg, #388e3c 0%, #2e7d32 100%) !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.6) !important;
+}}
 
-    /* Floating Embers */
-    .ember {{
-        position: absolute;
-        width: 3px;
-        height: 3px;
-        background: #fff;
-        border-radius: 50%;
-        box-shadow: 0 0 10px gold;
-        opacity: 0;
-        animation: float-embers 5s infinite;
-        z-index: 35;
-    }}
-    @keyframes float-embers {{
-        0%, 60% {{ transform: translateY(0) scale(0); opacity: 0; }}
-        70% {{ opacity: 1; }}
-        100% {{ transform: translateY(-250px) translateX(30px) scale(0); opacity: 0; }}
-    }}
+/* ระบบพื้นหลัง UFO เวอร์ชั่นย้อนกลับ (Step -3) - แก้ไขชิดขอบบนและขยายใหญ่ */
+[data-testid="stAppViewContainer"] {{
+    background-image: url('data:image/webp;base64,{ufo_base64}');
+    background-repeat: no-repeat;
+    background-position: center 0px; /* บังคับชิดขอบบนสุด */
+    background-attachment: fixed;
+    background-size: 160vw auto; /* ขยายให้ใหญ่ขึ้นอีกและคุมความกว้าง */
+    position: relative;
+}}
+[data-testid="stAppViewContainer"]::before {{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(14, 20, 16, 0.9); /* ปรับเป็นสีเขียวดำทึบโปร่งแสง 90% ให้เข้ากับธีมหลัก */
+    z-index: -1;
+}}
+[data-testid="stAppViewContainer"] > section:nth-child(2) {{
+    background-color: transparent !important;
+}}
 
-    .animated-ball-3d {{
-        position: absolute;
-        font-size: 2.5rem;
-        z-index: 100;
-        animation: ball-3d-journey 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
-        filter: drop-shadow(0 0 15px #fff);
-    }}
-    @keyframes ball-3d-journey {{
-        0% {{
-            transform: translate3d(-1000px, 120px, 800px) rotate(0deg) scale(0.3);
-            opacity: 0;
-        }}
-        5% {{
-            opacity: 1;
-        }}
-        25% {{
-            /* Curved path crossing over text height */
-            transform: translate3d(-400px, 140px, 400px) rotate(360deg) scale(1.3);
-        }}
-        45% {{
-            transform: translate3d(-150px, -20px, 100px) rotate(720deg) scale(1.6);
-        }}
-        58% {{
-            /* Hits gold trophy at 58% animation mark */
-            transform: translate3d(0, -60px, 0) rotate(1080deg) scale(1.1);
-            opacity: 1;
-            filter: drop-shadow(0 0 25px #fff);
-        }}
-        60% {{
-            /* Dissolves at impact to spawn fireworks */
-            transform: translate3d(0, -60px, -50px) rotate(1080deg) scale(0);
-            opacity: 0;
-        }}
-        100% {{
-            transform: translate3d(0, -60px, -50px) scale(0);
-            opacity: 0;
-        }}
-    }}
+/* ซ่อนแถบเครื่องมือพัฒนาของ Streamlit ทั้งหมดทางขวา (Share, Star, Edit, Deploy, Menu) */
+[data-testid="stHeaderActionElements"] {{display:none !important;}}
+.stAppDeployButton {{display:none !important;}}
+[data-testid="stHeaderActionButton"] {{display:none !important;}}
+#MainMenu {{display:none !important;}}
+footer {{visibility: hidden;}}
+[data-testid="stHeader"] {{
+    background-color: transparent !important;
+    box-shadow: none !important;
+}}
 
-    /* Mobile Responsive Header */
-    @media (max-width: 768px) {{
-        .header-container {{ height: 260px; }}
-        .gold-trophy-main {{ font-size: 6rem; }}
-        .banner-title-bottom {{ font-size: 2.2rem; letter-spacing: 4px; }}
-        .volumetric-fire {{ bottom: 25px; }}
-        .fire-outer {{ width: 60px; height: 90px; }}
-        .fire-medium {{ width: 40px; height: 70px; }}
-        .fire-inner {{ width: 25px; height: 50px; }}
-        .top-right-icon {{ top: 15px; right: 15px; font-size: 1.5rem; }}
+/* รองรับการแสดงผลบนโทรศัพท์มือถือ (Mobile Responsive) */
+@media (max-width: 768px) {{
+    .main-title {{
+        font-size: 2.0rem !important;
     }}
-
-    /* Hide Streamlit Header and Footer elements */
-    [data-testid="stHeaderActionElements"], .stAppDeployButton, [data-testid="stHeaderActionButton"], #MainMenu, footer {{ display:none !important; visibility: hidden; }}
-    [data-testid="stHeader"] {{ background-color: transparent !important; box-shadow: none !important; }}
-
-    /* Background UFO Section - Premium black theme */
+    .header-wrapper {{
+        height: 120px !important;
+    }}
+    .trophy-wrapper {{
+        font-size: 2.0rem !important;
+        margin-left: 10px !important;
+    }}
     [data-testid="stAppViewContainer"] {{
-        background-image: linear-gradient(180deg, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 100%), url('data:image/webp;base64,{ufo_base64}');
-        background-repeat: no-repeat;
-        background-position: center 0px;
-        background-attachment: fixed;
-        background-size: 160vw auto;
-        position: relative;
+        background-size: cover !important;
+        background-position: center top !important;
     }}
-    [data-testid="stAppViewContainer"]::before {{
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.95);
-        z-index: -1;
+    /* ดันช่องกรอกข้อมูลและปุ่มให้ดูกระชับขึ้นบนหน้าจอมือถือ */
+    .stNumberInput {{
+        margin-bottom: 5px !important;
     }}
+    /* ซ่อนช่องว่างดันปุ่มเมื่ออยู่ในจอมือถือ */
+    .desktop-spacer {{
+        display: none !important;
+    }}
+    /* ล็อก Sidebar หลักไม่ให้แสงเงาทะลุออกนอกขอบเขตด้านล่าง */
+    [data-testid="stSidebar"] {{
+        overflow: hidden !important;
+    }}
+    /* ปล่อยให้เฉพาะเนื้อหาภายใน Sidebar เลื่อนแนวตั้งได้ และจะหยุดทันทีเมื่อสุดเนื้อหา */
+    [data-testid="stSidebarUserContent"] {{
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+    }}
+    /* ย่อขนาดหัวข้อล็อกอินใน Sidebar */
+    [data-testid="stSidebar"] h2 {{
+        font-size: 1.1rem !important;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }}
+    /* ย่อขนาดและจัดกระชับปุ่มเลือกเมนูหลักใน Sidebar เพื่อให้เห็นครบทุกเมนูโดยไม่ต้องเลื่อน */
+    div[role="radiogroup"] > label {{
+        padding: 5px 10px !important;
+        margin-bottom: 4px !important;
+        border-radius: 6px !important;
+    }}
+    div[role="radiogroup"] > label span {{
+        font-size: 0.8rem !important;
+    }}
+}}
 </style>
 
-<div class='header-container'>
-    <div class='top-right-icon'>🏆</div>
-    <div class='firework-bg'>
-        <div class='firework-particle' style='--angle:0deg; --tx:0px; --ty:-250px; --tz:100px; --color:#ffffff; --delay:0s;'></div>
-        <div class='firework-particle' style='--angle:15deg; --tx:60px; --ty:-240px; --tz:80px; --color:#FFD700; --delay:0.04s;'></div>
-        <div class='firework-particle' style='--angle:30deg; --tx:120px; --ty:-210px; --tz:50px; --color:#ffffff; --delay:0.08s;'></div>
-        <div class='firework-particle' style='--angle:45deg; --tx:170px; --ty:-170px; --tz:30px; --color:#FFD700; --delay:0.12s;'></div>
-        <div class='firework-particle' style='--angle:60deg; --tx:210px; --ty:-120px; --tz:20px; --color:#ffffff; --delay:0.16s;'></div>
-        <div class='firework-particle' style='--angle:75deg; --tx:240px; --ty:-60px; --tz:10px; --color:#FFD700; --delay:0.20s;'></div>
-        <div class='firework-particle' style='--angle:90deg; --tx:250px; --ty:0px; --tz:0px; --color:#ffffff; --delay:0.24s;'></div>
-        <div class='firework-particle' style='--angle:-15deg; --tx:-60px; --ty:-240px; --tz:80px; --color:#FFD700; --delay:0.04s;'></div>
-        <div class='firework-particle' style='--angle:-30deg; --tx:-120px; --ty:-210px; --tz:50px; --color:#ffffff; --delay:0.08s;'></div>
-        <div class='firework-particle' style='--angle:-45deg; --tx:-170px; --ty:-170px; --tz:30px; --color:#FFD700; --delay:0.12s;'></div>
-        <div class='firework-particle' style='--angle:-60deg; --tx:-210px; --ty:-120px; --tz:20px; --color:#ffffff; --delay:0.16s;'></div>
-        <div class='firework-particle' style='--angle:-75deg; --tx:-240px; --ty:-60px; --tz:10px; --color:#FFD700; --delay:0.20s;'></div>
-        <div class='firework-particle' style='--angle:-90deg; --tx:-250px; --ty:0px; --tz:0px; --color:#ffffff; --delay:0.24s;'></div>
-        <div class='firework-particle' style='--angle:10deg; --tx:80px; --ty:-350px; --tz:150px; --color:#FFD700; --delay:0.08s;'></div>
-        <div class='firework-particle' style='--angle:25deg; --tx:180px; --ty:-310px; --tz:120px; --color:#ffffff; --delay:0.12s;'></div>
-        <div class='firework-particle' style='--angle:40deg; --tx:260px; --ty:-260px; --tz:90px; --color:#FFD700; --delay:0.16s;'></div>
-        <div class='firework-particle' style='--angle:55deg; --tx:310px; --ty:-180px; --tz:60px; --color:#ffffff; --delay:0.20s;'></div>
-        <div class='firework-particle' style='--angle:-10deg; --tx:-80px; --ty:-350px; --tz:150px; --color:#FFD700; --delay:0.08s;'></div>
-        <div class='firework-particle' style='--angle:-25deg; --tx:-180px; --ty:-310px; --tz:120px; --color:#ffffff; --delay:0.12s;'></div>
-        <div class='firework-particle' style='--angle:-40deg; --tx:-260px; --ty:-260px; --tz:90px; --color:#FFD700; --delay:0.16s;'></div>
-        <div class='firework-particle' style='--angle:-55deg; --tx:-310px; --ty:-180px; --tz:60px; --color:#ffffff; --delay:0.20s;'></div>
+<div class='header-wrapper'>
+    <div class='main-title'>CRAZYFIFA 2026</div>
+    <div class='trophy-wrapper'>
+        🏆
+        <span class='animated-ball'>⚽</span>
+        <div class='firework-particle p1'></div>
+        <div class='firework-particle p2'></div>
+        <div class='firework-particle p3'></div>
+        <div class='firework-particle p4'></div>
+        <div class='firework-particle p5'></div>
+        <div class='firework-particle p6 white-p'></div>
+        <div class='firework-particle p7 white-p'></div>
     </div>
-    <div class='trophy-group-3d'>
-        <div class='gold-trophy-main'>🏆</div>
-        <div class='volumetric-fire fire-outer'></div>
-        <div class='volumetric-fire fire-medium'></div>
-        <div class='volumetric-fire fire-inner'></div>
-        <span class='animated-ball-3d'>⚽</span>
-        <div class='ember' style='left: 10%; animation-delay: 3s;'></div>
-        <div class='ember' style='left: 30%; animation-delay: 3.5s;'></div>
-        <div class='ember' style='left: 70%; animation-delay: 3.2s;'></div>
-        <div class='ember' style='left: 90%; animation-delay: 3.8s;'></div>
-    </div>
-    <div class='banner-title-bottom'>CRAZYFIFA 2026</div>
 </div>
-
-""")
+""", unsafe_allow_html=True)
 
 st.markdown("<h3 style='text-align: center; margin-top: -30px; color: #888;'>WORLD CUP PREDICTION CHALLENGE</h3>", unsafe_allow_html=True)
 
