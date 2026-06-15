@@ -16,9 +16,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 image_full_path = os.path.join(current_dir, "ต่างดาว_optimized.webp")
 ufo_base64 = get_base64_image(image_full_path)
 
-# โหลดภาพ Artwork Messi บน Sidebar
-messi_path = os.path.join(current_dir, "messi_optimized.png")
-messi_base64 = get_base64_image(messi_path)
+# โหลดภาพ Artwork พื้นหลัง Sidebar (เปลี่ยนจาก Messi เป็น 02.png ตามสั่ง)
+bg_sidebar_path = os.path.join(current_dir, "02_optimized.png")
+bg_sidebar_base64 = get_base64_image(bg_sidebar_path)
 
 # ฟังก์ชันสำหรับเพลง
 def get_audio_html(audio_path):
@@ -128,7 +128,7 @@ st.markdown(f"""
         100% {{ transform: translate(30%, 30%); }}
     }}
 
-    /* สร้างเลเยอร์ภาพ Artwork Messi (Custom Artwork Overlay) */
+    /* สร้างเลเยอร์ภาพ Artwork พื้นหลัง Sidebar (Custom Artwork Overlay) */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -136,12 +136,12 @@ st.markdown(f"""
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("data:image/png;base64,{messi_base64}");
+        background-image: url("data:image/png;base64,{bg_sidebar_base64}");
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
-        opacity: 0.18; /* ปรับระดับความจางให้ลงตัว */
-        filter: grayscale(100%) contrast(110%) brightness(85%); /* แปลงเป็นขาวดำเพื่อย้อมให้กลืนไปกับพื้นหลังสีเขียวตุ่นได้อย่างแนบเนียน */
+        opacity: 0.22; /* ปรับระดับความจางให้ลงตัวสำหรับภาพใหม่ */
+        filter: grayscale(100%) contrast(110%) brightness(85%); /* ย้อมให้กลืนไปกับพื้นหลังสีเขียวตุ่น */
         pointer-events: none;
         z-index: -2; /* ปรับไปอยู่หลังสุด */
     }}
