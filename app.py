@@ -84,6 +84,16 @@ db.init_db()
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
+<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัด (Waving Effect) -->
+<svg style="display:none">
+  <filter id="waving-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.08" numOctaves="1" result="noise">
+      <animate attributeName="baseFrequency" values="0.01 0.08; 0.01 0.15; 0.01 0.08" dur="5s" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" />
+  </filter>
+</svg>
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
     
@@ -141,28 +151,17 @@ st.markdown(f"""
         background-size: cover;
         background-position: center;
         opacity: 0.22; /* ปรับระดับความจางให้ลงตัวสำหรับภาพใหม่ */
-        filter: grayscale(100%) contrast(110%) brightness(85%); /* ย้อมให้กลืนไปกับพื้นหลังสีเขียวตุ่น */
+        filter: grayscale(100%) contrast(110%) brightness(85%) url(#waving-filter); /* ใช้ SVG Filter เพื่อทำเอฟเฟกต์สะบัด */
         pointer-events: none;
         z-index: -2; /* ปรับไปอยู่หลังสุด */
         
-        /* เพิ่มกิมมิกการกระพือช้าๆ เหมือนผืนธง (Waving Flag Animation) */
-        animation: waving-flag 8s ease-in-out infinite;
-        transform-origin: center center;
+        /* เพิ่มการเคลื่อนไหวเบาๆ เสริมเข้าไป */
+        animation: subtle-drift 10s ease-in-out infinite;
     }}
 
-    @keyframes waving-flag {{
-        0%, 100% {{ 
-            transform: scale(1.0) skew(0deg, 0deg); 
-        }}
-        25% {{ 
-            transform: scale(1.05) skew(1deg, 0.5deg); 
-        }}
-        50% {{ 
-            transform: scale(1.02) skew(-0.5deg, -0.5deg); 
-        }}
-        75% {{ 
-            transform: scale(1.06) skew(0.5deg, 1deg); 
-        }}
+    @keyframes subtle-drift {{
+        0%, 100% {{ transform: scale(1.05) translate(0, 0); }}
+        50% {{ transform: scale(1.1) translate(-10px, 5px); }}
     }}
 
     /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
