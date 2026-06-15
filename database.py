@@ -8,7 +8,17 @@ import streamlit as st
 
 # ตั้งค่า Credentials
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
-LOCAL_KEY_PATH = '.secrets/directed-graph-494807-i7-f79a56b5b375.json'
+# ค้นหาไฟล์ .secrets จากตำแหน่งของไฟล์นี้ หรือโฟลเดอร์หลัก
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(BASE_DIR)
+KEY_NAME = 'directed-graph-494807-i7-f79a56b5b375.json'
+
+LOCAL_KEY_PATH = os.path.join(PARENT_DIR, '.secrets', KEY_NAME)
+if not os.path.exists(LOCAL_KEY_PATH):
+    LOCAL_KEY_PATH = os.path.join(BASE_DIR, '.secrets', KEY_NAME)
+if not os.path.exists(LOCAL_KEY_PATH):
+    LOCAL_KEY_PATH = os.path.join('.secrets', KEY_NAME) # Fallback to relative
+
 SHEET_URL = 'https://docs.google.com/spreadsheets/d/1MWZoajy6xNEQunVccEqNcb4iV4124qRxrDS5pHLf57c/edit'
 
 @st.cache_resource
@@ -176,9 +186,19 @@ def get_leaderboard():
     df_p = get_predictions_df()
     if df_u.empty: return pd.DataFrame(columns=['username', 'total_score', 'pin'])
     
-    active_users = df_p['username'].unique() if not df_p.empty else []
-    df_u = df_u[df_u['username'].isin(active_users)]
-    df_u['total_score'] = pd.to_numeric(df_u['total_score'], errors='coerce').fillna(0).astype(int)
+    # คำนวณคะแนนจาก predictions ถ้ามี
+    if not df_p.empty:
+        df_p['points_earned_int'] = pd.to_numeric(df_p['points_earned'], errors='coerce').fillna(0).astype(int)
+        user_scores = df_p.groupby('username')['points_earned_int'].sum().reset_index()
+        user_scores.columns = ['username', 'calculated_score']
+        
+        # Merge คะแนนเข้ากับ users
+        df_u = df_u.merge(user_scores, on='username', how='left')
+        df_u['total_score'] = df_u['calculated_score'].fillna(0).astype(int)
+        df_u = df_u.drop(columns=['calculated_score'])
+    else:
+        df_u['total_score'] = pd.to_numeric(df_u['total_score'], errors='coerce').fillna(0).astype(int)
+    
     return df_u.sort_values('total_score', ascending=False)
 
 def get_prediction_history():
