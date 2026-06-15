@@ -84,16 +84,16 @@ db.init_db()
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
-<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) -->
+<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) - ปรับให้นุ่มนวลขึ้นไม่ลายตา -->
 <svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
-  <filter id="slow-waving-filter" x="-20%" y="-20%" width="140%" height="140%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" result="turbulence">
+  <filter id="slow-waving-filter" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="1" result="turbulence">
       <animate attributeName="baseFrequency" 
-               values="0.015 0.05; 0.015 0.07; 0.015 0.05" 
-               dur="10s" 
+               values="0.01 0.03; 0.01 0.04; 0.01 0.03" 
+               dur="12s" 
                repeatCount="indefinite" />
     </feTurbulence>
-    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G" />
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="12" xChannelSelector="R" yChannelSelector="G" />
   </filter>
 </svg>
 
