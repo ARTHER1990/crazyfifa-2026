@@ -108,36 +108,37 @@ st.markdown(f"""
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
         position: relative;
-        overflow: hidden;
+        overflow: hidden; /* ป้องกันแสงแลบออกนอกขอบ */
         border-right: none;
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
     
-    /* สร้างเลเยอร์แสงเงาเลื่อนผ่าน (Shimmer) */
+    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Diagonal Light Sweep) */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
-        top: -100%;
-        left: -150%;
-        width: 400%;
-        height: 300%;
+        top: 0;
+        left: -150%; /* เริ่มต้นนอกจอทางซ้าย */
+        width: 100%;
+        height: 100%;
         background: linear-gradient(
-            135deg,
-            rgba(188, 204, 110, 0) 0%,
-            rgba(188, 204, 110, 0) 45%,
-            rgba(188, 204, 110, 0.25) 50%,
-            rgba(188, 204, 110, 0) 55%,
-            rgba(188, 204, 110, 0) 100%
+            to right, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 255, 255, 0.08) 45%, 
+            rgba(255, 255, 255, 0.2) 50%, 
+            rgba(255, 255, 255, 0.08) 55%, 
+            rgba(255, 255, 255, 0) 100%
         );
-        animation: shimmer-fade 12s infinite linear;
+        transform: skewX(-45deg); /* เฉียง 45 องศา */
+        animation: light-sweep 10s infinite ease-in-out; /* วิ่ง 2s พัก 8s (รวม 10s) */
         pointer-events: none;
-        z-index: -1;
-        filter: blur(45px);
+        z-index: -1; /* อยู่เหนือรูปภาพ (-2) แต่อยู่ใต้ข้อความ */
     }}
 
-    @keyframes shimmer-fade {{
-        0% {{ transform: translate(-30%, -30%); }}
-        100% {{ transform: translate(30%, 30%); }}
+    @keyframes light-sweep {{
+        0% {{ left: -150%; }}
+        20% {{ left: 150%; }} /* วิ่งเสร็จใน 2 วินาที (20% ของ 10s) */
+        100% {{ left: 150%; }} /* หยุดรอ 8 วินาที */
     }}
 
     /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
