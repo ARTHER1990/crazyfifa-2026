@@ -39,24 +39,45 @@ def get_audio_html(audio_path):
 # --- ตั้งค่าหน้าเว็บ ---
 st.set_page_config(page_title="🏆 CRAZYFIFA WORLD CUP 2026", layout="wide", page_icon="⚽")
 
-# แผนผังธงชาติ
+# แผนผังธงชาติ (Lowercase keys สำหรับความยืดหยุ่นสูง)
 FLAG_MAP = {
-    'Mexico': '🇲🇽', 'South Africa': '🇿🇦', 'South Korea': '🇰🇷', 'Czech Republic': '🇨🇿',
-    'Canada': '🇨🇦', 'Bosnia and Herzegovina': '🇧🇦', 'USA': '🇺🇸', 'Paraguay': '🇵🇾',
-    'Spain': '🇪🇸', 'Morocco': '🇲🇦', 'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Australia': '🇦🇺',
-    'Qatar': '🇶🇦', 'Switzerland': '🇨🇭', 'Brazil': '🇧🇷', 'Haiti': '🇭🇹',
-    'Scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'Turkey': '🇹🇷', 'Argentina': '🇦🇷', 'France': '🇫🇷',
-    'Germany': '🇩🇪', 'Japan': '🇯🇵', 'Portugal': '🇵🇹', 'Netherlands': '🇳🇱',
-    'Curaçao': '🇨🇼', 'Côte d\'Ivoire': '🇨🇮', 'Ecuador': '🇪🇨', 'Sweden': '🇸🇪',
-    'Tunisia': '🇹🇳', 'Cape Verde': '🇨🇻', 'Belgium': '🇧🇪', 'Egypt': '🇪🇬',
-    'Saudi Arabia': '🇸🇦', 'Uruguay': '🇺🇾', 'Iran': '🇮🇷', 'New Zealand': '🇳🇿',
-    'Korea Republic': '🇰🇷', 'Czechia': '🇨🇿', 'Türkiye': '🇹🇷', 'Cabo Verde': '🇨🇻', 'IR Iran': '🇮🇷',
-    'Ivory Coast': '🇨🇮'
+    'mexico': '🇲🇽', 'south africa': '🇿🇦', 'south korea': '🇰🇷', 'czech republic': '🇨🇿',
+    'canada': '🇨🇦', 'bosnia and herzegovina': '🇧🇦', 'usa': '🇺🇸', 'paraguay': '🇵🇾',
+    'spain': '🇪🇸', 'morocco': '🇲🇦', 'england': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'australia': '🇦🇺',
+    'qatar': '🇶🇦', 'switzerland': '🇨🇭', 'brazil': '🇧🇷', 'haiti': '🇭🇹',
+    'scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'turkey': '🇹🇷', 'argentina': '🇦🇷', 'france': '🇫🇷',
+    'germany': '🇩🇪', 'japan': '🇯🇵', 'portugal': '🇵🇹', 'netherlands': '🇳🇱',
+    'curaçao': '🇨🇼', 'côte d\'ivoire': '🇨🇮', 'ecuador': '🇪🇨', 'sweden': '🇸🇪',
+    'tunisia': '🇹🇳', 'cape verde': '🇨🇻', 'belgium': '🇧🇪', 'egypt': '🇪🇬',
+    'saudi arabia': '🇸🇦', 'uruguay': '🇺🇾', 'iran': '🇮🇷', 'new zealand': '🇳🇿',
+    'senegal': '🇸🇳', 'iraq': '🇮🇶', 'norway': '🇳🇴', 'algeria': '🇩🇿',
+    'austria': '🇦🇹', 'jordan': '🇯🇴', 'dr congo': '🇨🇩', 'croatia': '🇭🇷',
+    'ghana': '🇬🇭', 'panama': '🇵🇦', 'uzbekistan': '🇺🇿', 'colombia': '🇨🇴',
+    'italy': '🇮🇹', 'costa rica': '🇨🇷', 'jamaica': '🇯🇲', 'honduras': '🇭🇳',
+    'chile': '🇨🇱', 'peru': '🇵🇪', 'venezuela': '🇻🇪', 'nigeria': '🇳🇬',
+    'cameroon': '🇨🇲', 'denmark': '🇩🇰', 'poland': '🇵🇱', 'ukraine': '🇺🇦',
+    'wales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'serbia': '🇷🇸', 'slovenia': '🇸🇮', 'romania': '🇷🇴',
+    'georgia': '🇬🇪', 'albania': '🇦🇱', 'hungary': '🇭🇺', 'slovakia': '🇸🇰',
+    'china': '🇨🇳', 'vietnam': '🇻🇳', 'thailand': '🇹🇭', 'malaysia': '🇲🇾',
+    'singapore': '🇸🇬', 'indonesia': '🇮🇩', 'philippines': '🇵🇭', 'india': '🇮🇳'
 }
 
 def get_team_display(team_name):
-    flag = FLAG_MAP.get(team_name, '🏳️')
-    return f"{team_name} {flag}"
+    clean_name = team_name.strip()
+    alias_map = {
+        'cabo verde': 'cape verde',
+        'czechia': 'czech republic',
+        'türkiye': 'turkey',
+        'ir iran': 'iran',
+        'ivory coast': 'côte d\'ivoire',
+        'korea republic': 'south korea'
+    }
+    lookup_name = clean_name.lower()
+    if lookup_name in alias_map:
+        lookup_name = alias_map[lookup_name]
+        
+    flag = FLAG_MAP.get(lookup_name, '🏳️')
+    return f"{clean_name} {flag}"
 
 # เริ่มต้นฐานข้อมูล
 db.init_db()
@@ -155,6 +176,26 @@ st.markdown(f"""
     div[role="radiogroup"] > label[data-selected="true"] span {{
         color: #ffffff !important;
         font-weight: 600;
+    }}
+
+    /* ปรับแต่งช่องกรอกคะแนน (st.number_input) ให้ดูโมเดิร์นคลีนและมีมิติ */
+    div[data-testid="stNumberInput"] {{
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 5px 8px !important;
+        transition: all 0.3s ease !important;
+    }}
+    div[data-testid="stNumberInput"]:hover {{
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }}
+    /* ปรับตัวอักษร Label ของช่องกรอกข้อมูลให้ดูมีระเบียบและไม่รกรุงรัง */
+    div[data-testid="stNumberInput"] label p {{
+        font-size: 0.9rem !important;
+        color: #a0aec0 !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.5px !important;
     }}
 
     .header-wrapper {{
@@ -474,7 +515,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             with col1:
                 # ใช้ label บอกชื่อประเทศพร้อมธงชาติเหนือช่องกรอกข้อมูลโดยตรงเพื่อให้เข้าใจง่ายบนมือถือ
                 pred_h = st.number_input(
-                    label=home_display,
+                    label="⚽ สกอร์ทีมเหย้า",
                     min_value=0,
                     step=1,
                     value=val_h,
@@ -483,7 +524,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                 )
             with col2:
                 pred_a = st.number_input(
-                    label=away_display,
+                    label="⚽ สกอร์ทีมเยือน",
                     min_value=0,
                     step=1,
                     value=val_a,
@@ -571,7 +612,7 @@ elif menu == "📜 ผลการแข่งขันย้อนหลัง"
         unique_dates = finished['match_dt'].dt.date.unique()
         
         for d in unique_dates:
-            st.subheader(f"📅 วันที่ {d.strftime('%d/%m/%Y')}")
+            st.subheader(f"🗓️ วันที่ {d.strftime('%d/%m/%Y')}")
             day_matches = finished[finished['match_dt'].dt.date == d]
             
             for _, row in day_matches.iterrows():
@@ -586,7 +627,7 @@ elif menu == "📜 ผลการแข่งขันย้อนหลัง"
                 
                 with st.expander(expander_label):
                     st.markdown(f"### 🏟️ {home_display} vs {away_display}")
-                    st.write(f"📅 **เวลาแข่งขัน:** {pd.to_datetime(row['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
+                    st.write(f"🗓️ **เวลาแข่งขัน:** {pd.to_datetime(row['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
                     
                     winner_name = home if h_score > a_score else (away if a_score > h_score else "เสมอ")
                     winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
@@ -647,7 +688,7 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
             unique_dates = filtered_history['date'].unique()
             for d in unique_dates:
                 is_today, is_tomorrow = (d == today), (d == tomorrow)
-                with st.expander(f"📅 {d.strftime('%d/%m/%Y')} {'(วันนี้)' if is_today else ('(พรุ่งนี้)' if is_tomorrow else '')}", expanded=is_today):
+                with st.expander(f"🗓️ {d.strftime('%d/%m/%Y')} {'(วันนี้)' if is_today else ('(พรุ่งนี้)' if is_tomorrow else '')}", expanded=is_today):
                     day_history = filtered_history[filtered_history['date'] == d]
                     st.dataframe(day_history[['username', 'match', 'prediction', 'real_score', 'points']].rename(columns={'username': 'ผู้เล่น', 'match': 'แมตช์', 'prediction': 'ทาย', 'real_score': 'ผลจริง', 'points': 'แต้ม'}), use_container_width=True, hide_index=True)
 
