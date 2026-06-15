@@ -235,7 +235,7 @@ st.markdown(f"""
     position: absolute;
     font-size: 1.8rem;
     z-index: 10;
-    animation: ball-3d-journey 6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    animation: ball-3d-journey 5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
     will-change: transform;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
 }}
@@ -245,32 +245,23 @@ st.markdown(f"""
         transform: translate3d(-1500px, 100px, 1000px) rotate(0deg) scale(0.5); 
         opacity: 0; 
     }}
-    10% {{ 
+    5% {{ 
         transform: translate3d(-1200px, -150px, 800px) rotate(180deg) scale(1.2); 
         opacity: 1; 
     }}
-    30% {{ 
-        transform: translate3d(-600px, 80px, 500px) rotate(540deg) scale(1.8); /* วิ่งพาดผ่านตัวหนังสือ (จุดที่ใกล้จอที่สุด) */
+    25% {{ 
+        transform: translate3d(-600px, 80px, 500px) rotate(540deg) scale(1.8); /* วิ่งพาดผ่านตัวหนังสือ */
     }}
-    50% {{ 
-        transform: translate3d(-200px, -100px, 200px) rotate(900deg) scale(1.3); 
+    45% {{ 
+        transform: translate3d(-100px, -50px, 100px) rotate(900deg) scale(1.1); 
     }}
-    70% {{ 
-        transform: translate3d(0, 0, 0) rotate(1260deg) scale(1); /* จอดที่ถ้วย */
+    60% {{ 
+        transform: translate3d(0, 0, 0) rotate(1080deg) scale(1); /* จอดที่ถ้วย */
+        opacity: 1;
     }}
-    75% {{ 
-        transform: translate3d(0, -25px, 0) rotate(1260deg); /* เด้งโชว์ 1 ครั้งที่ถ้วย */
-    }}
-    80% {{ 
-        transform: translate3d(0, 0, 0) rotate(1260deg); 
-    }}
-    95% {{ 
-        transform: translate3d(0, 0, 0) rotate(1260deg); 
-        opacity: 1; 
-    }}
-    100% {{ 
-        transform: translate3d(0, 0, 0) rotate(1260deg); 
-        opacity: 0; 
+    61%, 100% {{ 
+        transform: translate3d(0, 0, 0) rotate(1080deg) scale(0); /* หายตัวไปทันทีที่ถึงจุด */
+        opacity: 0;
     }}
 }}
 
@@ -282,9 +273,9 @@ st.markdown(f"""
     align-items: center;
     font-size: 3.5rem;
     margin-left: 20px;
-    perspective: 1500px; /* เพิ่มมิติความลึกให้ชัดเจนขึ้น */
+    perspective: 1500px; 
     z-index: 5;
-    overflow: visible; /* มั่นใจว่าบอลวิ่งทะลุขอบ wrapper ได้ */
+    overflow: visible; 
 }}
 
 /* สร้างอนุภาคประกายไฟ (Spark Particles) แบบ 3D */
@@ -300,30 +291,35 @@ st.markdown(f"""
     opacity: 0;
     pointer-events: none;
     transform-origin: bottom center;
-    z-index: -1; /* ให้อยู่หลังถ้วยและบอล */
+    z-index: -1; 
 }}
 
-/* กำหนดการเคลื่อนไหวแบบ Eruption กระจายทรงพัดและลึกแกน Z */
+/* กำหนดการเคลื่อนไหวแบบ Eruption ให้ซิงค์กับจังหวะบอลตกถึงถ้วย (ประมาณวินาทีที่ 3) */
 @keyframes eruption-3d {{
-    0% {{ 
+    0%, 59% {{ 
         transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0);
         opacity: 0;
     }}
-    15% {{ opacity: 1; }}
+    60% {{ 
+        opacity: 1; 
+    }}
+    85% {{
+        opacity: 1;
+    }}
     100% {{ 
         transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.3);
         opacity: 0;
     }}
 }}
 
-/* ตั้งค่าตัวแปรแต่ละอนุภาค (Angle, Distance, Z-depth) */
-.p1 {{ --angle: -45deg; --tx: -150px; --ty: -300px; --tz: 300px; animation: eruption-3d 2.5s infinite ease-out; }}
-.p2 {{ --angle: -25deg; --tx: -80px; --ty: -350px; --tz: -150px; animation: eruption-3d 2.8s infinite ease-out 0.3s; }}
-.p3 {{ --angle: 0deg; --tx: 0px; --ty: -380px; --tz: 200px; animation: eruption-3d 2.4s infinite ease-out 0.6s; }}
-.p4 {{ --angle: 25deg; --tx: 80px; --ty: -350px; --tz: -80px; animation: eruption-3d 2.7s infinite ease-out 0.15s; }}
-.p5 {{ --angle: 45deg; --tx: 150px; --ty: -300px; --tz: 150px; animation: eruption-3d 2.6s infinite ease-out 0.45s; }}
-.p6 {{ --angle: -15deg; --tx: -40px; --ty: -320px; --tz: 100px; animation: eruption-3d 2.9s infinite ease-out 0.7s; }}
-.p7 {{ --angle: 15deg; --tx: 40px; --ty: -320px; --tz: -200px; animation: eruption-3d 2.5s infinite ease-out 0.9s; }}
+/* ตั้งค่าตัวแปรแต่ละอนุภาค (Angle, Distance, Z-depth) ใช้เวลา 5s เท่ากับบอลเพื่อให้ Loop ซิงค์กัน */
+.p1 {{ --angle: -45deg; --tx: -150px; --ty: -300px; --tz: 300px; animation: eruption-3d 5s infinite ease-out; }}
+.p2 {{ --angle: -25deg; --tx: -80px; --ty: -350px; --tz: -150px; animation: eruption-3d 5s infinite ease-out; }}
+.p3 {{ --angle: 0deg; --tx: 0px; --ty: -380px; --tz: 200px; animation: eruption-3d 5s infinite ease-out; }}
+.p4 {{ --angle: 25deg; --tx: 80px; --ty: -350px; --tz: -80px; animation: eruption-3d 5s infinite ease-out; }}
+.p5 {{ --angle: 45deg; --tx: 150px; --ty: -300px; --tz: 150px; animation: eruption-3d 5s infinite ease-out; }}
+.p6 {{ --angle: -15deg; --tx: -40px; --ty: -320px; --tz: 100px; animation: eruption-3d 5s infinite ease-out; }}
+.p7 {{ --angle: 15deg; --tx: 40px; --ty: -320px; --tz: -200px; animation: eruption-3d 5s infinite ease-out; }}
 
 /* ประกายไฟยิบยับเสริม (Bloom Glow) */
 .white-p {{
