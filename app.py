@@ -113,32 +113,32 @@ st.markdown(f"""
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
     
-    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Diagonal Light Sweep) */
+    /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - ปรับให้นุ่มนวลฟุ้งกลืนไปกับพื้นหลัง */
     [data-testid="stSidebar"]::before {{
         content: "";
         position: absolute;
-        top: 0;
-        left: -150%; /* เริ่มต้นนอกจอทางซ้าย */
-        width: 100%;
-        height: 100%;
+        top: -20%;
+        left: -200%; /* เริ่มต้นไกลขึ้นเล็กน้อยเพื่อให้ความกว้างที่ฟุ้งไม่แลบเข้าจอ */
+        width: 250px; /* ขยายความกว้างให้แสงกระจาย */
+        height: 140%;
         background: linear-gradient(
             to right, 
             rgba(255, 255, 255, 0) 0%, 
-            rgba(255, 255, 255, 0.08) 45%, 
-            rgba(255, 255, 255, 0.2) 50%, 
-            rgba(255, 255, 255, 0.08) 55%, 
+            rgba(255, 255, 255, 0.04) 50%, 
             rgba(255, 255, 255, 0) 100%
         );
-        transform: skewX(-45deg); /* เฉียง 45 องศา */
-        animation: light-sweep 10s infinite ease-in-out; /* วิ่ง 2s พัก 8s (รวม 10s) */
+        transform: rotate(-45deg); /* ใช้การหมุนแทนการ skew เพื่อความนุ่มนวลของทรงแสง */
+        filter: blur(50px); /* กระจายแสงให้ฟุ้งที่สุดลบขอบทั้งหมด */
+        mix-blend-mode: overlay; /* ผสานแสงเข้ากับพื้นหลังสีเข้ม */
+        animation: light-sweep 12s infinite ease-in-out; /* ปรับเวลาให้นานขึ้นเล็กน้อยเพื่อความนุ่มนวล */
         pointer-events: none;
-        z-index: -1; /* อยู่เหนือรูปภาพ (-2) แต่อยู่ใต้ข้อความ */
+        z-index: -1;
     }}
 
     @keyframes light-sweep {{
-        0% {{ left: -150%; }}
-        20% {{ left: 150%; }} /* วิ่งเสร็จใน 2 วินาที (20% ของ 10s) */
-        100% {{ left: 150%; }} /* หยุดรอ 8 วินาที */
+        0% {{ left: -200%; }}
+        15% {{ left: 200%; }} /* วิ่งผ่านอย่างนุ่มนวล */
+        100% {{ left: 200%; }} /* เว้นระยะพักสายตา */
     }}
 
     /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
