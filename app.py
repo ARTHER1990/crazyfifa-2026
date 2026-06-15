@@ -83,7 +83,7 @@ def get_team_display(team_name):
 db.init_db()
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
-st.markdown(f"""
+st.html(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap');
 
@@ -163,8 +163,9 @@ st.markdown(f"""
         width: 100%;
         height: 400px;
         background-color: #000;
-        background-image: url('data:image/webp;base64,{ufo_base64}');
-        background-size: 130% auto;
+        /* Dark premium linear gradient overlay on UFO background */
+        background-image: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.95) 100%), url('data:image/webp;base64,{ufo_base64}');
+        background-size: cover;
         background-position: center;
         border-radius: 25px;
         overflow: visible;
@@ -173,8 +174,8 @@ st.markdown(f"""
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 20px 50px rgba(0,0,0,1);
-        border: 1px solid rgba(255, 215, 0, 0.15);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        border: 1px solid rgba(255, 215, 0, 0.1);
     }}
 
     .top-right-icon {{
@@ -203,27 +204,64 @@ st.markdown(f"""
         filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
     }}
 
-    /* Volumetric Fire Eruption */
+    /* Volumetric Fire Eruption - 3 layered fire elements */
     .volumetric-fire {{
         position: absolute;
-        top: 0px;
+        bottom: 50px; /* วางพิกัดให้อยู่กึ่งกลางตัวถ้วยพอดี */
         left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 120px;
-        background: radial-gradient(ellipse at bottom, #fff 0%, gold 30%, orange 60%, red 90%, transparent 100%);
-        filter: blur(5px) contrast(220%);
-        animation: fire-burst 5s infinite;
-        z-index: 31;
+        transform: translateX(-50%) scale(0);
+        transform-origin: bottom center;
         mix-blend-mode: screen;
         opacity: 0;
     }}
+    .fire-outer {{
+        width: 100px;
+        height: 140px;
+        background: radial-gradient(circle at 50% 85%, rgba(255, 69, 0, 0.85) 0%, rgba(255, 0, 0, 0.3) 60%, transparent 80%);
+        filter: blur(6px) contrast(150%);
+        animation: fire-burst-outer 5s infinite ease-in-out;
+        z-index: 29; /* Placed slightly behind the trophy */
+    }}
+    .fire-medium {{
+        width: 70px;
+        height: 110px;
+        background: radial-gradient(circle at 50% 85%, orange 0%, red 50%, transparent 80%);
+        filter: blur(4px) contrast(180%);
+        animation: fire-burst-medium 5s infinite ease-in-out;
+        z-index: 31; /* Placed in front of the trophy */
+    }}
+    .fire-inner {{
+        width: 40px;
+        height: 80px;
+        background: radial-gradient(circle at 50% 85%, #fff 0%, gold 40%, transparent 80%);
+        filter: blur(2px) contrast(200%);
+        animation: fire-burst-inner 5s infinite ease-in-out;
+        z-index: 32; /* Brightest inner flame core */
+    }}
 
-    @keyframes fire-burst {{
-        0%, 59% {{ opacity: 0; height: 0; transform: translateX(-50%) scale(0); }}
-        60% {{ opacity: 1; height: 130px; transform: translateX(-50%) scale(1.3); }}
-        80% {{ opacity: 0.8; height: 160px; transform: translateX(-50%) scale(1.1) skewX(5deg); }}
-        100% {{ opacity: 0; height: 100px; transform: translateX(-50%) scale(0.8); }}
+    @keyframes fire-burst-outer {{
+        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
+        60% {{ opacity: 0.95; transform: translateX(-50%) scale(1) rotate(-5deg); }}
+        70% {{ opacity: 0.85; transform: translateX(-50%) scale(1.15) rotate(5deg) skewX(5deg); }}
+        80% {{ opacity: 0.8; transform: translateX(-50%) scale(1.0) rotate(-3deg) skewX(-5deg); }}
+        90% {{ opacity: 0.45; transform: translateX(-50%) scale(0.8) rotate(0deg); }}
+        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
+    }}
+    @keyframes fire-burst-medium {{
+        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
+        60% {{ opacity: 0.98; transform: translateX(-50%) scale(1) rotate(5deg); }}
+        70% {{ opacity: 0.9; transform: translateX(-50%) scale(1.2) rotate(-5deg) skewX(-3deg); }}
+        80% {{ opacity: 0.85; transform: translateX(-50%) scale(1.05) rotate(3deg) skewX(3deg); }}
+        90% {{ opacity: 0.4; transform: translateX(-50%) scale(0.7) rotate(0deg); }}
+        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
+    }}
+    @keyframes fire-burst-inner {{
+        0%, 58% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
+        60% {{ opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }}
+        70% {{ opacity: 0.95; transform: translateX(-50%) scale(1.25) rotate(3deg); }}
+        80% {{ opacity: 0.9; transform: translateX(-50%) scale(1.1) rotate(-3deg); }}
+        90% {{ opacity: 0.35; transform: translateX(-50%) scale(0.6) rotate(0deg); }}
+        100% {{ opacity: 0; transform: translateX(-50%) scale(0) rotate(0deg); }}
     }}
 
     /* Intricate 3D Fireworks */
@@ -236,33 +274,41 @@ st.markdown(f"""
     }}
     .firework-particle {{
         position: absolute;
-        top: 40%;
+        top: 35%; /* Explodes at trophy center */
         left: 50%;
-        width: 5px;
-        height: 15px;
-        background: linear-gradient(to top, rgba(255,255,255,0) 0%, #fff 50%, gold 100%);
-        border-radius: 5px;
-        filter: blur(1px) drop-shadow(0 0 12px gold);
+        width: 3px;
+        height: 12px;
+        background: linear-gradient(to top, transparent, var(--color));
+        border-radius: 3px;
+        filter: blur(0.5px) drop-shadow(0 0 6px var(--color));
         opacity: 0;
         animation: fireworks-eruption 5s infinite ease-out;
+        animation-delay: var(--delay);
+        z-index: 5;
     }}
     @keyframes fireworks-eruption {{
-        0%, 59% {{ transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0); opacity: 0; }}
+        0%, 58% {{ transform: translate3d(-50%, -50%, 0) rotate(var(--angle)) scale(0); opacity: 0; }}
         60% {{ opacity: 1; }}
-        100% {{ transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.4); opacity: 0; }}
+        75% {{ opacity: 0.9; }}
+        100% {{ transform: translate3d(var(--tx), var(--ty), var(--tz)) rotate(var(--angle)) scale(0.3); opacity: 0; }}
     }}
 
-    /* Golden Banner Title */
+    /* Golden Banner Title - premium golden text */
     .banner-title-bottom {{
-        margin-top: 10px;
-        color: #FFD700;
+        margin-top: 15px;
         font-family: 'Kanit', sans-serif;
         font-weight: 800;
-        font-size: 3.8rem;
-        letter-spacing: 8px;
+        font-size: 4rem;
+        letter-spacing: 10px;
         text-transform: uppercase;
-        text-shadow: 0 0 25px rgba(255, 215, 0, 0.8), 3px 3px 6px rgba(0,0,0,1);
+        background: linear-gradient(90deg, #FFE875 0%, #F39C12 50%, #FFE875 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: #FFD700;
+        filter: drop-shadow(0 0 15px rgba(243, 156, 18, 0.6));
         z-index: 60;
+        position: relative;
     }}
 
     /* Floating Embers */
@@ -291,29 +337,56 @@ st.markdown(f"""
         filter: drop-shadow(0 0 15px #fff);
     }}
     @keyframes ball-3d-journey {{
-        0% {{ transform: translate3d(-1800px, 100px, 1200px) rotate(0deg) scale(0.5); opacity: 0; }}
-        10% {{ transform: translate3d(-1400px, -150px, 900px) rotate(180deg) scale(1.3); opacity: 1; }}
-        30% {{ transform: translate3d(-500px, 100px, 600px) rotate(540deg) scale(2.5); }}
-        58% {{ transform: translate3d(0, 0, 0) rotate(1080deg) scale(1.5); opacity: 1; }}
-        60%, 100% {{ transform: translate3d(0, 0, 0) rotate(1080deg) scale(0); opacity: 0; }}
+        0% {{
+            transform: translate3d(-1000px, 120px, 800px) rotate(0deg) scale(0.3);
+            opacity: 0;
+        }}
+        5% {{
+            opacity: 1;
+        }}
+        25% {{
+            /* Curved path crossing over text height */
+            transform: translate3d(-400px, 140px, 400px) rotate(360deg) scale(1.3);
+        }}
+        45% {{
+            transform: translate3d(-150px, -20px, 100px) rotate(720deg) scale(1.6);
+        }}
+        58% {{
+            /* Hits gold trophy at 58% animation mark */
+            transform: translate3d(0, -60px, 0) rotate(1080deg) scale(1.1);
+            opacity: 1;
+            filter: drop-shadow(0 0 25px #fff);
+        }}
+        60% {{
+            /* Dissolves at impact to spawn fireworks */
+            transform: translate3d(0, -60px, -50px) rotate(1080deg) scale(0);
+            opacity: 0;
+        }}
+        100% {{
+            transform: translate3d(0, -60px, -50px) scale(0);
+            opacity: 0;
+        }}
     }}
 
     /* Mobile Responsive Header */
     @media (max-width: 768px) {{
-        .header-container {{ height: 220px; }}
-        .gold-trophy-main {{ font-size: 5rem; }}
-        .banner-title-bottom {{ font-size: 1.8rem; letter-spacing: 3px; }}
-        .volumetric-fire {{ width: 40px; height: 60px; }}
+        .header-container {{ height: 260px; }}
+        .gold-trophy-main {{ font-size: 6rem; }}
+        .banner-title-bottom {{ font-size: 2.2rem; letter-spacing: 4px; }}
+        .volumetric-fire {{ bottom: 25px; }}
+        .fire-outer {{ width: 60px; height: 90px; }}
+        .fire-medium {{ width: 40px; height: 70px; }}
+        .fire-inner {{ width: 25px; height: 50px; }}
         .top-right-icon {{ top: 15px; right: 15px; font-size: 1.5rem; }}
     }}
 
-    /* ซ่อน Footer และ Header Streamlit */
+    /* Hide Streamlit Header and Footer elements */
     [data-testid="stHeaderActionElements"], .stAppDeployButton, [data-testid="stHeaderActionButton"], #MainMenu, footer {{ display:none !important; visibility: hidden; }}
     [data-testid="stHeader"] {{ background-color: transparent !important; box-shadow: none !important; }}
 
-    /* Background UFO Section */
+    /* Background UFO Section - Premium black theme */
     [data-testid="stAppViewContainer"] {{
-        background-image: url('data:image/webp;base64,{ufo_base64}');
+        background-image: linear-gradient(180deg, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.92) 100%), url('data:image/webp;base64,{ufo_base64}');
         background-repeat: no-repeat;
         background-position: center 0px;
         background-attachment: fixed;
@@ -324,38 +397,51 @@ st.markdown(f"""
         content: "";
         position: absolute;
         top: 0; left: 0; width: 100%; height: 100%;
-        background-color: rgba(14, 20, 16, 0.9);
+        background-color: rgba(0, 0, 0, 0.95);
         z-index: -1;
     }}
 </style>
 
 <div class='header-container'>
     <div class='top-right-icon'>🏆</div>
-
     <div class='firework-bg'>
-        <div class='firework-particle' style='--angle:-50deg; --tx:-300px; --ty:-350px; --tz:300px;'></div>
-        <div class='firework-particle' style='--angle:50deg; --tx:300px; --ty:-350px; --tz:150px;'></div>
-        <div class='firework-particle' style='--angle:0deg; --tx:0px; --ty:-400px; --tz:400px;'></div>
-        <div class='firework-particle' style='--angle:-25deg; --tx:-150px; --ty:-380px; --tz:100px;'></div>
-        <div class='firework-particle' style='--angle:25deg; --tx:150px; --ty:-380px; --tz:0px;'></div>
+        <div class='firework-particle' style='--angle:0deg; --tx:0px; --ty:-250px; --tz:100px; --color:#ffffff; --delay:0s;'></div>
+        <div class='firework-particle' style='--angle:15deg; --tx:60px; --ty:-240px; --tz:80px; --color:#FFD700; --delay:0.04s;'></div>
+        <div class='firework-particle' style='--angle:30deg; --tx:120px; --ty:-210px; --tz:50px; --color:#ffffff; --delay:0.08s;'></div>
+        <div class='firework-particle' style='--angle:45deg; --tx:170px; --ty:-170px; --tz:30px; --color:#FFD700; --delay:0.12s;'></div>
+        <div class='firework-particle' style='--angle:60deg; --tx:210px; --ty:-120px; --tz:20px; --color:#ffffff; --delay:0.16s;'></div>
+        <div class='firework-particle' style='--angle:75deg; --tx:240px; --ty:-60px; --tz:10px; --color:#FFD700; --delay:0.20s;'></div>
+        <div class='firework-particle' style='--angle:90deg; --tx:250px; --ty:0px; --tz:0px; --color:#ffffff; --delay:0.24s;'></div>
+        <div class='firework-particle' style='--angle:-15deg; --tx:-60px; --ty:-240px; --tz:80px; --color:#FFD700; --delay:0.04s;'></div>
+        <div class='firework-particle' style='--angle:-30deg; --tx:-120px; --ty:-210px; --tz:50px; --color:#ffffff; --delay:0.08s;'></div>
+        <div class='firework-particle' style='--angle:-45deg; --tx:-170px; --ty:-170px; --tz:30px; --color:#FFD700; --delay:0.12s;'></div>
+        <div class='firework-particle' style='--angle:-60deg; --tx:-210px; --ty:-120px; --tz:20px; --color:#ffffff; --delay:0.16s;'></div>
+        <div class='firework-particle' style='--angle:-75deg; --tx:-240px; --ty:-60px; --tz:10px; --color:#FFD700; --delay:0.20s;'></div>
+        <div class='firework-particle' style='--angle:-90deg; --tx:-250px; --ty:0px; --tz:0px; --color:#ffffff; --delay:0.24s;'></div>
+        <div class='firework-particle' style='--angle:10deg; --tx:80px; --ty:-350px; --tz:150px; --color:#FFD700; --delay:0.08s;'></div>
+        <div class='firework-particle' style='--angle:25deg; --tx:180px; --ty:-310px; --tz:120px; --color:#ffffff; --delay:0.12s;'></div>
+        <div class='firework-particle' style='--angle:40deg; --tx:260px; --ty:-260px; --tz:90px; --color:#FFD700; --delay:0.16s;'></div>
+        <div class='firework-particle' style='--angle:55deg; --tx:310px; --ty:-180px; --tz:60px; --color:#ffffff; --delay:0.20s;'></div>
+        <div class='firework-particle' style='--angle:-10deg; --tx:-80px; --ty:-350px; --tz:150px; --color:#FFD700; --delay:0.08s;'></div>
+        <div class='firework-particle' style='--angle:-25deg; --tx:-180px; --ty:-310px; --tz:120px; --color:#ffffff; --delay:0.12s;'></div>
+        <div class='firework-particle' style='--angle:-40deg; --tx:-260px; --ty:-260px; --tz:90px; --color:#FFD700; --delay:0.16s;'></div>
+        <div class='firework-particle' style='--angle:-55deg; --tx:-310px; --ty:-180px; --tz:60px; --color:#ffffff; --delay:0.20s;'></div>
     </div>
-
     <div class='trophy-group-3d'>
         <div class='gold-trophy-main'>🏆</div>
-        <div class='volumetric-fire'></div>
-        <!-- ลูกบอลเด้งมาที่ถ้วย -->
+        <div class='volumetric-fire fire-outer'></div>
+        <div class='volumetric-fire fire-medium'></div>
+        <div class='volumetric-fire fire-inner'></div>
         <span class='animated-ball-3d'>⚽</span>
-        <!-- สะเก็ดไฟ (Embers) -->
         <div class='ember' style='left: 10%; animation-delay: 3s;'></div>
         <div class='ember' style='left: 30%; animation-delay: 3.5s;'></div>
         <div class='ember' style='left: 70%; animation-delay: 3.2s;'></div>
         <div class='ember' style='left: 90%; animation-delay: 3.8s;'></div>
     </div>
-
     <div class='banner-title-bottom'>CRAZYFIFA 2026</div>
 </div>
 
-""", unsafe_allow_html=True)
+""")
 
 st.markdown("<h3 style='text-align: center; margin-top: -30px; color: #888;'>WORLD CUP PREDICTION CHALLENGE</h3>", unsafe_allow_html=True)
 
