@@ -495,23 +495,35 @@ menu = st.sidebar.radio("เมนูหลัก", menu_options)
 
 # 2. หน้าทายผลการแข่งขัน
 if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
-    # ระบบป๊อปอัปเล็กแสดงข้อมูลยอดผู้เล่น Top 3
+    # ระบบแสดงข้อมูลทำเนียบผู้นำเฉพาะผู้เล่นที่มีคะแนนสะสมมากกว่า 0 ขึ้นมาทันที
     try:
         leaderboard_df = db.get_leaderboard()
+        # กรองเฉพาะผู้เล่นที่มีคะแนนมากกว่า 0 คะแนนเท่านั้น
+        leaderboard_df = leaderboard_df[leaderboard_df['total_score'] > 0]
+        
         if not leaderboard_df.empty:
             top_3 = leaderboard_df.head(3)
-            # โชว์ Toast แจ้งเตือนมุมขวาล่างเมื่อเข้าหน้าแรกในเซสชันนั้นๆ ครั้งแรก
-            if 'top3_toast_shown' not in st.session_state:
-                leaders_str = " | ".join([f"🏆 {row['username']} ({int(row['total_score'])} แต้ม)" for _, row in top_3.iterrows()])
-                st.toast(f"🔥 ยอดนักทำนายท็อปฟอร์ม 3 อันดับแรก: {leaders_str}", icon="🏆")
-                st.session_state.top3_toast_shown = True
+            leaders_list = []
+            for idx, (_, row) in enumerate(top_3.iterrows(), 1):
+                medal = "🥇" if idx == 1 else ("🥈" if idx == 2 else "🥉")
+                leaders_list.append(f"{medal} <b>{row['username']}</b> ({int(row['total_score'])} แต้ม)")
             
-            # ปุ่มป๊อปอัปขนาดเล็กที่คลิกเพื่อเปิดดูทำเนียบผู้นำได้ตลอดเวลา
-            with st.popover("🏆 ทำเนียบยอดนักทำนายท็อปฟอร์ม (Top 3)"):
-                st.markdown("<h4 style='color: #FFD700; margin-bottom: 10px; font-family: Kanit;'>🔥 ทำเนียบยอดนักทำนาย Top 3</h4>", unsafe_allow_html=True)
-                for idx, (_, row) in enumerate(top_3.iterrows(), 1):
-                    medal = "🥇" if idx == 1 else ("🥈" if idx == 2 else "🥉")
-                    st.markdown(f"{medal} **{row['username']}** : `{int(row['total_score'])} คะแนน`")
+            leaders_html = " &nbsp;&nbsp;|&nbsp;&nbsp; ".join(leaders_list)
+            
+            # เพิ่มระยะห่างไม่ให้เบียดชิดกับป้ายแบนเนอร์ CRAZYFIFA 2026 หัวข้อหลักด้านบน
+            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+            
+            # เรนเดอร์กล่องแสดงทำเนียบผู้เล่น Top 3 แบบเรียบง่ายขนาดกะทัดรัด (ไม่ต้องคลิกเปิด)
+            st.markdown(
+                f"""
+                <div style='background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); 
+                            padding: 10px 20px; border-radius: 12px; text-align: center; margin-bottom: 25px;'>
+                    <span style='color: #FFD700; font-weight: bold; font-size: 0.95rem; margin-right: 15px; font-family: Kanit, sans-serif;'>🔥 3 อันดับผู้นำท็อปฟอร์ม:</span>
+                    <span style='color: #e2e8f0; font-size: 0.95rem; font-family: Kanit, sans-serif;'>{leaders_html}</span>
+                </div>
+                """, 
+                unsafe_allow_html=True
+            )
     except Exception as e:
         pass
 
