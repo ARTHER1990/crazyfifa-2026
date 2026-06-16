@@ -350,18 +350,30 @@ st.markdown(f"""
     margin-right: 8px;
 }}
 
-.ufo-flyer {{
+.ufo-flyer-lg {{
     position: fixed;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     z-index: 99999;
-    top: 60px;
+    top: 65px;
     pointer-events: none;
-    animation: ufo-flight 18s linear infinite;
+    animation: ufo-flight-lg 15s linear infinite;
     will-change: transform;
-    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 12px rgba(0, 191, 255, 0.5));
+    filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 15px rgba(0, 191, 255, 0.6));
 }}
 
-@keyframes ufo-flight {{
+.ufo-flyer-sm {{
+    position: fixed;
+    font-size: 0.9rem;
+    z-index: 99998;
+    top: 35px;
+    pointer-events: none;
+    animation: ufo-flight-sm 22s linear infinite;
+    animation-delay: 6s;
+    will-change: transform;
+    filter: drop-shadow(0 0 4px rgba(223, 0, 254, 0.9)) drop-shadow(0 0 10px rgba(128, 0, 128, 0.6));
+}}
+
+@keyframes ufo-flight-lg {{
     0% {{
         transform: translate3d(100vw, 0px, 0);
     }}
@@ -373,6 +385,24 @@ st.markdown(f"""
     }}
     75% {{
         transform: translate3d(25vw, -10px, 0);
+    }}
+    100% {{
+        transform: translate3d(-150px, 0px, 0);
+    }}
+}}
+
+@keyframes ufo-flight-sm {{
+    0% {{
+        transform: translate3d(100vw, 0px, 0);
+    }}
+    30% {{
+        transform: translate3d(70vw, 10px, 0);
+    }}
+    60% {{
+        transform: translate3d(40vw, -15px, 0);
+    }}
+    85% {{
+        transform: translate3d(15vw, 5px, 0);
     }}
     100% {{
         transform: translate3d(-100px, 0px, 0);
@@ -476,7 +506,8 @@ footer {{visibility: hidden;}}
 
 <div class='header-wrapper'>
     <div class='main-title'>CRAZYFIFA 2026</div>
-    <div class='ufo-flyer'>🛸</div>
+    <div class='ufo-flyer-lg'>🛸</div>
+    <div class='ufo-flyer-sm'>🛸</div>
     <div class='trophy-wrapper'>
         🏆
         <div class='animated-ball-x'>
