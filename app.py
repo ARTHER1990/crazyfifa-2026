@@ -228,8 +228,33 @@ st.markdown(f"""
     font-size: 3.5rem;
     font-weight: bold;
     margin: 0;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
     letter-spacing: 2px;
+    position: relative;
+    animation: rising-mist 3s ease-in-out infinite;
+}}
+
+@keyframes rising-mist {{
+    0% {{
+        text-shadow: 
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 -4px 15px rgba(0, 150, 255, 0.5),
+            0 -8px 25px rgba(135, 206, 250, 0.3),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
+    50% {{
+        text-shadow: 
+            0 0 14px rgba(0, 212, 255, 0.9),
+            0 -8px 22px rgba(0, 150, 255, 0.7),
+            0 -16px 35px rgba(135, 206, 250, 0.5),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
+    100% {{
+        text-shadow: 
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 -4px 15px rgba(0, 150, 255, 0.5),
+            0 -8px 25px rgba(135, 206, 250, 0.3),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
 }}
 .trophy-wrapper {{
     position: relative;
@@ -293,18 +318,16 @@ st.markdown(f"""
     26% {{ transform: translateX(-200px); }}
     32% {{ transform: translateX(-80px); }}
     35% {{ transform: translateX(0px); }}
-    37% {{ transform: translateX(5px); }}
-    40% {{ transform: translateX(10px); }}
-    100% {{ transform: translateX(10px); }}
+    40% {{ transform: translateX(0px); }}
+    100% {{ transform: translateX(0px); }}
 }}
 
 @keyframes goal-y {{
     0% {{ transform: translateY(120px); }}
     18% {{ transform: translateY(-120px); }}
     35% {{ transform: translateY(-10px); }}
-    37% {{ transform: translateY(-15px); }}
-    40% {{ transform: translateY(0px); }}
-    100% {{ transform: translateY(0px); }}
+    40% {{ transform: translateY(-10px); }}
+    100% {{ transform: translateY(-10px); }}
 }}
 
 @keyframes goal-ball {{
@@ -312,9 +335,9 @@ st.markdown(f"""
     3% {{ opacity: 1; }}
     18% {{ transform: rotate(270deg) scale(1.5); }}
     35% {{ transform: rotate(540deg) scale(0.7); opacity: 1; }}
-    37% {{ transform: rotate(570deg) scale(0.4); opacity: 0.8; }}
-    40% {{ transform: rotate(600deg) scale(0); opacity: 0; }}
-    100% {{ transform: rotate(600deg) scale(0); opacity: 0; }}
+    38% {{ transform: rotate(560deg) scale(0.1); opacity: 0; }}
+    40% {{ transform: rotate(560deg) scale(0); opacity: 0; }}
+    100% {{ transform: rotate(560deg) scale(0); opacity: 0; }}
 }}
 
 @keyframes bounce {{
