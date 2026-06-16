@@ -11,53 +11,29 @@ df = pd.DataFrame(data[1:], columns=data[0])
 
 # แมตช์ที่จะอัปเดต
 updates = {
-    '5': {
-        'home_score': '1',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'Boualem Khoukhi (90+5) | Breel Embolo (73 pen)'
-    },
-    '6': {
-        'home_score': '1',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'Vinícius Júnior (32) | Ismael Saibari (21)'
-    },
-    '7': {
+    '13': {
         'home_score': '0',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'John McGinn (16)'
-    },
-    '8': {
-        'home_score': '2',
         'away_score': '0',
         'status': 'Finished',
-        'scorers': 'Nestory Irankunda (73), Connor Metcalfe (85)'
+        'scorers': ''
     },
-    '9': {
-        'home_score': '7',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+2 pen, 88), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78) | Livano Comenencia (21)'
-    },
-    '10': {
-        'home_score': '2',
-        'away_score': '2',
-        'status': 'Finished',
-        'scorers': 'Virgil van Dijk (51), Crysencio Summerville (64) | Keito Nakamura (57), Daichi Kamada (89)'
-    },
-    '11': {
+    '14': {
         'home_score': '1',
-        'away_score': '0',
-        'status': 'Finished',
-        'scorers': 'Amad Diallo (89)'
-    },
-    '12': {
-        'home_score': '5',
         'away_score': '1',
         'status': 'Finished',
-        'scorers': 'Yasin Ayari (7, 90+6), Alexander Isak (30), Viktor Gyökeres (60), Mattias Svanberg (86) | Omar Rekik (43)'
+        'scorers': 'Mohamed Hany (66 OG) | Emam Ashour (20)'
+    },
+    '15': {
+        'home_score': '1',
+        'away_score': '1',
+        'status': 'Finished',
+        'scorers': 'Abdulelah Al-Amri (41) | Maximiliano Araújo (80)'
+    },
+    '16': {
+        'home_score': '0',
+        'away_score': '0',
+        'status': 'Finished',
+        'scorers': ''
     }
 }
 

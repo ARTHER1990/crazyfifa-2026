@@ -245,6 +245,7 @@ st.markdown(f"""
     z-index: 15;
     animation: goal-physics 4s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
     will-change: transform;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
 }}
 .firework-particle {{
     position: absolute;
@@ -276,12 +277,14 @@ st.markdown(f"""
 }}
 
 @keyframes goal-physics {{
-    0% {{ transform: translate3d(-700px, 80px, 0) rotate(0deg) scale(2.2); opacity: 0; }}
-    5% {{ transform: translate3d(-600px, 60px, 0) rotate(30deg) scale(2.2); opacity: 1; }}
-    18% {{ transform: translate3d(-350px, -80px, 0) rotate(180deg) scale(1.6); }}
-    28% {{ transform: translate3d(-150px, 20px, 0) rotate(360deg) scale(1.2); }}
-    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(0.9); opacity: 1; }}
-    37% {{ transform: translate3d(5px, -20px, 0) rotate(570deg) scale(0.6); opacity: 0.8; }}
+    0% {{ transform: translate3d(-780px, 120px, 0) rotate(0deg) scale(2.8); opacity: 0; }}
+    3% {{ transform: translate3d(-710px, 90px, 0) rotate(45deg) scale(2.5); opacity: 1; }}
+    10% {{ transform: translate3d(-420px, -45px, 0) rotate(180deg) scale(2.0); }}
+    18% {{ transform: translate3d(-310px, -85px, 0) rotate(270deg) scale(1.5); }}
+    26% {{ transform: translate3d(-200px, -50px, 0) rotate(360deg) scale(1.1); }}
+    32% {{ transform: translate3d(-80px, -20px, 0) rotate(480deg) scale(0.85); }}
+    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(0.7); opacity: 1; }}
+    37% {{ transform: translate3d(5px, -15px, 0) rotate(570deg) scale(0.4); opacity: 0.8; }}
     40% {{ transform: translate3d(10px, 0px, 0) rotate(600deg) scale(0); opacity: 0; }}
     100% {{ transform: translate3d(10px, 0px, 0) scale(0); opacity: 0; }}
 }}
