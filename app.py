@@ -239,11 +239,20 @@ st.markdown(f"""
     font-size: 3rem;
     margin-left: 20px;
 }}
-.animated-ball {{
+.animated-ball-x {{
     position: absolute;
-    font-size: 1.5rem;
     z-index: 15;
-    animation: goal-physics 4s cubic-bezier(0.25, 0.1, 0.25, 1.0) infinite;
+    animation: goal-x 4s infinite;
+    will-change: transform;
+}}
+.animated-ball-y {{
+    animation: goal-y 4s infinite;
+    will-change: transform;
+}}
+.animated-ball {{
+    display: inline-block;
+    font-size: 1.5rem;
+    animation: goal-ball 4s infinite;
     will-change: transform;
     filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
 }}
@@ -276,17 +285,36 @@ st.markdown(f"""
     100% {{ opacity: 0; }}
 }}
 
-@keyframes goal-physics {{
-    0% {{ transform: translate3d(-780px, 120px, 0) rotate(0deg) scale(2.8); opacity: 0; }}
-    3% {{ transform: translate3d(-710px, 90px, 0) rotate(45deg) scale(2.5); opacity: 1; }}
-    10% {{ transform: translate3d(-420px, -45px, 0) rotate(180deg) scale(2.0); }}
-    18% {{ transform: translate3d(-310px, -85px, 0) rotate(270deg) scale(1.5); }}
-    26% {{ transform: translate3d(-200px, -50px, 0) rotate(360deg) scale(1.1); }}
-    32% {{ transform: translate3d(-80px, -20px, 0) rotate(480deg) scale(0.85); }}
-    35% {{ transform: translate3d(0px, -10px, 0) rotate(540deg) scale(0.7); opacity: 1; }}
-    37% {{ transform: translate3d(5px, -15px, 0) rotate(570deg) scale(0.4); opacity: 0.8; }}
-    40% {{ transform: translate3d(10px, 0px, 0) rotate(600deg) scale(0); opacity: 0; }}
-    100% {{ transform: translate3d(10px, 0px, 0) scale(0); opacity: 0; }}
+@keyframes goal-x {{
+    0% {{ transform: translateX(-780px); }}
+    3% {{ transform: translateX(-710px); }}
+    10% {{ transform: translateX(-420px); }}
+    18% {{ transform: translateX(-310px); }}
+    26% {{ transform: translateX(-200px); }}
+    32% {{ transform: translateX(-80px); }}
+    35% {{ transform: translateX(0px); }}
+    37% {{ transform: translateX(5px); }}
+    40% {{ transform: translateX(10px); }}
+    100% {{ transform: translateX(10px); }}
+}}
+
+@keyframes goal-y {{
+    0% {{ transform: translateY(120px); }}
+    18% {{ transform: translateY(-120px); }}
+    35% {{ transform: translateY(-10px); }}
+    37% {{ transform: translateY(-15px); }}
+    40% {{ transform: translateY(0px); }}
+    100% {{ transform: translateY(0px); }}
+}}
+
+@keyframes goal-ball {{
+    0% {{ transform: rotate(0deg) scale(2.8); opacity: 0; }}
+    3% {{ opacity: 1; }}
+    18% {{ transform: rotate(270deg) scale(1.5); }}
+    35% {{ transform: rotate(540deg) scale(0.7); opacity: 1; }}
+    37% {{ transform: rotate(570deg) scale(0.4); opacity: 0.8; }}
+    40% {{ transform: rotate(600deg) scale(0); opacity: 0; }}
+    100% {{ transform: rotate(600deg) scale(0); opacity: 0; }}
 }}
 
 @keyframes bounce {{
@@ -398,7 +426,11 @@ footer {{visibility: hidden;}}
     <div class='main-title'>CRAZYFIFA 2026</div>
     <div class='trophy-wrapper'>
         🏆
-        <span class='animated-ball'>⚽</span>
+        <div class='animated-ball-x'>
+            <div class='animated-ball-y'>
+                <span class='animated-ball'>⚽</span>
+            </div>
+        </div>
         <div class='firework-particle p1'></div>
         <div class='firework-particle p2'></div>
         <div class='firework-particle p3'></div>
