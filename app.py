@@ -373,39 +373,69 @@ st.markdown(f"""
     filter: drop-shadow(0 0 4px rgba(223, 0, 254, 0.9)) drop-shadow(0 0 10px rgba(128, 0, 128, 0.6));
 }}
 
+.ufo-flyer-mid {{
+    position: fixed;
+    font-size: 2.2rem; /* ลำใหญ่เด่นๆ */
+    z-index: 99999;
+    top: 120px; /* วิ่งระดับต่ำลงมาช่วงกลางเว็บ */
+    pointer-events: none;
+    animation: ufo-flight-mid 12s linear infinite;
+    animation-delay: 3s; /* ปล่อยคนละช่วงเวลา */
+    will-change: transform;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 0, 1)) drop-shadow(0 0 20px rgba(50, 205, 50, 0.7)); /* ออร่าสีเขียวเรืองแสงเด่นๆ */
+}}
+
 @keyframes ufo-flight-lg {{
     0% {{
-        transform: translate3d(100vw, 0px, 0);
+        transform: translate3d(120vw, 0px, 0);
     }}
     25% {{
-        transform: translate3d(75vw, -15px, 0);
+        transform: translate3d(60vw, -15px, 0);
     }}
     50% {{
-        transform: translate3d(50vw, 15px, 0);
+        transform: translate3d(0vw, 15px, 0);
     }}
     75% {{
-        transform: translate3d(25vw, -10px, 0);
+        transform: translate3d(-60vw, -10px, 0);
     }}
     100% {{
-        transform: translate3d(-150px, 0px, 0);
+        transform: translate3d(-120vw, 0px, 0);
     }}
 }}
 
 @keyframes ufo-flight-sm {{
     0% {{
-        transform: translate3d(100vw, 0px, 0);
+        transform: translate3d(120vw, 0px, 0);
     }}
     30% {{
-        transform: translate3d(70vw, 10px, 0);
+        transform: translate3d(50vw, 10px, 0);
     }}
     60% {{
-        transform: translate3d(40vw, -15px, 0);
+        transform: translate3d(-20vw, -15px, 0);
     }}
     85% {{
-        transform: translate3d(15vw, 5px, 0);
+        transform: translate3d(-80vw, 5px, 0);
     }}
     100% {{
-        transform: translate3d(-100px, 0px, 0);
+        transform: translate3d(-120vw, 0px, 0);
+    }}
+}}
+
+@keyframes ufo-flight-mid {{
+    0% {{
+        transform: translate3d(120vw, 0px, 0);
+    }}
+    25% {{
+        transform: translate3d(60vw, 30px, 0);
+    }}
+    50% {{
+        transform: translate3d(0vw, -30px, 0);
+    }}
+    75% {{
+        transform: translate3d(-60vw, 20px, 0);
+    }}
+    100% {{
+        transform: translate3d(-120vw, 0px, 0);
     }}
 }}
 
@@ -508,6 +538,7 @@ footer {{visibility: hidden;}}
     <div class='main-title'>CRAZYFIFA 2026</div>
     <div class='ufo-flyer-lg'>🛸</div>
     <div class='ufo-flyer-sm'>🛸</div>
+    <div class='ufo-flyer-mid'>🛸</div>
     <div class='trophy-wrapper'>
         🏆
         <div class='animated-ball-x'>
