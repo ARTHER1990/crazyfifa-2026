@@ -350,6 +350,35 @@ st.markdown(f"""
     margin-right: 8px;
 }}
 
+.ufo-flyer {{
+    position: fixed;
+    font-size: 1.2rem;
+    z-index: 99999;
+    top: 60px;
+    pointer-events: none;
+    animation: ufo-flight 18s linear infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 12px rgba(0, 191, 255, 0.5));
+}}
+
+@keyframes ufo-flight {{
+    0% {{
+        transform: translate3d(100vw, 0px, 0);
+    }}
+    25% {{
+        transform: translate3d(75vw, -15px, 0);
+    }}
+    50% {{
+        transform: translate3d(50vw, 15px, 0);
+    }}
+    75% {{
+        transform: translate3d(25vw, -10px, 0);
+    }}
+    100% {{
+        transform: translate3d(-100px, 0px, 0);
+    }}
+}}
+
 /* แต่งปุ่มแบบ Primary (บันทึกแล้ว) ให้แสดงผลเป็นสีเขียวพรีเมี่ยมสวยสะดุดตา */
 button[data-testid="baseButton-primary"] {{
     background: linear-gradient(90deg, #2e7d32 0%, #1b5e20 100%) !important;
@@ -447,6 +476,7 @@ footer {{visibility: hidden;}}
 
 <div class='header-wrapper'>
     <div class='main-title'>CRAZYFIFA 2026</div>
+    <div class='ufo-flyer'>🛸</div>
     <div class='trophy-wrapper'>
         🏆
         <div class='animated-ball-x'>
