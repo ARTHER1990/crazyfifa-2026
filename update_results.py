@@ -11,11 +11,11 @@ df = pd.DataFrame(data[1:], columns=data[0])
 
 # แมตช์ที่จะอัปเดต
 updates = {
-    '19': {
-        'home_score': '3',
-        'away_score': '0',
+    '20': {
+        'home_score': '2',
+        'away_score': '1',
         'status': 'Finished',
-        'scorers': 'Lionel Messi (17, 60, 76)'
+        'scorers': 'Romano Schmid (20), Yazan Al-Arab (75 OG) | Ali Olwan (50)'
     }
 }
 
