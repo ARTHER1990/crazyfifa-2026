@@ -11,29 +11,11 @@ df = pd.DataFrame(data[1:], columns=data[0])
 
 # แมตช์ที่จะอัปเดต
 updates = {
-    '13': {
-        'home_score': '0',
+    '19': {
+        'home_score': '3',
         'away_score': '0',
         'status': 'Finished',
-        'scorers': ''
-    },
-    '14': {
-        'home_score': '1',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'Mohamed Hany (66 OG) | Emam Ashour (20)'
-    },
-    '15': {
-        'home_score': '1',
-        'away_score': '1',
-        'status': 'Finished',
-        'scorers': 'Abdulelah Al-Amri (41) | Maximiliano Araújo (80)'
-    },
-    '16': {
-        'home_score': '0',
-        'away_score': '0',
-        'status': 'Finished',
-        'scorers': ''
+        'scorers': 'Lionel Messi (17, 60, 76)'
     }
 }
 
