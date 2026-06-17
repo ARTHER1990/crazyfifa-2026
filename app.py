@@ -108,7 +108,7 @@ st.markdown(f"""
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
         position: relative;
-        overflow: hidden; /* ป้องกันแสงแลบออกนอกขอบ */
+        overflow-y: auto !important; /* เปิด scrolling ในแนวตั้งสำหรับ sidebar หลัก */
         border-right: none;
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
     }}
@@ -509,12 +509,12 @@ footer {{visibility: hidden;}}
     }}
     /* ล็อก Sidebar หลักไม่ให้แสงเงาทะลุออกนอกขอบเขตด้านล่าง */
     [data-testid="stSidebar"] {{
-        overflow: hidden !important;
+        overflow-y: auto !important;
     }}
     /* ปล่อยให้เฉพาะเนื้อหาภายใน Sidebar เลื่อนแนวตั้งได้ และจะหยุดทันทีเมื่อสุดเนื้อหา */
     [data-testid="stSidebarUserContent"] {{
-        overflow-y: auto !important;
-        max-height: 100vh !important;
+        overflow-y: visible !important;
+        max-height: none !important;
     }}
     /* ย่อขนาดหัวข้อล็อกอินใน Sidebar */
     [data-testid="stSidebar"] h2 {{
