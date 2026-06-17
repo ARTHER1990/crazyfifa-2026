@@ -12,10 +12,10 @@ df = pd.DataFrame(data[1:], columns=data[0])
 # แมตช์ที่จะอัปเดต
 updates = {
     '20': {
-        'home_score': '2',
+        'home_score': '3',
         'away_score': '1',
         'status': 'Finished',
-        'scorers': 'Romano Schmid (20), Yazan Al-Arab (75 OG) | Ali Olwan (50)'
+        'scorers': 'Romano Schmid (20), Yazan Al-Arab (77 OG), Marko Arnautović (90+11 pen) | Ali Olwan (50)'
     }
 }
 
