@@ -11,17 +11,11 @@ df = pd.DataFrame(data[1:], columns=data[0])
 
 # แมตช์ที่จะอัปเดต
 updates = {
-    '21': {
+    '23': {
         'home_score': '1',
-        'away_score': '1',
+        'away_score': '0',
         'status': 'Finished',
-        'scorers': 'João Neves (12) | Yoane Wissa (45+2)'
-    },
-    '22': {
-        'home_score': '4',
-        'away_score': '2',
-        'status': 'Finished',
-        'scorers': 'Harry Kane (12 pen, 42), Jude Bellingham (47), Marcus Rashford (85) | Martin Baturina (36), Petar Musa (45+5)'
+        'scorers': 'Caleb Yirenkyi (90+5)'
     }
 }
 
