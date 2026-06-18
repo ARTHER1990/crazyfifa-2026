@@ -964,85 +964,166 @@ elif menu == "📑 ประวัติการทายผล":
     # ดึงข้อมูลแมตช์และคำทำนาย
     all_matches = db.get_matches()
     all_matches['match_dt'] = pd.to_datetime(all_matches['match_time'])
-    finished_matches = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
     
-    if finished_matches.empty:
-        st.info("ยังไม่มีผลการแข่งขันที่เสร็จสิ้นในขณะนี้ครับ")
-    else:
-        # ดึงประวัติการทายทั้งหมด
-        predictions_df = db.get_predictions_df()
-        
-        # จัดกลุ่มตามวันแข่งขัน
-        unique_dates = finished_matches['match_dt'].dt.date.unique()
-        
-        for d in unique_dates:
-            date_str = d.strftime('%d/%m/%Y')
-            st.subheader(f"🗓️ ผลแข่งขันประจำวันที่ {date_str}")
-            day_matches = finished_matches[finished_matches['match_dt'].dt.date == d]
+    # สร้าง Tab แยกข้อมูล
+    tab_finished, tab_upcoming = st.tabs(["🏁 ผลการทายที่แข่งเสร็จแล้ว", "🔮 ผลทายล่วงหน้าของคุณ"])
+    
+    with tab_finished:
+        finished_matches = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
+        if finished_matches.empty:
+            st.info("ยังไม่มีผลการแข่งขันที่เสร็จสิ้นในขณะนี้ครับ")
+        else:
+            # ดึงประวัติการทายทั้งหมด
+            predictions_df = db.get_predictions_df()
             
-            for _, row_m in day_matches.iterrows():
-                m_id = str(row_m['id'])
-                home_team = row_m['home_team']
-                away_team = row_m['away_team']
-                h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
-                a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
-                real_win = (h_real > a_real) - (h_real < a_real)
+            # จัดกลุ่มตามวันแข่งขัน
+            unique_dates = finished_matches['match_dt'].dt.date.unique()
+            
+            for d in unique_dates:
+                date_str = d.strftime('%d/%m/%Y')
+                st.subheader(f"🗓️ ผลแข่งขันประจำวันที่ {date_str}")
+                day_matches = finished_matches[finished_matches['match_dt'].dt.date == d]
                 
-                home_disp = get_team_display(home_team)
-                away_disp = get_team_display(away_team)
-                
-                expander_label = f"⚽ {home_disp}  {h_real} - {a_real}  {away_disp}"
-                
-                with st.expander(expander_label):
-                    st.markdown(f"**⏰ เวลาแข่ง:** {pd.to_datetime(row_m['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
-                    if row_m['scorers']:
-                        st.markdown(f"⚽ **ผู้ทำประตู:** {row_m['scorers']}")
+                for _, row_m in day_matches.iterrows():
+                    m_id = str(row_m['id'])
+                    home_team = row_m['home_team']
+                    away_team = row_m['away_team']
+                    h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
+                    a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
+                    real_win = (h_real > a_real) - (h_real < a_real)
                     
-                    st.markdown("---")
-                    st.markdown("**🎯 ผลการทายของผู้เล่นทั้งหมดในคู่นี้:**")
+                    home_disp = get_team_display(home_team)
+                    away_disp = get_team_display(away_team)
                     
-                    m_preds = predictions_df[predictions_df['match_id'].astype(str) == m_id]
-                    if m_preds.empty:
-                        st.write("ยังไม่มีผู้เล่นใดทายผลคู่นี้ไว้ในระบบ")
+                    expander_label = f"⚽ {home_disp}  {h_real} - {a_real}  {away_disp}"
+                    
+                    with st.expander(expander_label):
+                        st.markdown(f"**⏰ เวลาแข่ง:** {pd.to_datetime(row_m['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
+                        if row_m['scorers']:
+                            st.markdown(f"⚽ **ผู้ทำประตู:** {row_m['scorers']}")
+                        
+                        st.markdown("---")
+                        st.markdown("**🎯 ผลการทายของผู้เล่นทั้งหมดในคู่นี้:**")
+                        
+                        m_preds = predictions_df[predictions_df['match_id'].astype(str) == m_id]
+                        if m_preds.empty:
+                            st.write("ยังไม่มีผู้เล่นใดทายผลคู่นี้ไว้ในระบบ")
+                        else:
+                            for _, row_p in m_preds.iterrows():
+                                u_name = row_p['username']
+                                p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
+                                p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
+                                pred_win = (p_h > p_a) - (p_h < p_a)
+                                
+                                # ตรวจแต้มทายผล
+                                if p_h == h_real and p_a == a_real:
+                                    pt_label = "🏆 ทายถูกตรงเป๊ะ! ได้ 3 คะแนน"
+                                    card_style = """
+                                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(153, 101, 21, 0.1) 100%);
+                                    border: 1px solid #FFD700;
+                                    color: #FFD700;
+                                    """
+                                elif pred_win == real_win:
+                                    pt_label = "🟢 ทายถูกฝั่ง! ได้ 1 คะแนน"
+                                    card_style = """
+                                    background: linear-gradient(135deg, rgba(46, 125, 50, 0.2) 0%, rgba(27, 94, 32, 0.1) 100%);
+                                    border: 1px solid #4CAF50;
+                                    color: #81C784;
+                                    """
+                                else:
+                                    pt_label = "❌ ทายผิด! ได้ 0 คะแนน"
+                                    card_style = """
+                                    background: rgba(255, 255, 255, 0.02);
+                                    border: 1px solid rgba(255, 255, 255, 0.08);
+                                    color: #a0aec0;
+                                    """
+                                
+                                st.markdown(
+                                    f"""
+                                    <div style='padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; {card_style}'>
+                                        👤 ผู้เล่น: <b>{u_name}</b> | ผลทาย: <b>{p_h} - {p_a}</b> &nbsp;&nbsp;&nbsp;&nbsp; ({pt_label})
+                                    </div>
+                                    """,
+                                    unsafe_allow_html=True
+                                )
+                st.divider()
+
+    with tab_upcoming:
+        st.info("💡 หน้านี้แสดงข้อมูลเฉพาะสกอร์ที่คุณทายไว้ล่วงหน้าสำหรับคู่แข่งขันที่ยังไม่เริ่มเตะ เพื่อความปลอดภัยในการป้องกันการลอกเลียนแบบผลทายของกันและกันครับ")
+        upcoming_matches = all_matches[all_matches['status'] != 'Finished'].sort_values('match_time')
+        
+        if upcoming_matches.empty:
+            st.success("คุณเข้าร่วมการแข่งครบถ้วนหมดแล้ว ไม่มีคู่การแข่งขันล่วงหน้าค้างอยู่ครับ")
+        else:
+            user_preds = db.get_user_predictions(username)
+            unique_dates_uc = upcoming_matches['match_dt'].dt.date.unique()
+            
+            for d in unique_dates_uc:
+                date_str = d.strftime('%d/%m/%Y')
+                
+                # ตรวจป้าย วันนี้ / วันพรุ่งนี้ / วันมะรืนนี้
+                now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+                today_d = now_th.date()
+                tomorrow_d = today_d + pd.Timedelta(days=1)
+                day_after_d = today_d + pd.Timedelta(days=2)
+                
+                label_suffix = ""
+                if d == today_d:
+                    label_suffix = " (วันนี้)"
+                elif d == tomorrow_d:
+                    label_suffix = " (วันพรุ่งนี้)"
+                elif d == day_after_d:
+                    label_suffix = " (วันมะรืนนี้)"
+                
+                st.subheader(f"🗓️ ตารางแข่งขันวันที่ {date_str}{label_suffix}")
+                day_matches = upcoming_matches[upcoming_matches['match_dt'].dt.date == d]
+                
+                for _, row_m in day_matches.iterrows():
+                    m_id = row_m['id']
+                    home_team = row_m['home_team']
+                    away_team = row_m['away_team']
+                    
+                    has_pred = int(m_id) in user_preds
+                    home_disp = get_team_display(home_team)
+                    away_disp = get_team_display(away_team)
+                    
+                    m_time = datetime.strptime(row_m['match_time'], '%Y-%m-%d %H:%M:%S')
+                    is_locked = now_th > m_time or row_m['status'] == 'Finished'
+                    
+                    if has_pred:
+                        pred_h, pred_a = user_preds[int(m_id)]
+                        pred_text = f"🔥 ผลทายของคุณ: &nbsp;<b>{pred_h} - {pred_a}</b>"
+                        card_style = """
+                        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 150, 255, 0.03) 100%);
+                        border: 1px solid rgba(0, 212, 255, 0.2);
+                        color: #e2e8f0;
+                        """
                     else:
-                        for _, row_p in m_preds.iterrows():
-                            u_name = row_p['username']
-                            p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
-                            p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
-                            pred_win = (p_h > p_a) - (p_h < p_a)
-                            
-                            # ตรวจแต้มทายผล
-                            if p_h == h_real and p_a == a_real:
-                                pt_label = "🏆 ทายถูกตรงเป๊ะ! ได้ 3 คะแนน"
-                                card_style = """
-                                background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(153, 101, 21, 0.1) 100%);
-                                border: 1px solid #FFD700;
-                                color: #FFD700;
-                                """
-                            elif pred_win == real_win:
-                                pt_label = "🟢 ทายถูกฝั่ง! ได้ 1 คะแนน"
-                                card_style = """
-                                background: linear-gradient(135deg, rgba(46, 125, 50, 0.2) 0%, rgba(27, 94, 32, 0.1) 100%);
-                                border: 1px solid #4CAF50;
-                                color: #81C784;
-                                """
-                            else:
-                                pt_label = "❌ ทายผิด! ได้ 0 คะแนน"
-                                card_style = """
-                                background: rgba(255, 255, 255, 0.02);
-                                border: 1px solid rgba(255, 255, 255, 0.08);
-                                color: #a0aec0;
-                                """
-                            
-                            st.markdown(
-                                f"""
-                                <div style='padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; {card_style}'>
-                                    👤 ผู้เล่น: <b>{u_name}</b> | ผลทาย: <b>{p_h} - {p_a}</b> &nbsp;&nbsp;&nbsp;&nbsp; ({pt_label})
-                                </div>
-                                """,
-                                unsafe_allow_html=True
-                            )
-            st.divider()
+                        pred_text = "⚠️ คุณยังไม่ได้ทายผลคู่นี้"
+                        card_style = """
+                        background: rgba(255, 255, 255, 0.01);
+                        border: 1px solid rgba(255, 255, 255, 0.05);
+                        color: #a0aec0;
+                        """
+                    
+                    status_text = "🔒 ปิดรับผลทายแล้ว" if is_locked else "🔓 เปิดรับผลทาย (สามารถแก้ไขได้ที่หน้าแรก)"
+                    st.markdown(
+                        f"""
+                        <div style='padding: 15px; border-radius: 12px; margin-bottom: 12px; {card_style}'>
+                            <div style='display: flex; justify-content: space-between; align-items: center;'>
+                                <span style='font-size: 1.05rem; font-weight: bold;'>⚽ {home_disp} vs {away_disp}</span>
+                                <span style='font-size: 0.85rem; color: #a0aec0;'>⏰ เวลาเตะ: {m_time.strftime('%H:%M น.')}</span>
+                            </div>
+                            <div style='margin-top: 10px; font-size: 1rem;'>
+                                {pred_text}
+                            </div>
+                            <div style='margin-top: 8px; font-size: 0.8rem; color: #888;'>
+                                สถานะ: {status_text}
+                            </div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
 
 # 4. หน้า Admin
 elif menu == "💎 ห้องควบคุมระบบ (Admin)":
