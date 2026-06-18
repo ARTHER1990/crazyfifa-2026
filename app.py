@@ -603,6 +603,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
                     db.get_or_create_user(selected_user, set_pin)
                     st.session_state.username = selected_user
                     st.session_state.authenticated = True
+                    st.session_state.toast_shown = False
                     st.rerun()
         else:
             pin_input = st.sidebar.text_input(f"ใส่รหัส PIN ({selected_user}):", type="password", max_chars=4)
@@ -610,6 +611,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 if db.verify_user(selected_user, pin_input):
                     st.session_state.username = selected_user
                     st.session_state.authenticated = True
+                    st.session_state.toast_shown = False
                     st.rerun()
                 else:
                     st.sidebar.error("❌ PIN ไม่ถูกต้อง")
@@ -619,6 +621,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
         if st.sidebar.button("ออกจากระบบ"):
             st.session_state.username = ""
             st.session_state.authenticated = False
+            st.session_state.toast_shown = False
             st.rerun()
 else:
     st.info("👈 กรุณาเลือกชื่อเพื่อเริ่มเล่นครับ")
@@ -628,6 +631,40 @@ if not st.session_state.authenticated:
     st.stop()
 
 username = st.session_state.username
+
+# --- คำนวณคู่แข่งขันที่ยังไม่ได้ทายผลสำหรับเตือนความจำ ---
+if 'toast_shown' not in st.session_state:
+    st.session_state.toast_shown = False
+
+try:
+    all_matches_rem = db.get_matches()
+    all_matches_rem['match_dt'] = pd.to_datetime(all_matches_rem['match_time'])
+    now_th_rem = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+    
+    # ดึงคู่ที่ยังไม่จบการแข่งขัน และเวลาเตะยังไม่ถึงกำหนด (ยังแก้ไขได้)
+    active_upcoming_rem = all_matches_rem[
+        (all_matches_rem['status'] != 'Finished') & 
+        (all_matches_rem['match_dt'] > now_th_rem)
+    ]
+    
+    user_preds_rem = db.get_user_predictions(username)
+    unpredicted_list = []
+    
+    for _, row in active_upcoming_rem.iterrows():
+        m_id = int(row['id'])
+        if m_id not in user_preds_rem:
+            unpredicted_list.append(row)
+            
+    st.session_state.unpredicted_count = len(unpredicted_list)
+    st.session_state.unpredicted_matches = unpredicted_list
+    
+    # สั่นแจ้งเตือน (Toast) ครั้งแรกตอนล็อกอินสำเร็จ
+    if not st.session_state.toast_shown and len(unpredicted_list) > 0:
+        st.toast(f"🚨 คุณ {username}! ยังมีคู่แข่งขันที่ยังไม่ได้ทายผลอีก {len(unpredicted_list)} คู่ครับ!", icon="🚨")
+        st.session_state.toast_shown = True
+except Exception as e:
+    st.session_state.unpredicted_count = 0
+    st.session_state.unpredicted_matches = []
 
 # --- ระบบเพลงประกอบ (เล่นอัตโนมัติหลัง Login) ---
 if st.session_state.authenticated:
@@ -723,6 +760,37 @@ menu = st.sidebar.radio("เมนูหลัก", menu_options)
 
 # 2. หน้าทายผลการแข่งขัน
 if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
+    # 🚨 แสดงระบบกันลืม (Smart Prediction Reminder)
+    if 'unpredicted_matches' in st.session_state and st.session_state.unpredicted_matches:
+        matches_list_html = []
+        for m in st.session_state.unpredicted_matches:
+            h_disp = get_team_display(m['home_team'])
+            a_disp = get_team_display(m['away_team'])
+            m_t = pd.to_datetime(m['match_time']).strftime('%d/%m/%Y %H:%M น.')
+            matches_list_html.append(
+                f"<div style='margin-bottom: 5px;'>⚽ <b>{h_disp} vs {a_disp}</b> (⏰ เริ่มเตะ {m_t})</div>"
+            )
+        matches_html = "".join(matches_list_html)
+        
+        st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div style='background: linear-gradient(135deg, rgba(255, 75, 75, 0.15) 0%, rgba(255, 0, 0, 0.05) 100%); 
+                        border: 1px solid #FF4B4B; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; 
+                        box-shadow: 0 0 15px rgba(255, 75, 75, 0.2);'>
+                <div style='color: #FF4B4B; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; font-family: Kanit, sans-serif;'>
+                    🚨 คุณ {username} ครับ! ยังมีคู่แข่งขันที่ยังไม่ได้ทายผลอีก {len(st.session_state.unpredicted_matches)} คู่:
+                </div>
+                <div style='color: #e2e8f0; font-size: 0.95rem; font-family: Kanit, sans-serif; padding-left: 10px;'>
+                    {matches_html}
+                </div>
+                <div style='color: #a0aec0; font-size: 0.85rem; margin-top: 10px; font-style: italic;'>
+                    *กรุณากรอกผลและกด \"บันทึกผลทาย\" ด้านล่างก่อนเวลาเตะเพื่อป้องกันการเสียแต้มสะสม
+                </div>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
     # ระบบแสดงข้อมูลทำเนียบผู้นำเฉพาะผู้เล่นที่มีคะแนนสะสมมากกว่า 0 ขึ้นมาทันที
     try:
         leaderboard_df = db.get_leaderboard()
