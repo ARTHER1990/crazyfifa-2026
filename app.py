@@ -688,9 +688,13 @@ if st.session_state.authenticated:
         st.components.v1.html(get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
 
-    # --- แถบสรุปผลการแข่งขันของวันนั้นๆ ใน Sidebar ---
+    # --- แถบสรุปผลการแข่งขันของวันนี้ใน Sidebar ---
     st.sidebar.markdown("---")
-    st.sidebar.subheader("📅 สรุปผลแข่ง & ทายผล")
+    st.sidebar.subheader("📅 สรุปผลแข่งวันนี้")
+
+    # คำนวณวันปัจจุบัน (เวลาไทย UTC+7)
+    now_th_sb = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+    today_date_sb = now_th_sb.date()
 
     # ดึงข้อมูลแมตช์และประวัติการทายผลทั้งหมด
     all_matches_sb = db.get_matches()
@@ -698,19 +702,11 @@ if st.session_state.authenticated:
     finished_sb = all_matches_sb[all_matches_sb['status'] == 'Finished'].sort_values('match_time', ascending=False)
 
     if not finished_sb.empty:
-        # เลือกดูประวัติของวันที่แข่งล่าสุด
-        latest_date = finished_sb['match_dt'].dt.date.max()
-        selected_date_sb = st.sidebar.date_input(
-            "เลือกสรุปผลแข่งของวันที่:", 
-            value=latest_date,
-            min_value=finished_sb['match_dt'].dt.date.min(),
-            max_value=finished_sb['match_dt'].dt.date.max()
-        )
-        
-        day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == selected_date_sb]
+        # กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
+        day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == today_date_sb]
         
         if day_matches_sb.empty:
-            st.sidebar.info("ไม่มีการแข่งขันในวันที่เลือก")
+            st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
         else:
             # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
             predictions_sb = db.get_predictions_df()
@@ -761,7 +757,7 @@ if st.session_state.authenticated:
                                 unsafe_allow_html=True
                             )
     else:
-        st.sidebar.info("ยังไม่มีผลการแข่งขันที่เสร็จสิ้น")
+        st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
 
     st.sidebar.markdown("---")
 
