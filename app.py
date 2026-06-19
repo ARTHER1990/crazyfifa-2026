@@ -716,52 +716,52 @@ if st.session_state.authenticated:
         
         # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
         predictions_sb = db.get_predictions_df()
+        
+        for _, row_m in day_matches_sb.iterrows():
+            m_id = str(row_m['id'])
+            h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
+            a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
+            real_win = (h_real > a_real) - (h_real < a_real)
             
-            for _, row_m in day_matches_sb.iterrows():
-                m_id = str(row_m['id'])
-                h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
-                a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
-                real_win = (h_real > a_real) - (h_real < a_real)
+            home_flag = FLAG_MAP.get(row_m['home_team'].strip().lower(), '🏳️')
+            away_flag = FLAG_MAP.get(row_m['away_team'].strip().lower(), '🏳️')
+            
+            exp_title = f"{row_m['home_team']} {home_flag} {h_real} - {a_real} {row_m['away_team']} {away_flag}"
+            
+            with st.sidebar.expander(exp_title):
+                st.markdown(f"**⚽ ผู้ทำประตู:** {row_m['scorers'] if row_m['scorers'] else 'ไม่มีข้อมูล'}")
+                st.markdown("**🎯 ผลทายของทุกคนในคู่นี้:**")
                 
-                home_flag = FLAG_MAP.get(row_m['home_team'].strip().lower(), '🏳️')
-                away_flag = FLAG_MAP.get(row_m['away_team'].strip().lower(), '🏳️')
-                
-                exp_title = f"{row_m['home_team']} {home_flag} {h_real} - {a_real} {row_m['away_team']} {away_flag}"
-                
-                with st.sidebar.expander(exp_title):
-                    st.markdown(f"**⚽ ผู้ทำประตู:** {row_m['scorers'] if row_m['scorers'] else 'ไม่มีข้อมูล'}")
-                    st.markdown("**🎯 ผลทายของทุกคนในคู่นี้:**")
-                    
-                    # กรองคำทายของคู่นี้
-                    m_preds = predictions_sb[predictions_sb['match_id'].astype(str) == m_id]
-                    if m_preds.empty:
-                        st.markdown("<small style='color:#888;'>ยังไม่มีผู้เล่นทายคู่นี้</small>", unsafe_allow_html=True)
-                    else:
-                        for _, row_p in m_preds.iterrows():
-                            u_name = row_p['username']
-                            p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
-                            p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
-                            pred_win = (p_h > p_a) - (p_h < p_a)
-                            
-                            # คำนวณแต้มทายผล
-                            if p_h == h_real and p_a == a_real:
-                                hl_class = "pred-highlight-exact"
-                                pt_txt = "🏆 3 แต้ม"
-                            elif pred_win == real_win:
-                                hl_class = "pred-highlight-winner"
-                                pt_txt = "🟢 1 แต้ม"
-                            else:
-                                hl_class = "pred-highlight-wrong"
-                                pt_txt = "❌ 0 แต้ม"
-                            
-                            st.markdown(
-                                f"""
-                                <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
-                                    👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
-                                </div>
-                                """, 
-                                unsafe_allow_html=True
-                            )
+                # กรองคำทายของคู่นี้
+                m_preds = predictions_sb[predictions_sb['match_id'].astype(str) == m_id]
+                if m_preds.empty:
+                    st.markdown("<small style='color:#888;'>ยังไม่มีผู้เล่นทายคู่นี้</small>", unsafe_allow_html=True)
+                else:
+                    for _, row_p in m_preds.iterrows():
+                        u_name = row_p['username']
+                        p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
+                        p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
+                        pred_win = (p_h > p_a) - (p_h < p_a)
+                        
+                        # คำนวณแต้มทายผล
+                        if p_h == h_real and p_a == a_real:
+                            hl_class = "pred-highlight-exact"
+                            pt_txt = "🏆 3 แต้ม"
+                        elif pred_win == real_win:
+                            hl_class = "pred-highlight-winner"
+                            pt_txt = "🟢 1 แต้ม"
+                        else:
+                            hl_class = "pred-highlight-wrong"
+                            pt_txt = "❌ 0 แต้ม"
+                        
+                        st.markdown(
+                            f"""
+                            <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
+                                👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
+                            </div>
+                            """, 
+                            unsafe_allow_html=True
+                        )
     else:
         st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
 
