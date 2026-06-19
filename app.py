@@ -664,10 +664,13 @@ if st.session_state.get('show_congrats_popup', False):
                 leaders_str = " & ".join(leaders_at_top)
                 
                 with st.container():
-                    # 1. พ่นกล่อง Backdrop และ Modal ที่สมบูรณ์ในตัว (ไม่มีแท็กค้าง)
+                    # 1. พ่นกล่อง Backdrop, Modal, ปุ่มปิด HTML สำรอง และ JavaScript ดักคลิกกับ Auto-dismiss
                     st.markdown(
                         f"""<div class='congrats-modal-backdrop'>
 <div class='congrats-modal'>
+<!-- ปุ่มปิดตัว X กากบาทสีทองพรีเมียมที่หาง่ายและใช้สัมผัสปิดได้เร็วบนมือถือ -->
+<div class='congrats-close-x' onclick='dismissCongratsPopup()'>&times;</div>
+
 <!-- เอฟเฟกต์ประกายดวงดาวลอยละล่อง -->
 <div class='congrats-sparkle sp1'>✨</div>
 <div class='congrats-sparkle sp2'>⭐</div>
@@ -692,7 +695,39 @@ if st.session_state.get('show_congrats_popup', False):
 <div class='congrats-btn-placeholder'></div>
 </div>
 </div>
-<div class='congrats-trigger-marker'></div>""",
+<div class='congrats-trigger-marker'></div>
+
+<script>
+function dismissCongratsPopup() {{
+    // 1. ค้นหาและทำลายฉากหลังและกล่องป๊อปอัปฝั่งเบราว์เซอร์ทันทีเพื่อปลดล็อกหน้าจอ
+    var backdrop = document.querySelector('.congrats-modal-backdrop');
+    if (backdrop) {{
+        backdrop.style.display = 'none';
+        backdrop.remove();
+    }}
+    
+    // 2. ค้นหามาร์กเกอร์และทำการสกัดปุ่มกดปิดของ Streamlit เพื่อทำการกระตุ้นคลิกหลังบ้าน
+    var marker = document.querySelector('.congrats-trigger-marker');
+    if (marker) {{
+        var parentContainer = marker.parentElement;
+        if (parentContainer) {{
+            // หา container ของปุ่มสตรีมลิตที่อยู่ถัดไป
+            var nextEl = parentContainer.nextElementSibling;
+            if (nextEl) {{
+                var btn = nextEl.querySelector('button');
+                if (btn) {{
+                    btn.click();
+                }}
+            }}
+        }}
+    }}
+}}
+
+// ปิดอัตโนมัติเมื่อครบ 10 วินาที
+setTimeout(function() {{
+    dismissCongratsPopup();
+}}, 10000);
+</script>""",
                         unsafe_allow_html=True
                     )
                     
@@ -701,7 +736,7 @@ if st.session_state.get('show_congrats_popup', False):
                         st.session_state.show_congrats_popup = False
                         st.rerun()
                         
-                    # 3. พ่น CSS ควบคุมการเลือนหายไปเอง (Auto Fade-out & Pointer Events None) หลังผ่านไป 10 วินาที
+                    # 3. พ่น CSS ควบคุมการเลือนหายไปเอง และยอมให้นิ้วสไลด์เลื่อนผ่าน (Pointer Events PASS-THROUGH)
                     st.markdown(
                         """<style>
 /* แผงกั้นสีเบลอพื้นหลังเต็มจอ */
@@ -717,7 +752,9 @@ if st.session_state.get('show_congrats_popup', False):
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    pointer-events: auto !important;
+    
+    /* กุญแจสำคัญ: ปรับเป็น none เพื่อยอมให้เลื่อนหน้าจอ/รูดจอหลักด้านหลังบนมือถือได้ทันที ไม่ค้างแข็ง! */
+    pointer-events: none !important;
     
     /* แอนิเมชันเฟดหายไปเองใน 10 วินาที */
     animation: fade-out-disappear 10s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
@@ -735,9 +772,31 @@ if st.session_state.get('show_congrats_popup', False):
     width: 90% !important;
     position: relative !important;
     
+    /* เปิดใช้งาน touch / click บนตัวกล่อง Modal เองเพื่อให้กดปุ่มได้ปกติ */
+    pointer-events: auto !important;
+    
     /* สเกลเด้ง และเฟดหายพร้อมฉากหลัง */
     animation: popup-scale 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
                popup-fade-out 10s forwards ease-in-out !important;
+}
+
+/* ปุ่มกากบาทปิดสำรองที่มุมขวาบนของการ์ดเพื่อใช้งานง่ายบนโทรศัพท์ */
+.congrats-close-x {
+    position: absolute !important;
+    top: 15px !important;
+    right: 20px !important;
+    font-size: 2.3rem !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    transition: all 0.25s ease !important;
+    z-index: 1000005 !important;
+    pointer-events: auto !important;
+    font-family: Arial, sans-serif !important;
+}
+.congrats-close-x:hover {
+    color: #FFD700 !important;
+    transform: scale(1.15) !important;
 }
 
 /* ตัวจองพื้นที่ปุ่ม */
@@ -790,9 +849,9 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
 
 /* แอนิเมชันเลือนหาย (Fade Out) และปลอดการบังคลิก */
 @keyframes fade-out-disappear {
-    0% { opacity: 1; pointer-events: auto; }
-    80% { opacity: 1; pointer-events: auto; }
-    95% { opacity: 0; pointer-events: auto; }
+    0% { opacity: 1; pointer-events: none; }
+    80% { opacity: 1; pointer-events: none; }
+    95% { opacity: 0; pointer-events: none; }
     100% { opacity: 0; pointer-events: none; display: none !important; }
 }
 
