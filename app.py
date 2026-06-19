@@ -834,7 +834,13 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
 
     all_matches = db.get_matches()
     all_matches['match_dt'] = pd.to_datetime(all_matches['match_time'])
-    
+
+    # ดึงผลทำนายของผู้เล่นในครั้งเดียวที่นี่! เพื่อประหยัดการเชื่อมต่อ API ของ Google Sheets (Quota Saving)
+    try:
+        user_preds_cached = db.get_user_predictions(username)
+    except Exception as e:
+        user_preds_cached = {}
+
     def render_match(row, username):
         match_id = row['id']
         home = row['home_team']
@@ -847,50 +853,45 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
         is_locked = now_th > m_time or status == 'Finished'
 
-        with st.container():
-            # แถวแรก: แสดงคู่แข่งขันและเวลาเตะตัวใหญ่สวยงามชัดเจน
-            st.subheader(f"{home_display} 🆚 {away_display}")
-            st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
-            
-            user_preds = db.get_user_predictions(username)
-            has_pred = match_id in user_preds
-            default_h, default_a = user_preds.get(match_id, (0, 0))
-            
-            # กำหนดคะแนนที่จะแสดงในช่องกรอก (ถ้าเกมจบแล้ว ให้แสดงสกอร์จริงในช่องที่ปิดการแก้ไข)
-            if status == 'Finished':
-                val_h = int(row['home_score']) if row['home_score'] != "" else 0
-                val_a = int(row['away_score']) if row['away_score'] != "" else 0
-            else:
-                val_h = int(default_h)
-                val_a = int(default_a)
-            
-            # แถวสอง: แสดงช่องกรอกคะแนนของทั้งสองทีมพร้อมปุ่มบันทึกผล
-            # บน Desktop จะเรียงขนานกันสวยงาม 3 คอลัมน์ บนมือถือจะยุบตัวสแต็กแนวตั้งอย่างเป็นระเบียบเข้าใจง่าย
-            col1, col2, col3 = st.columns([3, 3, 2])
-            with col1:
-                # ใช้ label บอกชื่อประเทศพร้อมธงชาติเหนือช่องกรอกข้อมูลโดยตรงเพื่อให้เข้าใจง่ายบนมือถือ
-                pred_h = st.number_input(
-                    label="⚽ สกอร์ทีมเหย้า",
-                    min_value=0,
-                    step=1,
-                    value=val_h,
-                    key=f"h_{match_id}",
-                    disabled=is_locked
-                )
-            with col2:
-                pred_a = st.number_input(
-                    label="⚽ สกอร์ทีมเยือน",
-                    min_value=0,
-                    step=1,
-                    value=val_a,
-                    key=f"a_{match_id}",
-                    disabled=is_locked
-                )
-            with col3:
-                # ดันปุ่มลงมาขนานกับช่องกรอกข้อมูลที่มี Label ด้านบนเฉพาะบน Desktop
-                st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
-                if not is_locked:
-                    # ปรับข้อความและสีปุ่มตามสถานะการทายผล (ทายแล้วปุ่มจะเขียวเด่นชัด)
+        has_pred = match_id in user_preds_cached
+        default_h, default_a = user_preds_cached.get(match_id, (0, 0))
+        
+        # กำหนดคะแนนที่จะแสดงในช่องกรอก (ถ้าเกมจบแล้ว ให้แสดงสกอร์จริงในช่องที่ปิดการแก้ไข)
+        if status == 'Finished':
+            val_h = int(row['home_score']) if row['home_score'] != "" else 0
+            val_a = int(row['away_score']) if row['away_score'] != "" else 0
+        else:
+            val_h = int(default_h)
+            val_a = int(default_a)
+
+        # ใช้ Hybrid Form-Container: 
+        # หากไม่โดนล็อก (สามารถทายผลได้) ให้ครอบด้วย st.form เพื่อป้องกันหน้าจอ Rerun ทันทีขณะเปลี่ยนค่าตัวเลข
+        if not is_locked:
+            with st.form(key=f"form_match_{match_id}", clear_on_submit=False):
+                # แถวแรก: แสดงคู่แข่งขันและเวลาเตะตัวใหญ่สวยงามชัดเจน
+                st.subheader(f"{home_display} 🆚 {away_display}")
+                st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
+                
+                # แถวสอง: แสดงช่องกรอกคะแนนของทั้งสองทีมพร้อมปุ่มบันทึกผล
+                col1, col2, col3 = st.columns([3, 3, 2])
+                with col1:
+                    pred_h = st.number_input(
+                        label="⚽ สกอร์ทีมเหย้า",
+                        min_value=0,
+                        step=1,
+                        value=val_h,
+                        key=f"h_{match_id}"
+                    )
+                with col2:
+                    pred_a = st.number_input(
+                        label="⚽ สกอร์ทีมเยือน",
+                        min_value=0,
+                        step=1,
+                        value=val_a,
+                        key=f"a_{match_id}"
+                    )
+                with col3:
+                    st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                     if has_pred:
                         btn_label = "✅ บันทึกแล้ว (แก้ไข)"
                         btn_type = "primary"
@@ -898,13 +899,42 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                         btn_label = "บันทึกผลทาย"
                         btn_type = "secondary"
                         
-                    # ใช้ปุ่มเต็มความกว้างคอลัมน์เพื่อให้กดง่ายสวยงาม
-                    if st.button(btn_label, key=f"btn_{match_id}", use_container_width=True, type=btn_type):
+                    # ใช้ปุ่ม st.form_submit_button แทน st.button สำหรับส่วนประกอบภายใน st.form
+                    if st.form_submit_button(btn_label, use_container_width=True, type=btn_type):
                         db.save_prediction(username, match_id, pred_h, pred_a)
                         st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
+                        # บังคับให้หน้าจอ Rerun ทันทีหลังกดส่ง เพื่อแสดงปุ่มติ๊กถูก
+                        st.rerun()
+                        
                     if has_pred:
                         st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
-                else:
+        else:
+            # หากโดนล็อกแล้ว (ปิดรับทายหรือเกมแข่งจบแล้ว) เรนเดอร์แบบธรรมดาด้วย st.container() โดยไม่ต้องใช้ st.form()
+            with st.container():
+                st.subheader(f"{home_display} 🆚 {away_display}")
+                st.caption(f"⏰ เวลาเตะ: {m_time.strftime('%d/%m/%Y %H:%M')}")
+                
+                col1, col2, col3 = st.columns([3, 3, 2])
+                with col1:
+                    st.number_input(
+                        label="⚽ สกอร์ทีมเหย้า",
+                        min_value=0,
+                        step=1,
+                        value=val_h,
+                        key=f"h_{match_id}",
+                        disabled=True
+                    )
+                with col2:
+                    st.number_input(
+                        label="⚽ สกอร์ทีมเยือน",
+                        min_value=0,
+                        step=1,
+                        value=val_a,
+                        key=f"a_{match_id}",
+                        disabled=True
+                    )
+                with col3:
+                    st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                     if status == 'Finished':
                         st.warning("🏁 สิ้นสุดการแข่งขัน")
                         h_score_val = int(row['home_score']) if row['home_score'] != "" else 0
@@ -919,7 +949,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                             st.info("🎯 **คุณไม่ได้ทายคู่นี้ไว้**")
                     else:
                         st.warning("🔒 ปิดรับผลทาย")
-            st.divider()
+        st.divider()
 
     finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
     if not finished.empty:
