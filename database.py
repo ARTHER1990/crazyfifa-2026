@@ -82,41 +82,8 @@ def get_predictions_df():
         return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
 
 def sync_results_from_web():
-    results = [
-        {'home': 'Mexico', 'away': 'South Africa', 'h_score': 2, 'a_score': 0, 'status': 'Finished'},
-        {'home': 'South Korea', 'away': 'Czech Republic', 'h_score': 2, 'a_score': 1, 'status': 'Finished'},
-        {'home': 'Canada', 'away': 'Bosnia and Herzegovina', 'id': 3},
-        {'home': 'USA', 'away': 'Paraguay', 'id': 4}
-    ]
-    
-    ws = get_worksheet('matches')
-    data = ws.get_all_values()
-    df = pd.DataFrame(data[1:], columns=data[0])
-    
-    updated_count = 0
-    for res in results:
-        if res.get('status') == 'Finished':
-            mask = (df['home_team'] == res['home']) & (df['away_team'] == res['away']) & (df['status'] == 'Upcoming')
-            if mask.any():
-                idx = df.index[mask][0]
-                df.at[idx, 'home_score'] = res['h_score']
-                df.at[idx, 'away_score'] = res['a_score']
-                df.at[idx, 'status'] = 'Finished'
-                updated_count += 1
-        elif 'id' in res:
-            mask = (df['id'].astype(str) == str(res['id'])) & (df['home_team'].str.startswith('TBD') | df['away_team'].str.startswith('TBD'))
-            if mask.any():
-                idx = df.index[mask][0]
-                df.at[idx, 'home_team'] = res['home']
-                df.at[idx, 'away_team'] = res['away']
-                updated_count += 1
-                
-    if updated_count > 0:
-        ws.clear()
-        ws.update([df.columns.values.tolist()] + df.values.tolist())
-        update_scores_logic()
-    st.cache_data.clear()
-    st.cache_resource.clear()
+    """ฟังก์ชันหลักสำหรับเรียกใช้การซิงค์ข้อมูลจากแหล่งภายนอก (Wikipedia)"""
+    updated_count = auto_sync_scores()
     return updated_count
 
 def normalize_name(username):
@@ -277,4 +244,112 @@ def update_scores_logic():
     ws_u.update([df_u.columns.values.tolist()] + df_u.values.tolist())
     st.cache_data.clear()
     st.cache_resource.clear()
+
+def auto_sync_scores():
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        import re
+        
+        ws = get_worksheet('matches')
+        data = ws.get_all_values()
+        df = pd.DataFrame(data[1:], columns=data[0])
+        
+        url = "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup"
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+        
+        r = requests.get(url, headers=headers, timeout=15)
+        if r.status_code != 200:
+            return 0
+            
+        soup = BeautifulSoup(r.text, 'html.parser')
+        boxes = soup.find_all('table', class_='fevent')
+        
+        updated_count = 0
+        
+        # Mapping ชื่อทีมจาก Wikipedia เป็นชื่อทีมในระบบของเรา
+        name_mapping = {
+            'United States': 'USA',
+            'Czechia': 'Czech Republic',
+            'Ivory Coast': "Côte d'Ivoire",
+            'DR Congo[D]': 'DR Congo',
+            'Cabo Verde': 'Cape Verde',
+            'IR Iran': 'Iran',
+            'Korea Republic': 'South Korea',
+            'Türkiye': 'Turkey'
+        }
+        
+        for box in boxes:
+            home_td = box.find('th', class_='fhome') or box.find('td', class_='fhome')
+            away_td = box.find('th', class_='faway') or box.find('td', class_='faway')
+            score_td = box.find('th', class_='fscore') or box.find('td', class_='fscore')
+            
+            if home_td and away_td and score_td:
+                home = home_td.get_text(strip=True)
+                away = away_td.get_text(strip=True)
+                score = score_td.get_text(strip=True)
+                
+                # คลีนชื่อ (ลบตัวเลข [D], [C] หรือช่องว่างพิเศษ)
+                home = re.sub(r'\[.*?\]', '', home)
+                home = re.sub(r'[\d\W]+$', '', home).strip().replace('\xa0', ' ')
+                
+                away = re.sub(r'\[.*?\]', '', away)
+                away = re.sub(r'^[\d\W]+', '', away).strip().replace('\xa0', ' ')
+                
+                if score and not score.startswith('Match') and ('–' in score or '-' in score):
+                    score_parts = re.split(r'[–-]', score)
+                    if len(score_parts) == 2:
+                        try:
+                            # สกัดตัวเลขสกอร์ (กรณีมีตัวอักษรอื่นปน)
+                            h_score_val = re.search(r'\d+', score_parts[0].strip())
+                            a_score_val = re.search(r'\d+', score_parts[1].strip())
+                            
+                            if not h_score_val or not a_score_val:
+                                continue
+                                
+                            h_score = int(h_score_val.group())
+                            a_score = int(a_score_val.group())
+                        except:
+                            continue
+                            
+                        # ดึงคนทำประตู
+                        h_goal_td = box.find('td', class_='fhgoal')
+                        a_goal_td = box.find('td', class_='fagoal')
+                        
+                        h_scorers = h_goal_td.get_text(strip=True) if h_goal_td else ""
+                        a_scorers = a_goal_td.get_text(strip=True) if a_goal_td else ""
+                        
+                        scorers_combined = ""
+                        h_clean = re.sub(r'\s+', ' ', h_scorers).strip()
+                        a_clean = re.sub(r'\s+', ' ', a_scorers).strip()
+                        if h_clean and a_clean:
+                            scorers_combined = f"{h_clean} | {a_clean}"
+                        elif h_clean:
+                            scorers_combined = h_clean
+                        else:
+                            scorers_combined = a_clean
+                            
+                        home_mapped = name_mapping.get(home, home)
+                        away_mapped = name_mapping.get(away, away)
+                        
+                        # อัปเดตแมตช์ที่ยังไม่เสร็จ (Upcoming) 
+                        # หรือถ้าอยากให้มีการอัปเดตทับเพื่อแก้ไขคะแนนที่ผิดพลาด ก็เปลี่ยนเป็น status != 'Finished' ได้
+                        mask = (df['home_team'] == home_mapped) & (df['away_team'] == away_mapped) & (df['status'] == 'Upcoming')
+                        if mask.any():
+                            idx = df.index[mask][0]
+                            df.at[idx, 'home_score'] = str(h_score)
+                            df.at[idx, 'away_score'] = str(a_score)
+                            df.at[idx, 'status'] = 'Finished'
+                            df.at[idx, 'scorers'] = scorers_combined
+                            updated_count += 1
+                            
+        if updated_count > 0:
+            ws.clear()
+            ws.update([df.columns.values.tolist()] + df.values.tolist())
+            update_scores_logic()
+            return updated_count
+    except Exception as e:
+        print("Auto-sync error:", e)
+    return 0
+
 

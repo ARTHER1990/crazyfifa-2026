@@ -59,8 +59,16 @@ FLAG_MAP = {
     'wales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'serbia': '🇷🇸', 'slovenia': '🇸🇮', 'romania': '🇷🇴',
     'georgia': '🇬🇪', 'albania': '🇦🇱', 'hungary': '🇭🇺', 'slovakia': '🇸🇰',
     'china': '🇨🇳', 'vietnam': '🇻🇳', 'thailand': '🇹🇭', 'malaysia': '🇲🇾',
-    'singapore': '🇸🇬', 'indonesia': '🇮🇩', 'philippines': '🇵🇭', 'india': '🇮🇳'
 }
+
+@st.cache_data(ttl=1800)
+def check_and_sync_scores():
+    try:
+        db.auto_sync_scores()
+    except Exception as e:
+        pass
+
+
 
 def get_team_display(team_name):
     clean_name = team_name.strip()
@@ -631,6 +639,10 @@ if not st.session_state.authenticated:
     st.stop()
 
 username = st.session_state.username
+
+# --- ตรวจสอบอัปเดตผลสกอร์แบบเรียลไทม์อัตโนมัติ (แคชไว้ 30 นาที) ---
+check_and_sync_scores()
+
 
 # --- คำนวณคู่แข่งขันที่ยังไม่ได้ทายผลสำหรับเตือนความจำ ---
 if 'toast_shown' not in st.session_state:
