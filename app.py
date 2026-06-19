@@ -666,35 +666,33 @@ if st.session_state.get('show_congrats_popup', False):
                 with st.container():
                     # 1. พ่นกล่อง Backdrop และ Modal ที่สมบูรณ์ในตัว (ไม่มีแท็กค้าง)
                     st.markdown(
-                        f"""
-                        <div class='congrats-modal-backdrop'>
-                            <div class='congrats-modal'>
-                                <!-- เอฟเฟกต์ประกายดวงดาวลอยละล่อง -->
-                                <div class='congrats-sparkle sp1'>✨</div>
-                                <div class='congrats-sparkle sp2'>⭐</div>
-                                <div class='congrats-sparkle sp3'>✨</div>
-                                <div class='congrats-sparkle sp4'>⭐</div>
-                                <div class='congrats-sparkle sp5'>✨</div>
-                                
-                                <!-- พลุกระจายตัวฉลองชัย -->
-                                <div class='firework-particle p1'></div>
-                                <div class='firework-particle p2'></div>
-                                <div class='firework-particle p3'></div>
-                                <div class='firework-particle p4'></div>
-                                <div class='firework-particle p5'></div>
-                                
-                                <div class='congrats-title'>🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
-                                <div style='font-size: 1.05rem; color: #a0aec0; margin-bottom: 5px; font-family: Kanit, sans-serif;'>ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
-                                <div class='congrats-leader'>🎉 {leaders_str} 🎉</div>
-                                <div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
-                                <div style='color: #FFD700; font-size: 0.95rem; font-family: Kanit, sans-serif; font-weight: bold; margin-bottom: 30px; animation: heartbeat 1.5s infinite;'>🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
-                                
-                                <!-- เว้นพื้นที่ว่างสำหรับวางปุ่มปิด Streamlit ที่ถูกดึงขึ้นมาทับพอดี -->
-                                <div class='congrats-btn-placeholder'></div>
-                            </div>
-                        </div>
-                        <div class='congrats-trigger-marker'></div>
-                        """,
+                        f"""<div class='congrats-modal-backdrop'>
+<div class='congrats-modal'>
+<!-- เอฟเฟกต์ประกายดวงดาวลอยละล่อง -->
+<div class='congrats-sparkle sp1'>✨</div>
+<div class='congrats-sparkle sp2'>⭐</div>
+<div class='congrats-sparkle sp3'>✨</div>
+<div class='congrats-sparkle sp4'>⭐</div>
+<div class='congrats-sparkle sp5'>✨</div>
+
+<!-- พลุกระจายตัวฉลองชัย -->
+<div class='firework-particle p1'></div>
+<div class='firework-particle p2'></div>
+<div class='firework-particle p3'></div>
+<div class='firework-particle p4'></div>
+<div class='firework-particle p5'></div>
+
+<div class='congrats-title'>🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
+<div style='font-size: 1.05rem; color: #a0aec0; margin-bottom: 5px; font-family: Kanit, sans-serif;'>ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
+<div class='congrats-leader'>🎉 {leaders_str} 🎉</div>
+<div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
+<div style='color: #FFD700; font-size: 0.95rem; font-family: Kanit, sans-serif; font-weight: bold; margin-bottom: 30px; animation: heartbeat 1.5s infinite;'>🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
+
+<!-- เว้นพื้นที่ว่างสำหรับวางปุ่มปิด Streamlit ที่ถูกดึงขึ้นมาทับพอดี -->
+<div class='congrats-btn-placeholder'></div>
+</div>
+</div>
+<div class='congrats-trigger-marker'></div>""",
                         unsafe_allow_html=True
                     )
                     
@@ -705,199 +703,197 @@ if st.session_state.get('show_congrats_popup', False):
                         
                     # 3. พ่น CSS ควบคุมการเลือนหายไปเอง (Auto Fade-out & Pointer Events None) หลังผ่านไป 10 วินาที
                     st.markdown(
-                        """
-                        <style>
-                        /* แผงกั้นสีเบลอพื้นหลังเต็มจอ */
-                        .congrats-modal-backdrop {
-                            position: fixed !important;
-                            top: 0 !important;
-                            left: 0 !important;
-                            width: 100vw !important;
-                            height: 100vh !important;
-                            background: rgba(8, 8, 16, 0.88) !important;
-                            backdrop-filter: blur(15px) !important;
-                            z-index: 999990 !important;
-                            display: flex !important;
-                            justify-content: center !important;
-                            align-items: center !important;
-                            pointer-events: auto !important;
-                            
-                            /* แอนิเมชันเฟดหายไปเองใน 10 วินาที */
-                            animation: fade-out-disappear 10s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
-                        }
-                        
-                        /* ตัวการ์ดป๊อปอัปเฉลิมฉลองแชมป์ */
-                        .congrats-modal {
-                            background: linear-gradient(135deg, rgba(20, 20, 38, 0.95) 0%, rgba(32, 32, 58, 0.98) 100%) !important;
-                            border: 3px solid #FFD700 !important;
-                            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.2) !important;
-                            border-radius: 28px !important;
-                            padding: 45px 35px !important;
-                            text-align: center !important;
-                            max-width: 520px !important;
-                            width: 90% !important;
-                            position: relative !important;
-                            
-                            /* สเกลเด้ง และเฟดหายพร้อมฉากหลัง */
-                            animation: popup-scale 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
-                                       popup-fade-out 10s forwards ease-in-out !important;
-                        }
-                        
-                        /* ตัวจองพื้นที่ปุ่ม */
-                        .congrats-btn-placeholder {
-                            height: 55px !important;
-                        }
-                        
-                        /* ยึดและดึงคอนเทนเนอร์ปุ่มของสตรีมลิตขึ้นมาลอยตัวบนสุด */
-                        div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] {
-                            position: fixed !important;
-                            top: calc(50vh + 125px) !important;
-                            left: 50vw !important;
-                            transform: translate(-50%, -50%) !important;
-                            z-index: 1000000 !important; /* ชั้นสูงสุดเหนือ backdrop */
-                            width: auto !important;
-                            min-width: 260px !important;
-                            max-width: 440px !important;
-                            display: block !important;
-                            pointer-events: auto !important;
-                            
-                            /* เลือนหายไปพร้อมกล่อง */
-                            animation: button-fade-out 10s forwards ease-in-out !important;
-                        }
-                        
-                        /* สไตล์ปุ่มกดปิดสีทองพรีเมียมตระการตา */
-                        div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button {
-                            background: linear-gradient(135deg, #FFD700 0%, #FF9F00 100%) !important;
-                            color: #000000 !important;
-                            font-weight: 800 !important;
-                            border: 2px solid #FFFFFF !important;
-                            padding: 12px 40px !important;
-                            border-radius: 50px !important;
-                            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.3) !important;
-                            font-family: 'Kanit', sans-serif !important;
-                            font-size: 1.15rem !important;
-                            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-                            width: 100% !important;
-                            cursor: pointer !important;
-                            pointer-events: auto !important;
-                        }
-                        
-                        div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button:hover {
-                            transform: scale(1.06) !important;
-                            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.5) !important;
-                        }
-                        
-                        div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button:active {
-                            transform: scale(0.97) !important;
-                        }
-                        
-                        /* แอนิเมชันเลือนหาย (Fade Out) และปลอดการบังคลิก */
-                        @keyframes fade-out-disappear {
-                            0% { opacity: 1; pointer-events: auto; }
-                            80% { opacity: 1; pointer-events: auto; }
-                            95% { opacity: 0; pointer-events: auto; }
-                            100% { opacity: 0; pointer-events: none; display: none !important; }
-                        }
-                        
-                        @keyframes popup-fade-out {
-                            0% { opacity: 1; }
-                            80% { opacity: 1; transform: scale(1); }
-                            95% { opacity: 0; transform: scale(0.9); }
-                            100% { opacity: 0; display: none !important; }
-                        }
-                        
-                        @keyframes button-fade-out {
-                            0% { opacity: 1; pointer-events: auto; }
-                            80% { opacity: 1; pointer-events: auto; }
-                            95% { opacity: 0; pointer-events: none; }
-                            100% { opacity: 0; pointer-events: none; display: none !important; }
-                        }
-                        
-                        @keyframes popup-scale {
-                            0% { transform: scale(0.5); opacity: 0; }
-                            100% { transform: scale(1); opacity: 1; }
-                        }
-                        
-                        @keyframes heartbeat {
-                            0% { transform: scale(1); }
-                            50% { transform: scale(1.04); }
-                            100% { transform: scale(1); }
-                        }
-                        
-                        .congrats-title {
-                            font-size: 1.7rem !important;
-                            color: #FFD700 !important;
-                            font-weight: 850 !important;
-                            margin-bottom: 8px !important;
-                            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
-                            font-family: 'Kanit', sans-serif !important;
-                        }
-                        
-                        .congrats-leader {
-                            font-size: 2.4rem !important;
-                            color: #FFFFFF !important;
-                            font-weight: 900 !important;
-                            margin: 18px 0 !important;
-                            text-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 0 10px rgba(255, 215, 0, 0.4) !important;
-                            font-family: 'Kanit', sans-serif !important;
-                            animation: heartbeat 2s infinite !important;
-                        }
-                        
-                        .congrats-score {
-                            font-size: 1.3rem !important;
-                            color: #00E676 !important;
-                            font-weight: bold !important;
-                            margin-bottom: 20px !important;
-                            text-shadow: 0 0 10px rgba(0, 230, 118, 0.4) !important;
-                            font-family: 'Kanit', sans-serif !important;
-                        }
-                        
-                        /* วิ้งวิ้งและประกายดาว */
-                        .congrats-sparkle {
-                            position: absolute !important;
-                            font-size: 1.5rem !important;
-                            animation: float-sparkle 3s infinite ease-in-out !important;
-                        }
-                        .sp1 { top: 10%; left: 8%; animation-delay: 0s !important; }
-                        .sp2 { top: 15%; right: 10%; animation-delay: 0.5s !important; }
-                        .sp3 { bottom: 25%; left: 12%; animation-delay: 1s !important; }
-                        .sp4 { bottom: 20%; right: 15%; animation-delay: 1.5s !important; }
-                        .sp5 { top: 50%; left: 5%; animation-delay: 0.8s !important; }
-                        
-                        @keyframes float-sparkle {
-                            0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.3; }
-                            50% { transform: translateY(-15px) scale(1.2); opacity: 1; text-shadow: 0 0 12px #FFD700; }
-                        }
-                        
-                        /* พลุกระจายแฉก */
-                        .firework-particle {
-                            position: absolute !important;
-                            width: 6px !important;
-                            height: 6px !important;
-                            border-radius: 50% !important;
-                            background: #FFD700 !important;
-                            animation: explode 4s infinite ease-out !important;
-                            opacity: 0 !important;
-                        }
-                        .p1 { top: 20%; left: 20%; background: #FF3D00 !important; animation-delay: 0.2s !important; }
-                        .p2 { top: 30%; right: 25%; background: #00E676 !important; animation-delay: 1.2s !important; }
-                        .p3 { bottom: 35%; left: 25%; background: #29B6F6 !important; animation-delay: 2.2s !important; }
-                        .p4 { bottom: 40%; right: 20%; background: #EC407A !important; animation-delay: 0.7s !important; }
-                        .p5 { top: 12%; left: 50%; background: #FFEB3B !important; animation-delay: 1.7s !important; }
-                        
-                        @keyframes explode {
-                            0% { transform: scale(0); opacity: 1; }
-                            20% { transform: scale(1.5) translate(var(--dx, 20px), var(--dy, -20px)); opacity: 0.9; }
-                            80%, 100% { transform: scale(0.5) translate(var(--dx, 40px), var(--dy, -40px)); opacity: 0; }
-                        }
-                        
-                        .p1 { --dx: -30px; --dy: -40px; }
-                        .p2 { --dx: 45px; --dy: -30px; }
-                        .p3 { --dx: -40px; --dy: 35px; }
-                        .p4 { --dx: 35px; --dy: 40px; }
-                        .p5 { --dx: 10px; --dy: -45px; }
-                        </style>
-                        """,
+                        """<style>
+/* แผงกั้นสีเบลอพื้นหลังเต็มจอ */
+.congrats-modal-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(8, 8, 16, 0.88) !important;
+    backdrop-filter: blur(15px) !important;
+    z-index: 999990 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    pointer-events: auto !important;
+    
+    /* แอนิเมชันเฟดหายไปเองใน 10 วินาที */
+    animation: fade-out-disappear 10s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* ตัวการ์ดป๊อปอัปเฉลิมฉลองแชมป์ */
+.congrats-modal {
+    background: linear-gradient(135deg, rgba(20, 20, 38, 0.95) 0%, rgba(32, 32, 58, 0.98) 100%) !important;
+    border: 3px solid #FFD700 !important;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.2) !important;
+    border-radius: 28px !important;
+    padding: 45px 35px !important;
+    text-align: center !important;
+    max-width: 520px !important;
+    width: 90% !important;
+    position: relative !important;
+    
+    /* สเกลเด้ง และเฟดหายพร้อมฉากหลัง */
+    animation: popup-scale 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
+               popup-fade-out 10s forwards ease-in-out !important;
+}
+
+/* ตัวจองพื้นที่ปุ่ม */
+.congrats-btn-placeholder {
+    height: 55px !important;
+}
+
+/* ยึดและดึงคอนเทนเนอร์ปุ่มของสตรีมลิตขึ้นมาลอยตัวบนสุด */
+div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] {
+    position: fixed !important;
+    top: calc(50vh + 125px) !important;
+    left: 50vw !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 1000000 !important; /* ชั้นสูงสุดเหนือ backdrop */
+    width: auto !important;
+    min-width: 260px !important;
+    max-width: 440px !important;
+    display: block !important;
+    pointer-events: auto !important;
+    
+    /* เลือนหายไปพร้อมกล่อง */
+    animation: button-fade-out 10s forwards ease-in-out !important;
+}
+
+/* สไตล์ปุ่มกดปิดสีทองพรีเมียมตระการตา */
+div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button {
+    background: linear-gradient(135deg, #FFD700 0%, #FF9F00 100%) !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    border: 2px solid #FFFFFF !important;
+    padding: 12px 40px !important;
+    border-radius: 50px !important;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.3) !important;
+    font-family: 'Kanit', sans-serif !important;
+    font-size: 1.15rem !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+
+div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button:hover {
+    transform: scale(1.06) !important;
+    box-shadow: 0 12px 30px rgba(255, 215, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.5) !important;
+}
+
+div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button:active {
+    transform: scale(0.97) !important;
+}
+
+/* แอนิเมชันเลือนหาย (Fade Out) และปลอดการบังคลิก */
+@keyframes fade-out-disappear {
+    0% { opacity: 1; pointer-events: auto; }
+    80% { opacity: 1; pointer-events: auto; }
+    95% { opacity: 0; pointer-events: auto; }
+    100% { opacity: 0; pointer-events: none; display: none !important; }
+}
+
+@keyframes popup-fade-out {
+    0% { opacity: 1; }
+    80% { opacity: 1; transform: scale(1); }
+    95% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 0; display: none !important; }
+}
+
+@keyframes button-fade-out {
+    0% { opacity: 1; pointer-events: auto; }
+    80% { opacity: 1; pointer-events: auto; }
+    95% { opacity: 0; pointer-events: none; }
+    100% { opacity: 0; pointer-events: none; display: none !important; }
+}
+
+@keyframes popup-scale {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+.congrats-title {
+    font-size: 1.7rem !important;
+    color: #FFD700 !important;
+    font-weight: 850 !important;
+    margin-bottom: 8px !important;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
+    font-family: 'Kanit', sans-serif !important;
+}
+
+.congrats-leader {
+    font-size: 2.4rem !important;
+    color: #FFFFFF !important;
+    font-weight: 900 !important;
+    margin: 18px 0 !important;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 0 10px rgba(255, 215, 0, 0.4) !important;
+    font-family: 'Kanit', sans-serif !important;
+    animation: heartbeat 2s infinite !important;
+}
+
+.congrats-score {
+    font-size: 1.3rem !important;
+    color: #00E676 !important;
+    font-weight: bold !important;
+    margin-bottom: 20px !important;
+    text-shadow: 0 0 10px rgba(0, 230, 118, 0.4) !important;
+    font-family: 'Kanit', sans-serif !important;
+}
+
+/* วิ้งวิ้งและประกายดาว */
+.congrats-sparkle {
+    position: absolute !important;
+    font-size: 1.5rem !important;
+    animation: float-sparkle 3s infinite ease-in-out !important;
+}
+.sp1 { top: 10%; left: 8%; animation-delay: 0s !important; }
+.sp2 { top: 15%; right: 10%; animation-delay: 0.5s !important; }
+.sp3 { bottom: 25%; left: 12%; animation-delay: 1s !important; }
+.sp4 { bottom: 20%; right: 15%; animation-delay: 1.5s !important; }
+.sp5 { top: 50%; left: 5%; animation-delay: 0.8s !important; }
+
+@keyframes float-sparkle {
+    0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.3; }
+    50% { transform: translateY(-15px) scale(1.2); opacity: 1; text-shadow: 0 0 12px #FFD700; }
+}
+
+/* พลุกระจายแฉก */
+.firework-particle {
+    position: absolute !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: #FFD700 !important;
+    animation: explode 4s infinite ease-out !important;
+    opacity: 0 !important;
+}
+.p1 { top: 20%; left: 20%; background: #FF3D00 !important; animation-delay: 0.2s !important; }
+.p2 { top: 30%; right: 25%; background: #00E676 !important; animation-delay: 1.2s !important; }
+.p3 { bottom: 35%; left: 25%; background: #29B6F6 !important; animation-delay: 2.2s !important; }
+.p4 { bottom: 40%; right: 20%; background: #EC407A !important; animation-delay: 0.7s !important; }
+.p5 { top: 12%; left: 50%; background: #FFEB3B !important; animation-delay: 1.7s !important; }
+
+@keyframes explode {
+    0% { transform: scale(0); opacity: 1; }
+    20% { transform: scale(1.5) translate(var(--dx, 20px), var(--dy, -20px)); opacity: 0.9; }
+    80%, 100% { transform: scale(0.5) translate(var(--dx, 40px), var(--dy, -40px)); opacity: 0; }
+}
+
+.p1 { --dx: -30px; --dy: -40px; }
+.p2 { --dx: 45px; --dy: -30px; }
+.p3 { --dx: -40px; --dy: 35px; }
+.p4 { --dx: 35px; --dy: 40px; }
+.p5 { --dx: 10px; --dy: -45px; }
+</style>""",
                         unsafe_allow_html=True
                     )
                     
