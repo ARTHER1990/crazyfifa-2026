@@ -701,18 +701,13 @@ if st.session_state.authenticated:
         now_th_sb = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
         today_date_sb = now_th_sb.date()
         
-        # 1. กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
+        # กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
         day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == today_date_sb]
         
-        # 2. หากวันนี้ไม่มีการแข่งเสร็จสิ้นเลย ให้ถอยย้อนหลังไปดึงเฉพาะของวันล่าสุด 1 วันที่มีข้อมูล Finished
+        st.sidebar.subheader("📅 สรุปผลแข่งวันนี้")
+        
         if day_matches_sb.empty:
-            latest_finished_date = finished_sb['match_dt'].dt.date.max()
-            day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == latest_finished_date]
-            sb_title = f"📅 สรุปผลแข่งล่าสุด ({latest_finished_date.strftime('%d/%m/%Y')})"
-        else:
-            sb_title = "📅 สรุปผลแข่งวันนี้"
-            
-        st.sidebar.subheader(sb_title)
+            st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
         
         # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
         predictions_sb = db.get_predictions_df()
