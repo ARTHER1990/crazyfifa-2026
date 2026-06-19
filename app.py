@@ -653,117 +653,132 @@ if st.session_state.get('show_congrats_popup', False):
                 leaders_at_top = leaderboard_df[leaderboard_df['total_score'] == max_score]['username'].tolist()
                 leaders_str = " & ".join(leaders_at_top)
                 
-                st.markdown(
-                    f"""
-                    <div class='congrats-modal-backdrop'>
-                        <div class='congrats-modal'>
-                            <div class='firework-particle p1'></div>
-                            <div class='firework-particle p2'></div>
-                            <div class='firework-particle p3'></div>
-                            <div class='firework-particle p4'></div>
-                            <div class='firework-particle p5'></div>
-                            <div class='firework-particle p6 white-p'></div>
-                            <div class='firework-particle p7 white-p'></div>
-                            <div class='congrats-title'>🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
-                            <div style='font-size: 1.05rem; color: #a0aec0; margin-bottom: 5px; font-family: Kanit, sans-serif;'>ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
-                            <div class='congrats-leader'>🎉 {leaders_str} 🎉</div>
-                            <div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
-                            <div style='color: #FFD700; font-size: 0.95rem; font-family: Kanit, sans-serif; font-weight: bold; margin-bottom: 10px; animation: heartbeat 1.5s infinite;'>🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? ลุยกันเลย! 🔥</div>
+                with st.container():
+                    # 1. พ่นกล่อง Backdrop และ Modal ที่สมบูรณ์ในตัว (ไม่มีแท็กค้าง)
+                    st.markdown(
+                        f"""
+                        <div class='congrats-modal-backdrop'>
+                            <div class='congrats-modal'>
+                                <!-- เอฟเฟกต์พลุและแสงวิบวับสวยงามรอบด้าน -->
+                                <div class='congrats-sparkle sp1'>✨</div>
+                                <div class='congrats-sparkle sp2'>⭐</div>
+                                <div class='congrats-sparkle sp3'>✨</div>
+                                <div class='congrats-sparkle sp4'>⭐</div>
+                                <div class='congrats-sparkle sp5'>✨</div>
+                                <div class='firework-particle p1'></div>
+                                <div class='firework-particle p2'></div>
+                                <div class='firework-particle p3'></div>
+                                <div class='firework-particle p4'></div>
+                                <div class='firework-particle p5'></div>
+                                <div class='congrats-title'>🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
+                                <div style='font-size: 1.05rem; color: #a0aec0; margin-bottom: 5px; font-family: Kanit, sans-serif;'>ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
+                                <div class='congrats-leader'>🎉 {leaders_str} 🎉</div>
+                                <div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
+                                <div style='color: #FFD700; font-size: 0.95rem; font-family: Kanit, sans-serif; font-weight: bold; margin-bottom: 30px; animation: heartbeat 1.5s infinite;'>🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
+                                <!-- เว้นที่ว่างให้สำหรับปุ่มปิด Streamlit ที่จะถูกดึงด้วย CSS มาทับพอดี -->
+                                <div class='congrats-btn-placeholder'></div>
+                            </div>
                         </div>
-                    </div>
-                    <style>
-                    .congrats-modal-backdrop {{
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100vw;
-                        height: 100vh;
-                        background: rgba(10, 10, 20, 0.85);
-                        backdrop-filter: blur(12px);
-                        z-index: 999990;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                    }}
-                    .congrats-modal {{
-                        background: linear-gradient(135deg, rgba(18, 18, 32, 0.95) 0%, rgba(30, 30, 50, 0.98) 100%);
-                        border: 3px solid #FFD700;
-                        box-shadow: 0 0 40px rgba(255, 215, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.2);
-                        border-radius: 24px;
-                        padding: 40px 30px;
-                        text-align: center;
-                        max-width: 520px;
-                        width: 90%;
-                        position: relative;
-                        animation: popup-scale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-                    }}
-                    @keyframes popup-scale {{
-                        0% {{ transform: scale(0.6); opacity: 0; }}
-                        100% {{ transform: scale(1); opacity: 1; }}
-                    }}
-                    @keyframes heartbeat {{
-                        0% {{ transform: scale(1); }}
-                        50% {{ transform: scale(1.03); }}
-                        100% {{ transform: scale(1); }}
-                    }}
-                    .congrats-title {{
-                        font-size: 1.6rem;
-                        color: #FFD700;
-                        font-weight: bold;
-                        margin-bottom: 5px;
-                        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-                        font-family: 'Kanit', sans-serif;
-                    }}
-                    .congrats-leader {{
-                        font-size: 2.3rem;
-                        color: #FFFFFF;
-                        font-weight: 800;
-                        margin: 15px 0;
-                        text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-                        font-family: 'Kanit', sans-serif;
-                    }}
-                    .congrats-score {{
-                        font-size: 1.25rem;
-                        color: #00E676;
-                        font-weight: bold;
-                        margin-bottom: 15px;
-                        text-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
-                        font-family: 'Kanit', sans-serif;
-                    }}
-                    /* ปรับปุ่มปิดใน Streamlit ให้เด้งขึ้นมาลอยทับที่สวยงามตรงล่างสุดของ Pop-up */
-                    div.stButton > button[key^="close_popup_btn"] {{
-                        background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%) !important;
-                        color: #000000 !important;
-                        font-weight: bold !important;
-                        border: none !important;
-                        padding: 10px 30px !important;
-                        border-radius: 50px !important;
-                        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4) !important;
-                        font-family: 'Kanit', sans-serif !important;
-                        font-size: 1rem !important;
-                        transition: all 0.3s ease !important;
-                        position: fixed !important;
-                        top: calc(50% + 150px) !important;
-                        left: 50% !important;
-                        transform: translate(-50%, -50%) !important;
-                        z-index: 999999 !important;
-                    }}
-                    div.stButton > button[key^="close_popup_btn"]:hover {{
-                        transform: translate(-50%, -53%) scale(1.05) !important;
-                        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6) !important;
-                    }}
-                    </style>
-                    """,
-                    unsafe_allow_html=True
-                )
-                
-                # ปุ่มปิดเพื่อซ่อนความยินดีและทำงานต่อ
-                if st.button("ลุยต่อกันเลย! ⚽🔥", key="close_popup_btn"):
-                    st.session_state.show_congrats_popup = False
-                    st.rerun()
-                
-                st.balloons()
-                st.stop()
+                        <div class='congrats-trigger-marker'></div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    
+                    # 2. ปุ่ม Streamlit ปกติที่อยู่ติดกับ trigger marker
+                    if st.button("ลุยต่อกันเลย! ⚽🔥", key="close_popup_btn", use_container_width=True):
+                        st.session_state.show_congrats_popup = False
+                        st.rerun()
+                        
+                    # 3. พ่น CSS เพื่อดึงปุ่มให้ลอยขึ้นไปบนสุดและพ่นสไตล์ทั้งหมด
+                    st.markdown(
+                        """
+                            </div>
+                        </div>
+                        <style>
+                        .congrats-modal-backdrop {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100vw;
+                            height: 100vh;
+                            background: rgba(10, 10, 20, 0.85);
+                            backdrop-filter: blur(12px);
+                            z-index: 999990;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                        }
+                        .congrats-modal {
+                            background: linear-gradient(135deg, rgba(18, 18, 32, 0.95) 0%, rgba(30, 30, 50, 0.98) 100%);
+                            border: 3px solid #FFD700;
+                            box-shadow: 0 0 40px rgba(255, 215, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.2);
+                            border-radius: 24px;
+                            padding: 40px 30px;
+                            text-align: center;
+                            max-width: 520px;
+                            width: 90%;
+                            position: relative;
+                            animation: popup-scale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+                        }
+                        @keyframes popup-scale {
+                            0% { transform: scale(0.6); opacity: 0; }
+                            100% { transform: scale(1); opacity: 1; }
+                        }
+                        @keyframes heartbeat {
+                            0% { transform: scale(1); }
+                            50% { transform: scale(1.03); }
+                            100% { transform: scale(1); }
+                        }
+                        .congrats-title {
+                            font-size: 1.6rem;
+                            color: #FFD700;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                            font-family: 'Kanit', sans-serif;
+                        }
+                        .congrats-leader {
+                            font-size: 2.3rem;
+                            color: #FFFFFF;
+                            font-weight: 800;
+                            margin: 15px 0;
+                            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+                            font-family: 'Kanit', sans-serif;
+                        }
+                        .congrats-score {
+                            font-size: 1.25rem;
+                            color: #00E676;
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            text-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
+                            font-family: 'Kanit', sans-serif;
+                        }
+                        /* ปรับแต่งแต่งปุ่มสตรีมลิตที่อยู่ภายใน .congrats-modal โดยใช้ CSS ยูทิลิตี้แบบเจาะจง */
+                        .congrats-modal div.stButton > button {
+                            background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%) !important;
+                            color: #000000 !important;
+                            font-weight: bold !important;
+                            border: none !important;
+                            padding: 12px 30px !important;
+                            border-radius: 50px !important;
+                            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4) !important;
+                            font-family: 'Kanit', sans-serif !important;
+                            font-size: 1.1rem !important;
+                            transition: all 0.3s ease !important;
+                            margin-top: 10px !important;
+                            width: 100% !important;
+                        }
+                        .congrats-modal div.stButton > button:hover {
+                            transform: scale(1.03) !important;
+                            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6) !important;
+                        }
+                        </style>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                    
+                    st.balloons()
+                    st.stop()
     except Exception as e:
         pass
 
