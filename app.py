@@ -739,6 +739,27 @@ setTimeout(function() {{
                     # 3. พ่น CSS ควบคุมการเลือนหายไปเอง และยอมให้นิ้วสไลด์เลื่อนผ่าน (Pointer Events PASS-THROUGH)
                     st.markdown(
                         """<style>
+/* สำหรับอุปกรณ์โทรศัพท์มือถือและหน้าจอขนาดเล็ก: ปิดการทำงานและการครอบสัมผัสของระบบ Congrats ทั้งหมดโดยสมบูรณ์ เพื่อป้องกันไม่ให้โทรศัพท์ค้างแข็งและเปิดให้เลื่อนหน้าจอโฮมกรอกคะแนนได้ฉลุยทันที! */
+@media (max-width: 768px) {
+    .congrats-modal-backdrop {
+        display: none !important;
+        pointer-events: none !important;
+    }
+    .congrats-modal {
+        display: none !important;
+        pointer-events: none !important;
+    }
+    div[data-testid="element-container"]:has(.congrats-trigger-marker),
+    div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] {
+        display: none !important;
+        pointer-events: none !important;
+        position: static !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+    }
+}
+
 /* แผงกั้นสีเบลอพื้นหลังเต็มจอ */
 .congrats-modal-backdrop {
     position: fixed !important;
