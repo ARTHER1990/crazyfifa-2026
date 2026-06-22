@@ -1039,7 +1039,7 @@ try:
     unpredicted_list = []
     
     for _, row in active_upcoming_rem.iterrows():
-        m_id = int(row['id'])
+        m_id = safe_int(row['id'])
         if m_id not in user_preds_rem:
             unpredicted_list.append(row)
             
@@ -1595,7 +1595,7 @@ elif menu == "📑 ประวัติการทายผล":
                     home_team = row_m['home_team']
                     away_team = row_m['away_team']
                     
-                    has_pred = int(m_id) in user_preds
+                    has_pred = safe_int(m_id) in user_preds
                     home_disp = get_team_display(home_team)
                     away_disp = get_team_display(away_team)
                     
@@ -1606,7 +1606,7 @@ elif menu == "📑 ประวัติการทายผล":
                     is_locked = now_th > m_time or row_m['status'] == 'Finished'
                     
                     if has_pred:
-                        pred_h, pred_a = user_preds[int(m_id)]
+                        pred_h, pred_a = user_preds[safe_int(m_id)]
                         pred_text = f"🔥 ผลทายของคุณ: &nbsp;<b>{pred_h} - {pred_a}</b>"
                         card_style = """
                         background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 150, 255, 0.03) 100%);
