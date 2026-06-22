@@ -76,7 +76,10 @@ def get_predictions_df():
         ws = get_worksheet('predictions')
         data = ws.get_all_values()
         if not data: return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
-        return pd.DataFrame(data[1:], columns=data[0])
+        df = pd.DataFrame(data[1:], columns=data[0])
+        # ป้องกันและกรองรายการทำนายที่ซ้ำซ้อนในคู่เดียวกันของผู้ใช้แต่ละคน (ห้ามเปิ้ลคะแนนในคู่เดียว)
+        df = df.drop_duplicates(subset=['username', 'match_id'], keep='first')
+        return df
     except Exception as e:
         print(f"Error fetching predictions: {e}")
         return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
@@ -197,6 +200,9 @@ def update_scores_logic():
     ws_p = get_worksheet('predictions')
     data_p = ws_p.get_all_values()
     df_p = pd.DataFrame(data_p[1:], columns=data_p[0])
+    
+    # ป้องกันและเคลียร์การทำนายซ้ำซ้อนในคู่เดียวกันของผู้ใช้แต่ละคน (ห้ามเปิ้ลคะแนนในคู่เดียว)
+    df_p = df_p.drop_duplicates(subset=['username', 'match_id'], keep='first')
     
     df_m['id_int'] = pd.to_numeric(df_m['id'], errors='coerce').fillna(0).astype(int)
     df_p['match_id_int'] = pd.to_numeric(df_p['match_id'], errors='coerce').fillna(0).astype(int)
