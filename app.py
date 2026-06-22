@@ -1221,7 +1221,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         user_preds_cached = {}
 
     def render_match(row, username):
-        match_id = row['id']
+        match_id = safe_int(row['id'])
         home = row['home_team']
         away = row['away_team']
         home_display = get_team_display(home)
