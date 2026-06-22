@@ -1023,6 +1023,8 @@ check_and_sync_scores()
 # --- คำนวณคู่แข่งขันที่ยังไม่ได้ทายผลสำหรับเตือนความจำ ---
 if 'toast_shown' not in st.session_state:
     st.session_state.toast_shown = False
+if 'music_enabled' not in st.session_state:
+    st.session_state.music_enabled = True
 
 try:
     all_matches_rem = db.get_matches()
@@ -1058,10 +1060,20 @@ except Exception as e:
 if st.session_state.authenticated:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
-    music_on = st.sidebar.toggle("เปิดเสียงเชียร์", value=True)
+    
+    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization) โดยผูกกับ Session State และกุญแจถาวร
+    music_on = st.sidebar.toggle(
+        "เปิดเสียงเชียร์", 
+        value=st.session_state.music_enabled, 
+        key="music_toggle_key"
+    )
+    st.session_state.music_enabled = music_on
+    
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
-        st.components.v1.html(get_audio_html(song_path), height=0)
+        # ใช้คอนเทนเนอร์เฉพาะเพื่อให้ Streamlit ทำลาย iframe เพลงทิ้งทันทีเมื่อกดปิด
+        with st.sidebar.container():
+            st.components.v1.html(get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
