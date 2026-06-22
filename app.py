@@ -5,6 +5,41 @@ import pandas as pd
 import base64
 import os
 
+# ฟังก์ชันล้างไฟล์ขยะ Icon\r ในโฟลเดอร์ .git ป้องกันปัญหา git bad ref refs/tags/Icon? ถาวร
+def cleanup_git_icons():
+    try:
+        git_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".git")
+        if os.path.exists(git_dir):
+            for root, dirs, files in os.walk(git_dir):
+                for file in files:
+                    if file.startswith("Icon"):
+                        try:
+                            os.remove(os.path.join(root, file))
+                        except:
+                            pass
+    except:
+        pass
+
+cleanup_git_icons()
+
+# ฟังก์ชันสำหรับแปลงค่าตัวเลขอย่างปลอดภัย (ดักจับ None, NaN, ช่องว่าง)
+def safe_int(val, default=0):
+    if val is None:
+        return default
+    if isinstance(val, float):
+        import math
+        if math.isnan(val):
+            return default
+        return int(val)
+    val_str = str(val).strip()
+    if val_str == "" or val_str.lower() in ("nan", "none", "null"):
+        return default
+    try:
+        return int(val_str)
+    except:
+        return default
+
+
 # ฟังก์ชันแปลงรูปภาพในเครื่องเป็น Base64
 def get_base64_image(image_path):
     if not os.path.exists(image_path):
@@ -1032,74 +1067,77 @@ if st.session_state.authenticated:
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
 
-    # ดึงข้อมูลแมตช์และประวัติการทายผลทั้งหมด
-    all_matches_sb = db.get_matches()
-    all_matches_sb['match_dt'] = pd.to_datetime(all_matches_sb['match_time'])
-    finished_sb = all_matches_sb[all_matches_sb['status'] == 'Finished'].sort_values('match_time', ascending=False)
+    try:
+        # ดึงข้อมูลแมตช์และประวัติการทายผลทั้งหมด
+        all_matches_sb = db.get_matches()
+        all_matches_sb['match_dt'] = pd.to_datetime(all_matches_sb['match_time'])
+        finished_sb = all_matches_sb[all_matches_sb['status'] == 'Finished'].sort_values('match_time', ascending=False)
 
-    if not finished_sb.empty:
-        # คำนวณวันปัจจุบัน (เวลาไทย UTC+7)
-        now_th_sb = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
-        today_date_sb = now_th_sb.date()
-        
-        # กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
-        day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == today_date_sb]
-        
-        st.sidebar.subheader("📅 สรุปผลแข่งวันนี้")
-        
-        if day_matches_sb.empty:
-            st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
-        
-        # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
-        predictions_sb = db.get_predictions_df()
-        
-        for _, row_m in day_matches_sb.iterrows():
-            m_id = str(row_m['id'])
-            h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
-            a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
-            real_win = (h_real > a_real) - (h_real < a_real)
+        if not finished_sb.empty:
+            # คำนวณวันปัจจุบัน (เวลาไทย UTC+7)
+            now_th_sb = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+            today_date_sb = now_th_sb.date()
             
-            home_flag = FLAG_MAP.get(row_m['home_team'].strip().lower(), '🏳️')
-            away_flag = FLAG_MAP.get(row_m['away_team'].strip().lower(), '🏳️')
+            # กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
+            day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == today_date_sb]
             
-            exp_title = f"{row_m['home_team']} {home_flag} {h_real} - {a_real} {row_m['away_team']} {away_flag}"
+            st.sidebar.subheader("📅 สรุปผลแข่งวันนี้")
             
-            with st.sidebar.expander(exp_title):
-                st.markdown(f"**⚽ ผู้ทำประตู:** {row_m['scorers'] if row_m['scorers'] else 'ไม่มีข้อมูล'}")
-                st.markdown("**🎯 ผลทายของทุกคนในคู่นี้:**")
+            if day_matches_sb.empty:
+                st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
+            
+            # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
+            predictions_sb = db.get_predictions_df()
+            
+            for _, row_m in day_matches_sb.iterrows():
+                m_id = str(row_m['id'])
+                h_real = safe_int(row_m['home_score'])
+                a_real = safe_int(row_m['away_score'])
+                real_win = (h_real > a_real) - (h_real < a_real)
                 
-                # กรองคำทายของคู่นี้
-                m_preds = predictions_sb[predictions_sb['match_id'].astype(str) == m_id]
-                if m_preds.empty:
-                    st.markdown("<small style='color:#888;'>ยังไม่มีผู้เล่นทายคู่นี้</small>", unsafe_allow_html=True)
-                else:
-                    for _, row_p in m_preds.iterrows():
-                        u_name = row_p['username']
-                        p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
-                        p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
-                        pred_win = (p_h > p_a) - (p_h < p_a)
-                        
-                        # คำนวณแต้มทายผล
-                        if p_h == h_real and p_a == a_real:
-                            hl_class = "pred-highlight-exact"
-                            pt_txt = "🏆 3 แต้ม"
-                        elif pred_win == real_win:
-                            hl_class = "pred-highlight-winner"
-                            pt_txt = "🟢 1 แต้ม"
-                        else:
-                            hl_class = "pred-highlight-wrong"
-                            pt_txt = "❌ 0 แต้ม"
-                        
-                        st.markdown(
-                            f"""
-                            <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
-                                👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
-                            </div>
-                            """, 
-                            unsafe_allow_html=True
-                        )
-    else:
-        st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
+                home_flag = FLAG_MAP.get(row_m['home_team'].strip().lower(), '🏳️')
+                away_flag = FLAG_MAP.get(row_m['away_team'].strip().lower(), '🏳️')
+                
+                exp_title = f"{row_m['home_team']} {home_flag} {h_real} - {a_real} {row_m['away_team']} {away_flag}"
+                
+                with st.sidebar.expander(exp_title):
+                    st.markdown(f"**⚽ ผู้ทำประตู:** {row_m['scorers'] if row_m['scorers'] else 'ไม่มีข้อมูล'}")
+                    st.markdown("**🎯 ผลทายของทุกคน in คู่นี้:**")
+                    
+                    # กรองคำทายของคู่นี้
+                    m_preds = predictions_sb[predictions_sb['match_id'].astype(str) == m_id]
+                    if m_preds.empty:
+                        st.markdown("<small style='color:#888;'>ยังไม่มีผู้เล่นทายคู่นี้</small>", unsafe_allow_html=True)
+                    else:
+                        for _, row_p in m_preds.iterrows():
+                            u_name = row_p['username']
+                            p_h = safe_int(row_p['pred_home'])
+                            p_a = safe_int(row_p['pred_away'])
+                            pred_win = (p_h > p_a) - (p_h < p_a)
+                            
+                            # คำนวณแต้มทายผล
+                            if p_h == h_real and p_a == a_real:
+                                hl_class = "pred-highlight-exact"
+                                pt_txt = "🏆 3 แต้ม"
+                            elif pred_win == real_win:
+                                hl_class = "pred-highlight-winner"
+                                pt_txt = "🟢 1 แต้ม"
+                            else:
+                                hl_class = "pred-highlight-wrong"
+                                pt_txt = "❌ 0 แต้ม"
+                            
+                            st.markdown(
+                                f"""
+                                <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
+                                    👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
+                                </div>
+                                """, 
+                                unsafe_allow_html=True
+                            )
+        else:
+            st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
+    except Exception as sb_err:
+        st.sidebar.error(f"⚠️ เกิดข้อผิดพลาดในการสรุปผลวันนี้: {sb_err}")
 
     st.sidebar.markdown("---")
 
@@ -1189,7 +1227,10 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         home_display = get_team_display(home)
         away_display = get_team_display(away)
 
-        m_time = datetime.strptime(row['match_time'], '%Y-%m-%d %H:%M:%S')
+        # แปลงเวลาเตะอย่างยืดหยุ่นและปลอดภัยจากประเภทข้อมูล Timestamp/String
+        m_time = row['match_dt'] if 'match_dt' in row and pd.notnull(row['match_dt']) else pd.to_datetime(row['match_time'])
+        if not isinstance(m_time, datetime):
+            m_time = m_time.to_pydatetime()
         status = row['status']
         now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
         is_locked = now_th > m_time or status == 'Finished'
@@ -1199,11 +1240,11 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         
         # กำหนดคะแนนที่จะแสดงในช่องกรอก (ถ้าเกมจบแล้ว ให้แสดงสกอร์จริงในช่องที่ปิดการแก้ไข)
         if status == 'Finished':
-            val_h = int(row['home_score']) if row['home_score'] != "" else 0
-            val_a = int(row['away_score']) if row['away_score'] != "" else 0
+            val_h = safe_int(row['home_score'])
+            val_a = safe_int(row['away_score'])
         else:
-            val_h = int(default_h)
-            val_a = int(default_a)
+            val_h = safe_int(default_h)
+            val_a = safe_int(default_a)
 
         # ใช้ Hybrid Form-Container: 
         # หากไม่โดนล็อก (สามารถทายผลได้) ให้ครอบด้วย st.form เพื่อป้องกันหน้าจอ Rerun ทันทีขณะเปลี่ยนค่าตัวเลข
@@ -1278,14 +1319,14 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                     if status == 'Finished':
                         st.warning("🏁 สิ้นสุดการแข่งขัน")
-                        h_score_val = int(row['home_score']) if row['home_score'] != "" else 0
-                        a_score_val = int(row['away_score']) if row['away_score'] != "" else 0
+                        h_score_val = safe_int(row['home_score'])
+                        a_score_val = safe_int(row['away_score'])
                         winner_name = home if h_score_val > a_score_val else (away if a_score_val > h_score_val else "เสมอ")
                         winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
                         st.info(f"🏆 **ชนะ:** {winner_display} ({h_score_val}-{a_score_val})")
                         if row['scorers']: st.caption(f"⚽ **คนยิง:** {row['scorers']}")
                         if has_pred:
-                            st.info(f"🎯 **คุณทายผลไว้:** {int(default_h)} - {int(default_a)}")
+                            st.info(f"🎯 **คุณทายผลไว้:** {safe_int(default_h)} - {safe_int(default_a)}")
                         else:
                             st.info("🎯 **คุณไม่ได้ทายคู่นี้ไว้**")
                     else:
@@ -1316,7 +1357,15 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
             elif d == day_after:
                 label_suffix = " (วันมะรืนนี้)"
                 
-            st.markdown(f"### <span class='bouncing-icon'>⚽</span> ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}{label_suffix}", unsafe_allow_html=True)
+            fifa_label = ""
+            if d.strftime('%d/%m/%Y') == "24/06/2026":
+                fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 23 มิ.ย.)"
+            elif d.strftime('%d/%m/%Y') == "25/06/2026":
+                fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 24 มิ.ย.)"
+            elif d.strftime('%d/%m/%Y') == "26/06/2026":
+                fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 25 มิ.ย.)"
+                
+            st.markdown(f"### <span class='bouncing-icon'>⚽</span> ตารางแข่งขันวันที่ {d.strftime('%d/%m/%Y')}{label_suffix}{fifa_label}", unsafe_allow_html=True)
             day_matches = upcoming[upcoming['match_dt'].dt.date == d]
             for _, row in day_matches.iterrows():
                 render_match(row, username)
@@ -1348,8 +1397,8 @@ elif menu == "📜 ผลการแข่งขันย้อนหลัง"
                 away = row['away_team']
                 home_display = get_team_display(home)
                 away_display = get_team_display(away)
-                h_score = int(row['home_score']) if row['home_score'] != "" else 0
-                a_score = int(row['away_score']) if row['away_score'] != "" else 0
+                h_score = safe_int(row['home_score'])
+                a_score = safe_int(row['away_score'])
                 
                 expander_label = f"⚽ {home_display}  {h_score} - {a_score}  {away_display}"
                 
@@ -1443,8 +1492,8 @@ elif menu == "📑 ประวัติการทายผล":
                     m_id = str(row_m['id'])
                     home_team = row_m['home_team']
                     away_team = row_m['away_team']
-                    h_real = int(row_m['home_score']) if row_m['home_score'] != "" else 0
-                    a_real = int(row_m['away_score']) if row_m['away_score'] != "" else 0
+                    h_real = safe_int(row_m['home_score'])
+                    a_real = safe_int(row_m['away_score'])
                     real_win = (h_real > a_real) - (h_real < a_real)
                     
                     home_disp = get_team_display(home_team)
@@ -1466,8 +1515,8 @@ elif menu == "📑 ประวัติการทายผล":
                         else:
                             for _, row_p in m_preds.iterrows():
                                 u_name = row_p['username']
-                                p_h = int(row_p['pred_home']) if row_p['pred_home'] != "" else 0
-                                p_a = int(row_p['pred_away']) if row_p['pred_away'] != "" else 0
+                                p_h = safe_int(row_p['pred_home'])
+                                p_a = safe_int(row_p['pred_away'])
                                 pred_win = (p_h > p_a) - (p_h < p_a)
                                 
                                 # ตรวจแต้มทายผล
@@ -1530,7 +1579,15 @@ elif menu == "📑 ประวัติการทายผล":
                 elif d == day_after_d:
                     label_suffix = " (วันมะรืนนี้)"
                 
-                st.subheader(f"🗓️ ตารางแข่งขันวันที่ {date_str}{label_suffix}")
+                fifa_label = ""
+                if date_str == "24/06/2026":
+                    fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 23 มิ.ย.)"
+                elif date_str == "25/06/2026":
+                    fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 24 มิ.ย.)"
+                elif date_str == "26/06/2026":
+                    fifa_label = " 🇺🇸 (ตรงกับโปรแกรมฟีฟ่าวันที่ 25 มิ.ย.)"
+                
+                st.subheader(f"🗓️ ตารางแข่งขันวันที่ {date_str}{label_suffix}{fifa_label}")
                 day_matches = upcoming_matches[upcoming_matches['match_dt'].dt.date == d]
                 
                 for _, row_m in day_matches.iterrows():
@@ -1542,7 +1599,10 @@ elif menu == "📑 ประวัติการทายผล":
                     home_disp = get_team_display(home_team)
                     away_disp = get_team_display(away_team)
                     
-                    m_time = datetime.strptime(row_m['match_time'], '%Y-%m-%d %H:%M:%S')
+                    # แปลงเวลาเตะอย่างยืดหยุ่นและปลอดภัยจากประเภทข้อมูล Timestamp/String
+                    m_time = row_m['match_dt'] if 'match_dt' in row_m and pd.notnull(row_m['match_dt']) else pd.to_datetime(row_m['match_time'])
+                    if not isinstance(m_time, datetime):
+                        m_time = m_time.to_pydatetime()
                     is_locked = now_th > m_time or row_m['status'] == 'Finished'
                     
                     if has_pred:
