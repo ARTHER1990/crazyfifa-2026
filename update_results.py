@@ -11,11 +11,11 @@ df = pd.DataFrame(data[1:], columns=data[0])
 
 # แมตช์ที่จะอัปเดต
 updates = {
-    '23': {
-        'home_score': '1',
-        'away_score': '0',
+    '29': {
+        'home_score': '2',
+        'away_score': '1',
         'status': 'Finished',
-        'scorers': 'Caleb Yirenkyi (90+5)'
+        'scorers': 'Deniz Undav (68, 90+4) | Franck Kessié (30)'
     }
 }
 
