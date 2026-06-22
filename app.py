@@ -1061,15 +1061,14 @@ if st.session_state.authenticated:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
     
-    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization) โดยผูกกับ Session State และกุญแจถาวร
+    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization: ความไม่สอดคล้องกันของสถานะตัวแปรและการเรนเดอร์)
+    # โดยผูกกับ Session State (เซสชัน สเตต: หน่วยความจำชั่วคราวสำหรับเก็บบันทึกค่าสถานะต่างๆ ของผู้ใช้) ผ่าน key ตรงตัว
     music_on = st.sidebar.toggle(
         "เปิดเสียงเชียร์", 
-        value=st.session_state.music_enabled, 
-        key="music_toggle_key"
+        key="music_enabled"
     )
-    st.session_state.music_enabled = music_on
     
-    # จองพื้นที่ (Placeholder) เพื่อบังคับให้ระบบประมวลผลเขียนทับและลบตัวเล่นเพลงอย่างทันทีทันใด
+    # จองพื้นที่ (Placeholder: กล่องจองพื้นที่บนหน้าเว็บ) เพื่อบังคับให้ระบบประมวลผลเขียนทับและลบตัวเล่นเพลงอย่างทันทีทันใด
     music_placeholder = st.sidebar.empty()
     
     if music_on:
