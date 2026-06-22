@@ -1069,12 +1069,18 @@ if st.session_state.authenticated:
     )
     st.session_state.music_enabled = music_on
     
+    # จองพื้นที่ (Placeholder) เพื่อบังคับให้ระบบประมวลผลเขียนทับและลบตัวเล่นเพลงอย่างทันทีทันใด
+    music_placeholder = st.sidebar.empty()
+    
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
-        # ใช้คอนเทนเนอร์เฉพาะเพื่อให้ Streamlit ทำลาย iframe เพลงทิ้งทันทีเมื่อกดปิด
-        with st.sidebar.container():
+        with music_placeholder.container():
             st.components.v1.html(get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
+    else:
+        # หากกดปิด: บังคับเขียนทับในพื้นที่เดิมด้วยไอเฟรมเปล่า เพื่อบังคับเบราว์เซอร์ให้ทำลายออบเจกต์เสียงทันที!
+        with music_placeholder.container():
+            st.components.v1.html("<!-- music muted -->", height=0)
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
