@@ -686,8 +686,8 @@ if st.session_state.get('show_congrats_popup', False):
         if 'congrats_start_time' not in st.session_state:
             st.session_state.congrats_start_time = time.time()
             
-        # หากเวลาผ่านไปมากกว่า 10.5 วินาที ให้ปิดป๊อปอัปนี้อัตโนมัติทางหลังบ้านในการรีรันรอบถัดไป
-        if time.time() - st.session_state.congrats_start_time > 10.5:
+        # หากเวลาผ่านไปมากกว่า 5.5 วินาที ให้ปิดป๊อปอัปนี้อัตโนมัติทางหลังบ้านในการรีรันรอบถัดไป
+        if time.time() - st.session_state.congrats_start_time > 5.5:
             st.session_state.show_congrats_popup = False
             st.rerun()
             
@@ -758,10 +758,10 @@ function dismissCongratsPopup() {{
     }}
 }}
 
-// ปิดอัตโนมัติเมื่อครบ 10 วินาที
+// ปิดอัตโนมัติเมื่อครบ 5 วินาที
 setTimeout(function() {{
     dismissCongratsPopup();
-}}, 10000);
+}}, 5000);
 </script>""",
                         unsafe_allow_html=True
                     )
