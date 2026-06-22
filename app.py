@@ -812,8 +812,8 @@ setTimeout(function() {{
     /* กุญแจสำคัญ: ปรับเป็น none เพื่อยอมให้เลื่อนหน้าจอ/รูดจอหลักด้านหลังบนมือถือได้ทันที ไม่ค้างแข็ง! */
     pointer-events: none !important;
     
-    /* แอนิเมชันเฟดหายไปเองใน 10 วินาที */
-    animation: fade-out-disappear 10s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
+    /* แอนิเมชันเฟดหายไปเองใน 5 วินาที */
+    animation: fade-out-disappear 5s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 /* ตัวการ์ดป๊อปอัปเฉลิมฉลองแชมป์ */
@@ -833,7 +833,7 @@ setTimeout(function() {{
     
     /* สเกลเด้ง และเฟดหายพร้อมฉากหลัง */
     animation: popup-scale 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
-               popup-fade-out 10s forwards ease-in-out !important;
+               popup-fade-out 5s forwards ease-in-out !important;
 }
 
 /* ปุ่มกากบาทปิดสำรองที่มุมขวาบนของการ์ดเพื่อใช้งานง่ายบนโทรศัพท์ */
@@ -874,7 +874,7 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
     pointer-events: auto !important;
     
     /* เลือนหายไปพร้อมกล่อง */
-    animation: button-fade-out 10s forwards ease-in-out !important;
+    animation: button-fade-out 5s forwards ease-in-out !important;
 }
 
 /* สไตล์ปุ่มกดปิดสีทองพรีเมียมตระการตา */
@@ -906,21 +906,21 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
 /* แอนิเมชันเลือนหาย (Fade Out) และปลอดการบังคลิก */
 @keyframes fade-out-disappear {
     0% { opacity: 1; pointer-events: none; }
-    80% { opacity: 1; pointer-events: none; }
+    70% { opacity: 1; pointer-events: none; }
     95% { opacity: 0; pointer-events: none; }
     100% { opacity: 0; pointer-events: none; display: none !important; }
 }
 
 @keyframes popup-fade-out {
     0% { opacity: 1; }
-    80% { opacity: 1; transform: scale(1); }
+    70% { opacity: 1; transform: scale(1); }
     95% { opacity: 0; transform: scale(0.9); }
     100% { opacity: 0; display: none !important; }
 }
 
 @keyframes button-fade-out {
     0% { opacity: 1; pointer-events: auto; }
-    80% { opacity: 1; pointer-events: auto; }
+    70% { opacity: 1; pointer-events: auto; }
     95% { opacity: 0; pointer-events: none; }
     100% { opacity: 0; pointer-events: none; display: none !important; }
 }
