@@ -1231,7 +1231,9 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
     # 🎙️ เพิ่มบอร์ดวิเคราะห์วิจารณ์บอลโลกประจำวันโดย "ปีเตอร์ AI" (Glassmorphism AI Analyst Board)
     try:
         # อิมพอร์ต ai_analyst ท้องถิ่นเพื่อรันงาน
+        import importlib
         import ai_analyst
+        importlib.reload(ai_analyst)
         
         # ดึงสถานะชื่อผู้ใช้
         current_username = username
