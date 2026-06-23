@@ -1326,8 +1326,36 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                         personalized_report = personalized_report.replace(old_greet, f"คุณ {current_username} และเหล่านักล่าแต้มทุกคน")
                         break
             
-            # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ bullet points ให้สวยงาม
-            st.markdown(personalized_report)
+            # ตกแต่งเสริมสีสันและไฮไลท์แบบไฮเอนด์ด้วยการตรวจจับประเด็น (Fallback High-end Highlights) สำหรับแคชเดิมที่ยังไม่มีโค้ดสี HTML ติดมาจากระบบหลังบ้าน
+            personalized_report = personalized_report.replace(
+                "Daily MVP (เดลี เอ็มวีพี: ผู้เล่นทำผลงานโดดเด่นประจำวัน)",
+                "🏆 <span style='color: #00FF87; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,135,0.15);'>วิเคราะห์ Daily MVP ประจำวัน</span>"
+            ).replace(
+                "Leaderboard (ลีดเดอร์บอร์ด: ตารางคะแนนผู้นำ)",
+                "📊 <span style='color: #00E5FF; font-weight: bold; text-shadow: 0 0 10px rgba(0,229,255,0.15);'>ความเคลื่อนไหวบน Leaderboard</span>"
+            ).replace(
+                "Perfect Prediction (เพอร์เฟกต์ พรีดิกชัน: การทายผลสกอร์ได้อย่างถูกต้องแม่นยำร้อยเปอร์เซ็นต์)",
+                "<span style='color: #FFD700; font-weight: bold;'>Perfect Prediction (เพอร์เฟกต์ พรีดิกชัน: การทายผลสกอร์ได้อย่างถูกต้องแม่นยำร้อยเปอร์เซ็นต์)</span>"
+            )
+
+            # แทรกขีดคั่นสวยงามแบบอัตโนมัติหากพบหัวข้อย่อยแบบเดิมเพื่อแบ่งสัดส่วนบอร์ดไม่ให้อ่านยาก
+            for old_section in ["ตำแหน่ง Daily MVP", "สถานการณ์บน Leaderboard", "คืนนี้เตรียมตัวรับแรงกระแทก", "แมตช์ต่อไปที่กำลังจะมาถึง"]:
+                if old_section in personalized_report:
+                    personalized_report = personalized_report.replace(
+                        old_section,
+                        f"<hr style='border: 0; border-top: 1px solid rgba(255, 215, 0, 0.08); margin: 12px 0;'>{old_section}"
+                    )
+
+            # ตกแต่งรายชื่อคู่แข่งขันเปลี่ยนชีวิตของคืนนี้ให้เรืองแสงส้มสะดุดตาโดดเด่น
+            for tonight_match in ["Portugal พบ Uzbekistan", "England ดวลเดือด Ghana"]:
+                if tonight_match in personalized_report:
+                    personalized_report = personalized_report.replace(
+                        tonight_match,
+                        f"<span style='background: rgba(255, 94, 54, 0.12); color: #FF5E36; border: 1px solid rgba(255, 94, 54, 0.25); padding: 2px 8px; border-radius: 6px; font-weight: bold;'>🔥 {tonight_match}</span>"
+                    )
+
+            # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ HTML ให้สวยงาม
+            st.markdown(personalized_report, unsafe_allow_html=True)
             
             # ปิดกล่อง HTML
             st.markdown("</div>", unsafe_allow_html=True)
