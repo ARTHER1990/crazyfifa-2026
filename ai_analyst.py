@@ -12,22 +12,29 @@ def load_gemini_api_key():
     if api_key:
         return api_key
     
-    # หากไม่มี ให้สแกนหาไฟล์ .env จากตู้หลักและโฟลเดอร์โครงการ
+    # หากไม่มี ให้สแกนหาไฟล์ .env จากตู้หลักและโฟลเดอร์โครงการครอบคลุมถึงจุดสัมบูรณ์จริง
     current_dir = os.path.dirname(os.path.abspath(__file__))
     paths_to_try = [
         os.path.join(current_dir, ".env"),
-        os.path.join(os.path.dirname(current_dir), ".env")
+        os.path.join(os.path.dirname(current_dir), ".env"),
+        os.path.join(os.getcwd(), ".env"),
+        os.path.join(os.path.dirname(os.getcwd()), ".env"),
+        "/Users/art/Desktop/ART_JOB/.env"  # เส้นทางสัมบูรณ์ตรงเป้าบนเครื่องแมคของคุณอาร์ต
     ]
     for p in paths_to_try:
         if os.path.exists(p):
-            with open(p, "r", encoding="utf-8") as f:
-                for line in f:
-                    if line.strip().startswith("GEMINI_API_KEY="):
-                        val = line.strip().split("=", 1)[1].strip()
-                        # ลบอัญประกาศครอบ (ถ้ามี)
-                        if val.startswith(('"', "'")) and val.endswith(('"', "'")):
-                            val = val[1:-1]
-                        return val
+            try:
+                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    for line in f:
+                        clean_line = line.strip().replace("\r", "").replace("\n", "")
+                        if clean_line.startswith("GEMINI_API_KEY="):
+                            val = clean_line.split("=", 1)[1].strip()
+                            # ลบอัญประกาศครอบ (ถ้ามี)
+                            if val.startswith(('"', "'")) and val.endswith(('"', "'")):
+                                val = val[1:-1]
+                            return val
+            except Exception as e:
+                print(f"Error reading path {p}: {e}")
     return None
 
 # คำนวณรหัสแฮช (Hash Value) เพื่อตรวจสอบว่าข้อมูลหลักเปลี่ยนแปลงหรือไม่
