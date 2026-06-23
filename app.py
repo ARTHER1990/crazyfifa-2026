@@ -1228,6 +1228,101 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
     except Exception as e:
         pass
 
+    # 🎙️ เพิ่มบอร์ดวิเคราะห์วิจารณ์บอลโลกประจำวันโดย "ปีเตอร์ AI" (Glassmorphism AI Analyst Board)
+    try:
+        # อิมพอร์ต ai_analyst ท้องถิ่นเพื่อรันงาน
+        import ai_analyst
+        
+        # ดึงสถานะชื่อผู้ใช้
+        current_username = username
+        is_admin = (current_username == "Art")
+        
+        # จัดตั้งตัวแปรส่งสัญญาณ Force Refresh
+        force_ai = False
+        if is_admin:
+            # วางปุ่มสไตล์กะทัดรัดใต้บอร์ด
+            if st.button("🔄 ปลุกพลังปีเตอร์ AI วิเคราะห์ข้อมูลใหม่ (Admin Only)", key="btn_force_ai"):
+                force_ai = True
+                
+        # ดึงบทสรุปและจัดการแคชอัตโนมัติ
+        predictions_df_for_ai = db.get_predictions_df()
+        current_matches_for_ai = db.get_matches()
+        
+        ai_report, model_used, is_cached = ai_analyst.get_ai_summary(
+            leaderboard_df if 'leaderboard_df' in locals() else db.get_leaderboard(), 
+            current_matches_for_ai, 
+            predictions_df_for_ai, 
+            force_refresh=force_ai
+        )
+        
+        if ai_report:
+            # ใช้ Glassmorphism CSS สไตล์พรีเมี่ยม
+            st.markdown(
+                f"""
+                <style>
+                .peter-ai-box {{
+                    background: linear-gradient(135deg, rgba(45, 58, 49, 0.4) 0%, rgba(26, 36, 30, 0.5) 100%);
+                    border: 1px solid rgba(255, 215, 0, 0.25);
+                    padding: 22px 26px;
+                    border-radius: 16px;
+                    margin-bottom: 25px;
+                    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    font-family: 'Kanit', sans-serif;
+                    position: relative;
+                    overflow: hidden;
+                }}
+                .peter-ai-header {{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 12px;
+                    border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+                    padding-bottom: 10px;
+                }}
+                .peter-ai-title {{
+                    color: #FFD700;
+                    font-weight: 600;
+                    font-size: 1.15rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }}
+                .peter-ai-badge {{
+                    background: rgba(255, 215, 0, 0.12);
+                    color: #FFD700;
+                    font-size: 0.72rem;
+                    padding: 3px 10px;
+                    border-radius: 20px;
+                    font-family: monospace;
+                    border: 1px solid rgba(255, 215, 0, 0.2);
+                }}
+                .peter-ai-content {{
+                    color: #e2e8f0;
+                    font-size: 0.95rem;
+                    line-height: 1.6;
+                }}
+                </style>
+                <div class="peter-ai-box">
+                    <div class="peter-ai-header">
+                        <div class="peter-ai-title">🎙️ ปีเตอร์ AI สรุปวิเคราะห์และวิจารณ์ประจำวัน</div>
+                        <div class="peter-ai-badge">{model_used} {"(จากคลังแคช)" if is_cached else "(คำนวณใหม่)"}</div>
+                    </div>
+                """,
+                unsafe_allow_html=True
+            )
+            # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ bullet points ให้สวยงาม
+            st.markdown(ai_report)
+            
+            # ปิดกล่อง HTML
+            st.markdown("</div>", unsafe_allow_html=True)
+            if force_ai:
+                st.success("🔄 ปลดล็อกพลังปีเตอร์และเขียนสรุปบทวิเคราะห์ใหม่สำเร็จเรียบร้อยครับ!")
+    except Exception as e_ai:
+        # ใช้ Try-Except ครอบโครงสร้าง AI ทั้งหมดเพื่อความปลอดภัย 100% ต่อระบบ
+        pass
+
     all_matches = db.get_matches()
     all_matches['match_dt'] = pd.to_datetime(all_matches['match_time'])
 
