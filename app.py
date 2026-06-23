@@ -1314,8 +1314,20 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                 """,
                 unsafe_allow_html=True
             )
+            # ปรับแต่งคำทักทายแบบ Dynamic ตามชื่อผู้ใช้ที่ล็อกอินจริงใน Session (เซสชัน: ช่วงเวลาการใช้งานของผู้ใช้)
+            personalized_report = ai_report
+            if "{USERNAME}" in personalized_report:
+                personalized_report = personalized_report.replace("{USERNAME}", current_username)
+            else:
+                # รองรับการแทนที่คำทักทายแบบเก่า (Static) เผื่อในไฟล์แคชเก่ายังไม่มีตัวแปร {USERNAME} เพื่อให้ทำงานได้ทันทีโดยไม่ต้องรอแอดมินล้างแคช
+                for old_greet in ["คุณอาร์ตและผองเพื่อน", "คุณอาร์ตและเหล่านักล่าแต้มทุกคน", "คุณอาร์ตและเหล่านักล่าแต้ม", "คุณอาร์ตและแก๊งผู้ร่วมทายผล", "คุณอาร์ต"]:
+                    if old_greet in personalized_report:
+                        # แทนที่คำทักทายด้วยชื่อของผู้ใช้ที่ล็อกอินจริง
+                        personalized_report = personalized_report.replace(old_greet, f"คุณ {current_username} และเหล่านักล่าแต้มทุกคน")
+                        break
+            
             # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ bullet points ให้สวยงาม
-            st.markdown(ai_report)
+            st.markdown(personalized_report)
             
             # ปิดกล่อง HTML
             st.markdown("</div>", unsafe_allow_html=True)
