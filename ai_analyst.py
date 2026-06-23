@@ -14,7 +14,15 @@ def load_gemini_api_key():
     try:
         import streamlit as st
         api_key = st.secrets.get("GEMINI_API_KEY")
-        debug_log.append(f"Streamlit Secrets: {'Found' if api_key else 'Not Found'}")
+        debug_log.append(f"Streamlit Secrets (Root): {'Found' if api_key else 'Not Found'}")
+        
+        # เผื่อกรณีคุณอาร์ตวางคีย์เยื้องเข้าไปใต้กลุ่ม [gcp_service_account] ใน Dashboard Secrets
+        if not api_key and "gcp_service_account" in st.secrets:
+            gcp_sec = st.secrets["gcp_service_account"]
+            if isinstance(gcp_sec, dict) or hasattr(gcp_sec, "get"):
+                api_key = gcp_sec.get("GEMINI_API_KEY")
+                debug_log.append(f"Streamlit Secrets (Nested in gcp_service_account): {'Found' if api_key else 'Not Found'}")
+                
         if api_key:
             write_debug_key_log(debug_log)
             return api_key
