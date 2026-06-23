@@ -1242,7 +1242,8 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         # จัดตั้งตัวแปรส่งสัญญาณ Force Refresh
         force_ai = False
         if is_admin:
-            # วางปุ่มสไตล์กะทัดรัดใต้บอร์ด
+            # วาง Marker นำทางและแต่งปุ่มแอดมินให้คลิกได้ลื่นไหล 100%
+            st.markdown("<span class='force-ai-marker'></span>", unsafe_allow_html=True)
             if st.button("🔄 ปลุกพลังปีเตอร์ AI วิเคราะห์ข้อมูลใหม่ (Admin Only)", key="btn_force_ai"):
                 force_ai = True
                 
@@ -1258,10 +1259,27 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         )
         
         if ai_report:
+            # กำหนดป้ายแสดงสถานะ (Badge Text) สำหรับแอดมินและผู้ใช้งานทั่วไปเพื่อความสวยงามเป็นส่วนตัว
+            if is_admin:
+                badge_text = f"🤖 {model_used} {'(จากแคช)' if is_cached else '(คำนวณใหม่)'}"
+            else:
+                badge_text = "🟢 ปีเตอร์ AI วิเคราะห์ล่าสุด"
+
             # ใช้ Glassmorphism CSS สไตล์พรีเมี่ยม
             st.markdown(
                 f"""
                 <style>
+                /* ดันปุ่มสั่งรัน AI ของแอดมินให้ลอยขึ้นชั้นบนสุดเพื่อแก้ปัญหากล่องล่างบังปุ่มคลิกยาก */
+                div[data-testid="element-container"]:has(.force-ai-marker) + div[data-testid="element-container"] {{
+                    position: relative !important;
+                    z-index: 9999 !important;
+                    margin-bottom: 12px !important;
+                }}
+                div[data-testid="element-container"]:has(.force-ai-marker) + div[data-testid="element-container"] button {{
+                    pointer-events: auto !important;
+                    cursor: pointer !important;
+                    z-index: 10000 !important;
+                }}
                 .peter-ai-box {{
                     background: linear-gradient(135deg, rgba(45, 58, 49, 0.4) 0%, rgba(26, 36, 30, 0.5) 100%);
                     border: 1px solid rgba(255, 215, 0, 0.25);
@@ -1297,7 +1315,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                     font-size: 0.72rem;
                     padding: 3px 10px;
                     border-radius: 20px;
-                    font-family: monospace;
+                    font-family: 'Kanit', sans-serif, monospace;
                     border: 1px solid rgba(255, 215, 0, 0.2);
                 }}
                 .peter-ai-content {{
@@ -1309,7 +1327,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                 <div class="peter-ai-box">
                     <div class="peter-ai-header">
                         <div class="peter-ai-title">🎙️ ปีเตอร์ AI สรุปวิเคราะห์และวิจารณ์ประจำวัน</div>
-                        <div class="peter-ai-badge">{model_used} {"(จากคลังแคช)" if is_cached else "(คำนวณใหม่)"}</div>
+                        <div class="peter-ai-badge">{badge_text}</div>
                     </div>
                 """,
                 unsafe_allow_html=True
