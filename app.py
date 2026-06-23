@@ -1344,9 +1344,21 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                         personalized_report = personalized_report.replace(old_greet, f"คุณ {current_username} และเหล่านักล่าแต้มทุกคน")
                         break
             
+            # ดำเนินการลบเครื่องหมายแบ็กทิกที่ครอบรอบคำสำคัญที่อาจหลงเหลือมาจากประวัติแคชเดิม
+            for term in [
+                "Leaderboard (ลีดเดอร์บอร์ด: ตารางคะแนนผู้นำ)", 
+                "Daily MVP (เดลี เอ็มวีพี: ผู้ทำคะแนนหรือผลงานได้โดดเด่นสะดุดตาประจำวัน)",
+                "Daily MVP (เดลี เอ็มวีพี: ผู้เล่นทำผลงานโดดเด่นประจำวัน)",
+                "Perfect Prediction (เพอร์เฟกต์ พรีดิกชัน: การทายผลสกอร์ได้อย่างถูกต้องแม่นยำร้อยเปอร์เซ็นต์)"
+            ]:
+                personalized_report = personalized_report.replace(f"`{term}`", term)
+            
             # ตกแต่งเสริมสีสันและไฮไลท์แบบไฮเอนด์ด้วยการตรวจจับประเด็น (Fallback High-end Highlights) สำหรับแคชเดิมที่ยังไม่มีโค้ดสี HTML ติดมาจากระบบหลังบ้าน
             personalized_report = personalized_report.replace(
                 "Daily MVP (เดลี เอ็มวีพี: ผู้เล่นทำผลงานโดดเด่นประจำวัน)",
+                "🏆 <span style='color: #00FF87; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,135,0.15);'>วิเคราะห์ Daily MVP ประจำวัน</span>"
+            ).replace(
+                "Daily MVP (เดลี เอ็มวีพี: ผู้ทำคะแนนหรือผลงานได้โดดเด่นสะดุดตาประจำวัน)",
                 "🏆 <span style='color: #00FF87; font-weight: bold; text-shadow: 0 0 10px rgba(0,255,135,0.15);'>วิเคราะห์ Daily MVP ประจำวัน</span>"
             ).replace(
                 "Leaderboard (ลีดเดอร์บอร์ด: ตารางคะแนนผู้นำ)",
@@ -1371,6 +1383,11 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
                         tonight_match,
                         f"<span style='background: rgba(255, 94, 54, 0.12); color: #FF5E36; border: 1px solid rgba(255, 94, 54, 0.25); padding: 2px 8px; border-radius: 6px; font-weight: bold;'>🔥 {tonight_match}</span>"
                     )
+
+            # ดำเนินการคลีนแบ็กทิก (Backticks Strip) ที่อาจครอบรอบแท็ก HTML ทั้งหมดออกไปเพื่อป้องกัน Markdown เอสเคปคีย์
+            # เช่น `📊 <span ...>...</span>` -> 📊 <span ...>...</span>
+            import re
+            personalized_report = re.sub(r'`([^`]*<[^`]+>[^`]*)`', r'\1', personalized_report)
 
             # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ HTML ให้สวยงาม
             st.markdown(personalized_report, unsafe_allow_html=True)
