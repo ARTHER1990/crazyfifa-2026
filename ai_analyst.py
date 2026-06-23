@@ -7,18 +7,25 @@ from datetime import datetime
 
 # ค้นหาไฟล์ .env และดึงคีย์ API ของ Gemini
 def load_gemini_api_key():
+    debug_log = []
+    debug_log.append("--- Load Gemini API Key Debug ---")
+    
     # 1. พยายามดึงคีย์จาก Streamlit Secrets (สำหรับกรณีรันบน Streamlit Cloud จริง)
     try:
         import streamlit as st
         api_key = st.secrets.get("GEMINI_API_KEY")
+        debug_log.append(f"Streamlit Secrets: {'Found' if api_key else 'Not Found'}")
         if api_key:
+            write_debug_key_log(debug_log)
             return api_key
-    except Exception:
-        pass
+    except Exception as e:
+        debug_log.append(f"Streamlit Secrets Error: {e}")
 
     # 2. ดึงคีย์จากตัวแปรสภาพแวดล้อม (Environment Variables) เผื่อมีการเซ็ตไว้
     api_key = os.environ.get("GEMINI_API_KEY")
+    debug_log.append(f"OS Environ: {'Found' if api_key else 'Not Found'}")
     if api_key:
+        write_debug_key_log(debug_log)
         return api_key
     
     # 3. หากไม่มี ให้สแกนหาไฟล์ .env จากตู้หลักและโฟลเดอร์โครงการครอบคลุมถึงจุดสัมบูรณ์จริง
@@ -30,21 +37,41 @@ def load_gemini_api_key():
         os.path.join(os.path.dirname(os.getcwd()), ".env"),
         "/Users/art/Desktop/ART_JOB/.env"  # เส้นทางสัมบูรณ์ตรงเป้าบนเครื่องแมคของคุณอาร์ต
     ]
+    debug_log.append(f"current_dir: {current_dir}")
+    debug_log.append(f"getcwd: {os.getcwd()}")
+    
     for p in paths_to_try:
-        if os.path.exists(p):
+        exists = os.path.exists(p)
+        debug_log.append(f"Path: {p} (Exists: {exists})")
+        if exists:
             try:
                 with open(p, "r", encoding="utf-8", errors="ignore") as f:
-                    for line in f:
+                    for line_idx, line in enumerate(f, 1):
                         clean_line = line.strip().replace("\r", "").replace("\n", "")
+                        debug_log.append(f"  Line {line_idx}: {repr(clean_line[:20])}...")
                         if clean_line.startswith("GEMINI_API_KEY="):
                             val = clean_line.split("=", 1)[1].strip()
                             # ลบอัญประกาศครอบ (ถ้ามี)
                             if val.startswith(('"', "'")) and val.endswith(('"', "'")):
                                 val = val[1:-1]
+                            debug_log.append(f"  -> Found GEMINI_API_KEY in {p} (Length: {len(val)})")
+                            write_debug_key_log(debug_log)
                             return val
             except Exception as e:
-                print(f"Error reading path {p}: {e}")
+                debug_log.append(f"  -> Error reading {p}: {e}")
+                
+    debug_log.append("Result: Key NOT Found")
+    write_debug_key_log(debug_log)
     return None
+
+def write_debug_key_log(log_lines):
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        log_path = os.path.join(current_dir, "debug_key.log")
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(log_lines) + "\n")
+    except Exception:
+        pass
 
 # คำนวณรหัสแฮช (Hash Value) เพื่อตรวจสอบว่าข้อมูลหลักเปลี่ยนแปลงหรือไม่
 def calculate_db_hash(leaderboard_df, matches_df):
