@@ -186,6 +186,22 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
     current_hash = calculate_db_hash(leaderboard_df, matches_df)
     today_str = datetime.now().strftime("%Y-%m-%d")
     
+    # ดีบักแฮชเพื่อหาสาเหตุที่แคชหลุดบนระบบจริง
+    try:
+        debug_log_path = os.path.join(current_dir, "debug_hash.log")
+        with open(debug_log_path, "w", encoding="utf-8") as df_log:
+            df_log.write(f"date: {today_str}\n")
+            df_log.write(f"current_hash: {current_hash}\n")
+            if os.path.exists(cache_path):
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    cache_data = json.load(f)
+                    df_log.write(f"cached_hash: {cache_data.get('hash_key')}\n")
+                    df_log.write(f"cached_date: {cache_data.get('date')}\n")
+            else:
+                df_log.write("cache file does not exist\n")
+    except Exception as e:
+        pass
+    
     # 2. ตรวจสอบ Cache ท้องถิ่นก่อนรันงานจริง (เพื่อประหยัดโควตาและเร่งความเร็วในการโหลดหน้าจอ)
     if not force_refresh and os.path.exists(cache_path):
         try:
