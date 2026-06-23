@@ -7,12 +7,21 @@ from datetime import datetime
 
 # ค้นหาไฟล์ .env และดึงคีย์ API ของ Gemini
 def load_gemini_api_key():
-    # ดึงคีย์จากตัวแปรสภาพแวดล้อม (Environment Variables) เผื่อมีการเซ็ตไว้
+    # 1. พยายามดึงคีย์จาก Streamlit Secrets (สำหรับกรณีรันบน Streamlit Cloud จริง)
+    try:
+        import streamlit as st
+        api_key = st.secrets.get("GEMINI_API_KEY")
+        if api_key:
+            return api_key
+    except Exception:
+        pass
+
+    # 2. ดึงคีย์จากตัวแปรสภาพแวดล้อม (Environment Variables) เผื่อมีการเซ็ตไว้
     api_key = os.environ.get("GEMINI_API_KEY")
     if api_key:
         return api_key
     
-    # หากไม่มี ให้สแกนหาไฟล์ .env จากตู้หลักและโฟลเดอร์โครงการครอบคลุมถึงจุดสัมบูรณ์จริง
+    # 3. หากไม่มี ให้สแกนหาไฟล์ .env จากตู้หลักและโฟลเดอร์โครงการครอบคลุมถึงจุดสัมบูรณ์จริง
     current_dir = os.path.dirname(os.path.abspath(__file__))
     paths_to_try = [
         os.path.join(current_dir, ".env"),
