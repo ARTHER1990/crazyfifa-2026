@@ -59,8 +59,8 @@ def calculate_db_hash(leaderboard_df, matches_df):
 
 # เรียกติดต่อบริการเซิร์ฟเวอร์ Google Gemini API โดยตรงผ่านไลบรารี HTTP Requests 
 def call_gemini_api(prompt, api_key):
-    # เลือกรันโมเดลหลัก Gemini 2.5 Flash ทรงพลังความเร็วสูง หรือย้อนกลับไปใช้ Gemini 1.5 Flash เป็นทางเลือกสำรอง (Fallback)
-    models = ["gemini-2.5-flash", "gemini-1.5-flash"]
+    # เลือกรันโมเดลหลักประสิทธิภาพสูงตามลำดับความเสถียรเพื่อป้องกันปัญหา 503 (High Demand) และ 404 (Not Found)
+    models = ["gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.1-flash-lite"]
     
     for model_name in models:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
@@ -75,7 +75,7 @@ def call_gemini_api(prompt, api_key):
             ],
             "generationConfig": {
                 "temperature": 0.7,
-                "maxOutputTokens": 1000
+                "maxOutputTokens": 4000
             }
         }
         try:
