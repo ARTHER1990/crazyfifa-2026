@@ -235,148 +235,6 @@ st.markdown(f"""
         font-weight: 600;
     }}
 
-    .header-wrapper {{
-        display: flex !important;
-        flex-direction: row !important; /* จัดเลย์เอาต์แนวนอนแบบซ้าย-ขวา */
-        justify-content: space-between !important;
-        align-items: center !important;
-        width: 100% !important;
-        height: auto !important;
-        min-height: 155px !important;
-        margin-top: -35px !important;
-        margin-bottom: 25px !important;
-        padding: 20px 45px !important;
-        /* พื้นหลังลายเสี้ยนโลหะสีเทาเข้มปัดเงาขอบมืด Vignette แบบพรีเมียมตามรูปอ้างอิง */
-        background: 
-            radial-gradient(circle at 50% 50%, rgba(21, 34, 46, 0.45) 0%, rgba(10, 15, 20, 0.85) 75%, rgba(4, 6, 8, 1) 100%),
-            repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 3px),
-            linear-gradient(to bottom, #14212f 0%, #0a0f14 100%) !important;
-        border: 1.5px solid rgba(0, 240, 255, 0.15) !important; /* เส้นขอบบางเฉียบสีฟ้านีออนไซอัน */
-        border-radius: 20px !important;
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), inset 0 0 25px rgba(0, 240, 255, 0.08) !important;
-        position: relative !important;
-        overflow: hidden !important;
-        z-index: 10 !important;
-    }}
-
-    .header-left-spacer {{
-        width: 100px !important; /* มีขนาดเท่ากับ .trophy-column เพื่อดึงหัวข้อหลักมาไว้ตรงกลาง */
-        height: 1px !important;
-        display: block !important;
-    }}
-
-    .header-text-block {{
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        align-items: center !important; /* จัดกลุ่มตัวอักษรทั้งหมดให้อยู่กึ่งกลางหน้าจอแบบพรีเมียม */
-        text-align: center !important;
-        flex: 1 !important;
-    }}
-
-    .main-title {{
-        width: 100% !important;
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        margin: 0 !important;
-    }}
-
-    /* สไตล์ของหัวข้อใหญ่แบบเวกเตอร์ SVG เพื่อสร้างเอฟเฟกต์สีทองสลักเรืองแสงสีฟ้าสลับนีออนระดับพรีเมียม */
-    .main-title-svg {{
-        max-width: 680px !important;
-        height: auto !important;
-        overflow: visible !important;
-        animation: svg-neon-pulse 3.5s ease-in-out infinite alternate !important;
-    }}
-
-    .svg-text-base {{
-        font-family: 'Montserrat', 'Outfit', 'Kanit', sans-serif !important;
-        font-size: 82px !important;
-        font-weight: 950 !important;
-        letter-spacing: 5px !important;
-        fill: none !important;
-        stroke-linejoin: round !important;
-        stroke-linecap: round !important;
-    }}
-
-    /* ขอบเรืองแสงสีฟ้านีออนหนาสองชั้น (Double Neon Glow Layer) */
-    .cyan-glow {{
-        stroke: #7bf0ff !important;
-        stroke-width: 11px !important;
-        filter: url(#neon-glow-cyan) !important;
-    }}
-
-    /* เส้นล้างแบ่งขอบสีดำเพื่อตัดสีทองออกจากสีฟ้า ป้องกันสีพาดทับ */
-    .black-sep {{
-        stroke: #090e14 !important;
-        stroke-width: 6px !important;
-    }}
-
-    /* เนื้อในทองคำสลักสะท้อนแสงสว่าง (Glossy Inner Gold Core) */
-    .gold-core {{
-        stroke: url(#gold-neon-core) !important;
-        stroke-width: 2.2px !important;
-        filter: drop-shadow(0 0 1.5px rgba(255, 215, 0, 0.6)) !important;
-    }}
-
-    @keyframes svg-neon-pulse {{
-        0% {{
-            filter: drop-shadow(0 0 1px rgba(0, 240, 255, 0.3));
-        }}
-        100% {{
-            filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
-        }}
-    }}
-
-    .sub-title {{
-        font-family: 'Outfit', 'Montserrat', 'Kanit', sans-serif !important;
-        font-size: 1.1rem !important;
-        font-weight: 700 !important;
-        color: #9effff !important; /* สีฟ้านีออนสว่างประกาย */
-        letter-spacing: 7px !important;
-        margin: 12px 0 0 0 !important;
-        text-transform: uppercase !important;
-        text-shadow: 0 0 4px rgba(0, 240, 255, 0.8), 0 0 12px rgba(0, 240, 255, 0.4) !important;
-        text-align: center !important;
-        opacity: 0.9 !important;
-    }}
-
-    /* สไตล์คลาสสำหรับถ้วยรางวัลโครเมียม SVG และแอนิเมชันลอยตัว 3D */
-    .trophy-column {{
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        padding-right: 10px !important;
-        position: relative !important;
-        width: 100px !important; /* จำกัดขนาดความกว้างให้สมมาตรกับ spacer ฝั่งซ้าย */
-    }}
-
-    .chrome-trophy {{
-        filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.45)) !important;
-        animation: trophy-float-glow 4s ease-in-out infinite alternate !important;
-        will-change: transform, filter;
-    }}
-
-    @keyframes trophy-float-glow {{
-        0% {{
-            transform: translateY(0px) rotate(0deg);
-            filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.4));
-        }}
-        50% {{
-            transform: translateY(-8px) rotate(2deg);
-            filter: drop-shadow(0 0 18px rgba(0, 240, 255, 0.7));
-        }}
-        100% {{
-            transform: translateY(0px) rotate(-1.5deg);
-            filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.4));
-        }}
-    }}
-
-    .trophy-wrapper {{
-        display: none !important; /* ปิดตัวเก่าดั้งเดิม */
-    }}
-
     /* ปรับแต่งช่องกรอกคะแนน (st.number_input) ให้ดูโมเดิร์นคลีนและมีมิติ */
     div[data-testid="stNumberInput"] {{
         background: rgba(255, 255, 255, 0.02) !important;
@@ -396,6 +254,59 @@ st.markdown(f"""
         font-weight: 500 !important;
         letter-spacing: 0.5px !important;
     }}
+
+    .header-wrapper {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 140px;
+    margin-top: -35px;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
+}}
+.main-title {{
+    color: #FFD700;
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 0;
+    letter-spacing: 2px;
+    position: relative;
+    animation: rising-mist 3s ease-in-out infinite;
+}}
+
+@keyframes rising-mist {{
+    0% {{
+        text-shadow: 
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 -4px 15px rgba(0, 150, 255, 0.5),
+            0 -8px 25px rgba(135, 206, 250, 0.3),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
+    50% {{
+        text-shadow: 
+            0 0 14px rgba(0, 212, 255, 0.9),
+            0 -8px 22px rgba(0, 150, 255, 0.7),
+            0 -16px 35px rgba(135, 206, 250, 0.5),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
+    100% {{
+        text-shadow: 
+            0 0 10px rgba(0, 212, 255, 0.8),
+            0 -4px 15px rgba(0, 150, 255, 0.5),
+            0 -8px 25px rgba(135, 206, 250, 0.3),
+            3px 3px 6px rgba(0,0,0,0.5);
+    }}
+}}
+.trophy-wrapper {{
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-left: 20px;
+}}
 .animated-ball-x {{
     position: absolute;
     z-index: 15;
@@ -617,28 +528,15 @@ footer {{visibility: hidden;}}
 
 /* รองรับการแสดงผลบนโทรศัพท์มือถือ (Mobile Responsive) */
 @media (max-width: 768px) {{
-    .header-left-spacer {{
-        display: none !important;
+    .main-title {{
+        font-size: 2.0rem !important;
     }}
     .header-wrapper {{
-        flex-direction: column !important;
-        padding: 15px 20px !important;
-        height: auto !important;
-        min-height: auto !important;
+        height: 120px !important;
     }}
-    .trophy-column {{
-        margin-top: 15px !important;
-        padding-right: 0 !important;
-        width: auto !important;
-    }}
-    .chrome-trophy {{
-        width: 75px !important;
-        height: 125px !important;
-    }}
-    .sub-title {{
-        font-size: 0.8rem !important;
-        letter-spacing: 3px !important;
-        margin-top: 8px !important;
+    .trophy-wrapper {{
+        font-size: 2.0rem !important;
+        margin-left: 10px !important;
     }}
     [data-testid="stAppViewContainer"] {{
         background-size: cover !important;
@@ -680,80 +578,29 @@ footer {{visibility: hidden;}}
 </style>
 
 <div class='header-wrapper'>
-    <div class='header-left-spacer'></div>
-    <div class='header-text-block'>
-        <div class='main-title'>
-            <svg class='main-title-svg' viewBox="0 0 950 120" width="100%">
-                <defs>
-                    <linearGradient id="gold-neon-core" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#fffde0"/>
-                        <stop offset="25%" stop-color="#ffd700"/>
-                        <stop offset="75%" stop-color="#b8860b"/>
-                        <stop offset="100%" stop-color="#ffd700"/>
-                    </linearGradient>
-                    <filter id="neon-glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="6" result="blur1"/>
-                        <feGaussianBlur stdDeviation="2" result="blur2"/>
-                        <feMerge>
-                            <feMergeNode in="blur1"/>
-                            <feMergeNode in="blur2"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                <!-- Thick Cyan Outer Glow & Border -->
-                <text x="50%" y="85" text-anchor="middle" class="svg-text-base cyan-glow">CRAZYFIFA 2026</text>
-                <!-- Dark Separator Outline to isolate gold from cyan -->
-                <text x="50%" y="85" text-anchor="middle" class="svg-text-base black-sep">CRAZYFIFA 2026</text>
-                <!-- Inner Thin Gold Neon Tube -->
-                <text x="50%" y="85" text-anchor="middle" class="svg-text-base gold-core">CRAZYFIFA 2026</text>
-            </svg>
+    <div class='main-title'>CRAZYFIFA 2026</div>
+    <div class='ufo-flyer-lg'>🛸</div>
+    <div class='ufo-flyer-sm'>🛸</div>
+    <div class='ufo-flyer-mid'>🛸</div>
+    <div class='trophy-wrapper'>
+        🏆
+        <div class='animated-ball-x'>
+            <div class='animated-ball-y'>
+                <span class='animated-ball'>⚽</span>
+            </div>
         </div>
-        <div class='sub-title'>WORLD CUP PREDICTION CHALLENGE</div>
-    </div>
-    <div class='trophy-column'>
-        <svg class='chrome-trophy' viewBox="0 0 100 180" width="90" height="150">
-            <defs>
-                <linearGradient id="chrome-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffffff"/>
-                    <stop offset="20%" stop-color="#cbd5e0"/>
-                    <stop offset="40%" stop-color="#ffffff"/>
-                    <stop offset="60%" stop-color="#4a5568"/>
-                    <stop offset="80%" stop-color="#cbd5e0"/>
-                    <stop offset="100%" stop-color="#1a202c"/>
-                </linearGradient>
-                <radialGradient id="neon-glow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.95"/>
-                    <stop offset="50%" stop-color="#00a3ff" stop-opacity="0.5"/>
-                    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-                </radialGradient>
-            </defs>
-            <!-- แสงฟ้านีออนสลัวด้านหลังลูกโลก -->
-            <circle cx="50" cy="40" r="32" fill="url(#neon-glow)" filter="blur(3px)"/>
-            <!-- ฐานถ้วย 3 ชั้นไล่เฉดโครเมียมสะท้อนสีเงินเมทัลลิก -->
-            <rect x="35" y="152" width="30" height="12" rx="4" fill="url(#chrome-grad)" stroke="#0c1218" stroke-width="1.5"/>
-            <rect x="38" y="139" width="24" height="13" rx="2" fill="url(#chrome-grad)" stroke="#0c1218" stroke-width="1.5"/>
-            <path d="M 42 139 L 40 117 L 60 117 L 58 139 Z" fill="url(#chrome-grad)" stroke="#0c1218" stroke-width="1.5"/>
-            <!-- ลำก้านคู่ทรงเกลียวที่บิดตัวโอบอุ้มลูกโลกของฟีฟ่าทรัมเป็ต -->
-            <path d="M 42 117 C 33 97, 28 67, 44 39" fill="none" stroke="url(#chrome-grad)" stroke-width="7" stroke-linecap="round"/>
-            <path d="M 58 117 C 67 97, 72 67, 56 39" fill="none" stroke="url(#chrome-grad)" stroke-width="7" stroke-linecap="round"/>
-            <!-- แผ่นตกแต่งสะท้อนสีเงินด้านในเพิ่มมิติ 3 มิติ -->
-            <path d="M 45 117 C 40 92, 38 72, 48 52" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-            <path d="M 55 117 C 60 92, 62 72, 52 52" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-            <!-- ลูกแก้วโลกนีออนสีฟ้าคริสตัลระยิบระยับ -->
-            <circle cx="50" cy="38" r="17" fill="url(#chrome-grad)" stroke="#0c1218" stroke-width="1.5"/>
-            <circle cx="50" cy="38" r="17" fill="none" stroke="#00f0ff" stroke-width="2.5" filter="drop-shadow(0 0 5px #00f0ff)"/>
-            <!-- ลายกริดแผนที่โลกเรืองแสงไซอันสากล -->
-            <path d="M 38 38 Q 50 33 62 38" fill="none" stroke="#00f0ff" stroke-width="1.5" opacity="0.7"/>
-            <path d="M 40 33 Q 50 46 60 33" fill="none" stroke="#00f0ff" stroke-width="1.5" opacity="0.7"/>
-            <path d="M 50 21 L 50 55" fill="none" stroke="#00f0ff" stroke-width="1.2" opacity="0.5"/>
-            <path d="M 33 38 L 67 38" fill="none" stroke="#00f0ff" stroke-width="1.2" opacity="0.5"/>
-            <!-- จุดคริสตัลดวงใจสะท้อนแสงตรงกลาง -->
-            <circle cx="50" cy="38" r="4.5" fill="#ffffff" filter="drop-shadow(0 0 4px #00f0ff)"/>
-        </svg>
+        <div class='firework-particle p1'></div>
+        <div class='firework-particle p2'></div>
+        <div class='firework-particle p3'></div>
+        <div class='firework-particle p4'></div>
+        <div class='firework-particle p5'></div>
+        <div class='firework-particle p6 white-p'></div>
+        <div class='firework-particle p7 white-p'></div>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+st.markdown("<h3 style='text-align: center; margin-top: -30px; color: #888;'>WORLD CUP PREDICTION CHALLENGE</h3>", unsafe_allow_html=True)
 
 # 1. ระบบผู้ใช้งาน (Sidebar)
 if 'username' not in st.session_state:
