@@ -133,18 +133,8 @@ def get_team_display(team_name):
 # เริ่มต้นฐานข้อมูล
 db.init_db()
 
-# --- แผงปรับระดับความสว่างฉากหลังตามใจคุณอาร์ต ---
-st.sidebar.markdown("<br><h3 style='margin-bottom: 5px; color:#ffffff;'>🎨 ปรับแต่งหน้าบอร์ด</h3>", unsafe_allow_html=True)
-with st.sidebar.expander("🌌 แผงปรับความสว่างอวกาศ", expanded=True):
-    bg_opacity_val = st.slider(
-        "ระดับความมืดของอวกาศ:",
-        min_value=0.40,
-        max_value=0.98,
-        value=0.75, # ค่าเริ่มต้นที่ 75% สมดุลยอดเยี่ยมมาก!
-        step=0.01,
-        help="เลื่อนแถบสไลเดอร์ไปทางขวาเพื่อให้ข้อความและถ้วยลอยเด่นชัดขึ้น หรือเลื่อนไปทางซ้ายเพื่อรับชมวิวอวกาศและมนุษย์ต่างดาวชัดขึ้นตามสไตล์ของคุณอาร์ตเลยครับ!"
-    )
-bg_opacity_bottom = min(bg_opacity_val + 0.03, 0.99)
+bg_opacity_val = 0.67
+bg_opacity_bottom = 0.70
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
