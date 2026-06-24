@@ -133,6 +133,19 @@ def get_team_display(team_name):
 # เริ่มต้นฐานข้อมูล
 db.init_db()
 
+# --- แผงปรับระดับความสว่างฉากหลังตามใจคุณอาร์ต ---
+st.sidebar.markdown("<br><h3 style='margin-bottom: 5px; color:#ffffff;'>🎨 ปรับแต่งหน้าบอร์ด</h3>", unsafe_allow_html=True)
+with st.sidebar.expander("🌌 แผงปรับความสว่างอวกาศ", expanded=True):
+    bg_opacity_val = st.slider(
+        "ระดับความมืดของอวกาศ:",
+        min_value=0.40,
+        max_value=0.98,
+        value=0.75, # ค่าเริ่มต้นที่ 75% สมดุลยอดเยี่ยมมาก!
+        step=0.01,
+        help="เลื่อนแถบสไลเดอร์ไปทางขวาเพื่อให้ข้อความและถ้วยลอยเด่นชัดขึ้น หรือเลื่อนไปทางซ้ายเพื่อรับชมวิวอวกาศและมนุษย์ต่างดาวชัดขึ้นตามสไตล์ของคุณอาร์ตเลยครับ!"
+    )
+bg_opacity_bottom = min(bg_opacity_val + 0.03, 0.99)
+
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
 <!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) - ปรับให้นุ่มนวลขึ้นไม่ลายตา -->
@@ -554,7 +567,7 @@ button[data-testid="baseButton-primary"]:hover {{
 
 /* ระบบพื้นหลัง UFO เวอร์ชั่นย้อนกลับ (Step -3) - แก้ไขชิดขอบบนและขยายใหญ่ */
 [data-testid="stAppViewContainer"] {{
-    background-image: linear-gradient(to bottom, rgba(4, 6, 5, 0.93) 0%, rgba(3, 5, 4, 0.96) 100%), url('data:image/webp;base64,{ufo_base64}');
+    background-image: linear-gradient(to bottom, rgba(4, 6, 5, {bg_opacity_val}) 0%, rgba(3, 5, 4, {bg_opacity_bottom}) 100%), url('data:image/webp;base64,{ufo_base64}');
     background-repeat: no-repeat;
     background-position: center 0px; /* บังคับชิดขอบบนสุด */
     background-attachment: fixed;
@@ -565,7 +578,7 @@ button[data-testid="baseButton-primary"]:hover {{
     content: "";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(4, 6, 5, 0.94); /* ปรับเป็นสีเขียวดำทึบโปร่งแสง 94% เพื่อความโทนมืดลึกลับ คมเข้ม สบายตา และขับส่งแบนเนอร์กับถ้วยรางวัลเด่นชัดสูงสุด */
+    background-color: rgba(4, 6, 5, {bg_opacity_val}); /* ปรับระดับความมืดของอวกาศแบบไดนามิกเพื่อขับเน้นให้แบนเนอร์และถ้วยรางวัลเด่นชัดสะดุดตาสุดๆ */
     z-index: -1;
 }}
 [data-testid="stAppViewContainer"] > section:nth-child(2) {{
