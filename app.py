@@ -1146,9 +1146,8 @@ if st.session_state.authenticated:
             st.iframe(src=get_audio_html(song_path), height=1)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
     else:
-        # หากกดปิด: บังคับเขียนทับในพื้นที่เดิมด้วยไอเฟรมเปล่า เพื่อบังคับเบราว์เซอร์ให้ทำลายออบเจกต์เสียงทันที!
-        with music_placeholder.container():
-            st.iframe(src="<!-- music muted -->", height=1)
+        # หากกดปิด: บังคับทำลายออบเจกต์ตัวเล่นเสียงและเคลียร์กล่องจองพื้นที่ให้ว่างเปล่าทันที ส่งผลให้เสียงเงียบสนิทใน 1 คลิก!
+        music_placeholder.empty()
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
