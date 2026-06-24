@@ -631,31 +631,29 @@ footer {{visibility: hidden;}}
 </style>
 
 <header class="premium-header">
-    <div class="title-wrapper">
-        <!-- ภาพแบนเนอร์ เครซีเว็ป.png โหลดผ่าน Base64 โปร่งแสงพรีเมี่ยม -->
-        <img class="crazyweb-img" src="data:image/png;base64,{banner_base64}" alt="CRAZYFIFA 2026 Header">
-        
-        <!-- จานบินลอยจำลอง -->
-        <div class='ufo-flyer-lg'>🛸</div>
-        <div class='ufo-flyer-sm'>🛸</div>
-        <div class='ufo-flyer-mid'>🛸</div>
-
-        <!-- จุดฉายแอนิเมชันลูกบอลทองคำตกกระทบและส่องประกายออร่าเฉพาะยอดถ้วยฝั่งขวา -->
-        <div class="trophy-target-overlay">
-            <div class='animated-ball-x'>
-                <div class='animated-ball-y'>
-                    <img class='animated-ball' src="data:image/png;base64,{ball_base64}" alt="⚽">
-                </div>
-            </div>
-            <div class='firework-particle p1'></div>
-            <div class='firework-particle p2'></div>
-            <div class='firework-particle p3'></div>
-            <div class='firework-particle p4'></div>
-            <div class='firework-particle p5'></div>
-            <div class='firework-particle p6 white-p'></div>
-            <div class='firework-particle p7 white-p'></div>
-        </div>
-    </div>
+<div class="title-wrapper">
+<!-- ภาพแบนเนอร์ เครซีเว็ป.png โหลดผ่าน Base64 โปร่งแสงพรีเมี่ยม -->
+<img class="crazyweb-img" src="data:image/png;base64,{banner_base64}" alt="CRAZYFIFA 2026 Header">
+<!-- จานบินลอยจำลอง -->
+<div class='ufo-flyer-lg'>🛸</div>
+<div class='ufo-flyer-sm'>🛸</div>
+<div class='ufo-flyer-mid'>🛸</div>
+<!-- จุดฉายแอนิเมชันลูกบอลทองคำตกกระทบและส่องประกายออร่าเฉพาะยอดถ้วยฝั่งขวา -->
+<div class="trophy-target-overlay">
+<div class='animated-ball-x'>
+<div class='animated-ball-y'>
+<img class='animated-ball' src="data:image/png;base64,{ball_base64}" alt="⚽">
+</div>
+</div>
+<div class='firework-particle p1'></div>
+<div class='firework-particle p2'></div>
+<div class='firework-particle p3'></div>
+<div class='firework-particle p4'></div>
+<div class='firework-particle p5'></div>
+<div class='firework-particle p6 white-p'></div>
+<div class='firework-particle p7 white-p'></div>
+</div>
+</div>
 </header>
 """, unsafe_allow_html=True)
 
