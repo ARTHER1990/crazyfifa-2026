@@ -1074,12 +1074,12 @@ if st.session_state.authenticated:
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
         with music_placeholder.container():
-            st.components.v1.html(get_audio_html(song_path), height=0)
+            st.iframe(src=get_audio_html(song_path), height=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
     else:
         # หากกดปิด: บังคับเขียนทับในพื้นที่เดิมด้วยไอเฟรมเปล่า เพื่อบังคับเบราว์เซอร์ให้ทำลายออบเจกต์เสียงทันที!
         with music_placeholder.container():
-            st.components.v1.html("<!-- music muted -->", height=0)
+            st.iframe(src="<!-- music muted -->", height=0)
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
@@ -1792,8 +1792,6 @@ elif menu == "📑 ประวัติการทายผล":
                     
                     expander_label = f"⚽ {home_disp}  {h_real} - {a_real}  {away_disp}"
                     
-                    # หุ้ม st.expander ด้วย div.match-card-wrapper เพื่อสร้างกรอบที่มองเห็นได้ 100% แน่นอนในทุกบราวเซอร์
-                    st.markdown("<div class='match-card-wrapper'>", unsafe_allow_html=True)
                     with st.expander(expander_label):
                         st.markdown(f"**⏰ เวลาแข่ง:** {pd.to_datetime(row_m['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
                         if row_m['scorers']:
@@ -1843,7 +1841,6 @@ elif menu == "📑 ประวัติการทายผล":
                                     """,
                                     unsafe_allow_html=True
                                 )
-                    st.markdown("</div>", unsafe_allow_html=True)
                 st.divider()
 
     with tab_upcoming:
