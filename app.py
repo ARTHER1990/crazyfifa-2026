@@ -327,7 +327,7 @@ st.markdown(f"""
     /* แผงมาร์กพิกเซลกาวเป้าถ้วยรางวัลทองคำของคุณอาร์ต */
     .trophy-target-overlay {{
         position: absolute;
-        right: 10.2%; /* พิกัดขวาทองคำเป๊ะๆ โดยคุณอาร์ต */
+        right: 12.9%; /* พิกัดขวาทองคำเป๊ะๆ โดยคุณอาร์ต (ปรับจาก 10.2% กลับสู่สัดส่วนทองคำ) */
         top: 17.0%;    /* พิกัดบนทองคำเป๊ะๆ โดยคุณอาร์ต */
         width: 40px;
         height: 40px;
@@ -677,15 +677,16 @@ footer {{visibility: hidden;}}
 }}
 </style>
 
-<header class="premium-header">
-<div class="title-wrapper">
-<!-- ภาพแบนเนอร์ เครซีเว็ป.png โหลดผ่าน Base64 โปร่งแสงพรีเมี่ยม -->
-<img class="crazyweb-img" src="data:image/png;base64,{banner_base64}" alt="CRAZYFIFA 2026 Header">
-<!-- จานบินลอยจำลอง -->
+<!-- จานบินลอยจำลอง (แยกอยู่นอกโครงสร้าง Layout แบนเนอร์เพื่อความเสถียรของพิกัดถ้วยทองคำ) -->
 <div class='ufo-flyer-lg'>🛸</div>
 <div class='ufo-flyer-sm'>🛸</div>
 <div class='ufo-flyer-mid'>🛸</div>
 <div class='pizza-flyer'><img src="data:image/png;base64,{pizza_base64}" style="width:100%; height:100%; object-fit:contain;" alt="🍕"></div>
+
+<header class="premium-header">
+<div class="title-wrapper">
+<!-- ภาพแบนเนอร์ เครซีเว็ป.png โหลดผ่าน Base64 โปร่งแสงพรีเมี่ยม -->
+<img class="crazyweb-img" src="data:image/png;base64,{banner_base64}" alt="CRAZYFIFA 2026 Header">
 <!-- จุดฉายแอนิเมชันลูกบอลทองคำตกกระทบและส่องประกายออร่าเฉพาะยอดถ้วยฝั่งขวา -->
 <div class="trophy-target-overlay">
 <div class='animated-ball-x'>
