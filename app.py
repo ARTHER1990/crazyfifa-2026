@@ -51,6 +51,10 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 image_full_path = os.path.join(current_dir, "ต่างดาว_optimized.webp")
 ufo_base64 = get_base64_image(image_full_path)
 
+# โหลดภาพพิซซ่านาโปลี (พิซซ่า.png) สำหรับลอยเป็น Easter Egg ลำที่ 4
+pizza_path = os.path.join(current_dir, "พิซซ่า.png")
+pizza_base64 = get_base64_image(pizza_path)
+
 # โหลดภาพ Artwork พื้นหลัง Sidebar (เปลี่ยนจาก Messi เป็น 02.png ตามสั่ง)
 bg_sidebar_path = os.path.join(current_dir, "02_optimized.png")
 bg_sidebar_base64 = get_base64_image(bg_sidebar_path)
@@ -489,6 +493,19 @@ st.markdown(f"""
     filter: drop-shadow(0 0 8px rgba(0, 255, 0, 1)) drop-shadow(0 0 20px rgba(50, 205, 50, 0.7)); /* ออร่าสีเขียวเรืองแสงเด่นๆ */
 }}
 
+.pizza-flyer {{
+    position: fixed;
+    width: 65px;
+    height: 65px;
+    z-index: 99999;
+    top: 95px; /* ความสูงระดับกลางๆ กำลังพอดี */
+    pointer-events: none;
+    animation: pizza-flight 18s linear infinite;
+    animation-delay: 1.5s; /* หลบหลีกจานบินอื่นๆ ไม่ให้ทับซ้อนกัน */
+    will-change: transform;
+    filter: drop-shadow(0 0 8px rgba(255, 102, 0, 1)) drop-shadow(0 0 20px rgba(255, 69, 0, 0.7)); /* ออร่าสีส้มไฟเตาถ่านร้อนๆ ของแบรนด์ VOILA_PIZZA */
+}}
+
 @keyframes ufo-flight-lg {{
     0% {{
         transform: translate3d(120vw, 0px, 0);
@@ -542,6 +559,28 @@ st.markdown(f"""
         transform: translate3d(-120vw, 0px, 0);
     }}
 }}
+
+@keyframes pizza-flight {{
+    0% {{
+        transform: translate3d(120vw, 0px, 0);
+    }}
+    20% {{
+        transform: translate3d(80vw, -20px, 0);
+    }}
+    40% {{
+        transform: translate3d(40vw, 15px, 0);
+    }}
+    60% {{
+        transform: translate3d(0vw, -15px, 0);
+    }}
+    80% {{
+        transform: translate3d(-50vw, 20px, 0);
+    }}
+    100% {{
+        transform: translate3d(-120vw, 0px, 0);
+    }}
+}}
+
 
 /* แต่งปุ่มแบบ Primary (บันทึกแล้ว) ให้แสดงผลเป็นสีเขียวพรีเมี่ยมสวยสะดุดตา */
 button[data-testid="baseButton-primary"] {{
@@ -646,6 +685,7 @@ footer {{visibility: hidden;}}
 <div class='ufo-flyer-lg'>🛸</div>
 <div class='ufo-flyer-sm'>🛸</div>
 <div class='ufo-flyer-mid'>🛸</div>
+<div class='pizza-flyer'><img src="data:image/png;base64,{pizza_base64}" style="width:100%; height:100%; object-fit:contain;" alt="🍕"></div>
 <!-- จุดฉายแอนิเมชันลูกบอลทองคำตกกระทบและส่องประกายออร่าเฉพาะยอดถ้วยฝั่งขวา -->
 <div class="trophy-target-overlay">
 <div class='animated-ball-x'>
