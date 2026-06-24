@@ -1658,11 +1658,18 @@ elif menu == "📑 ประวัติการทายผล":
         /* ================================================================= */
         /* 0. ตกแต่งหัวข้อแท็บย่อย (st.tabs) ให้มีขอบมนและไฮไลท์กรอบเรืองแสงหรูหรา */
         /* ================================================================= */
+        /* สั่งให้โครงสร้างแท็บทั้งหมดเปิดเผยเงาเรืองแสง ไม่โดนตัดขอบเป็นสี่เหลี่ยม */
+        .stTabs, 
+        div[data-testid="stTabs"],
+        .stTabs [data-baseweb="tab-list"] {
+            overflow: visible !important;
+        }
+
         /* จัดระยะห่างของลิสต์แท็บให้สวยงาม และนำเส้นใต้พื้นหลังเดิมออก */
         .stTabs [data-baseweb="tab-list"] {
             gap: 12px !important;
             border-bottom: none !important; /* ปิดเส้นนอนใต้แท็บแบบเดิมถาวร */
-            padding-bottom: 10px !important; /* เพิ่มช่องว่างด้านล่างเล็กน้อยให้เงาหายใจได้ */
+            padding-bottom: 12px !important; /* เพิ่มช่องว่างด้านล่างเพื่อเว้นระยะห่าง */
         }
 
         /* ตกแต่งแท็บแต่ละอันในสถานะปกติ (Inactive) เป็นรูปทรงแคปซูลยาเม็ดพรีเมียม */
@@ -1680,9 +1687,9 @@ elif menu == "📑 ประวัติการทายผล":
         /* เอฟเฟกต์โฮเวอร์ (Hover) ของปุ่มแท็บ */
         .stTabs [data-baseweb="tab"]:hover {
             color: #ffffff !important;
-            border-color: rgba(255, 215, 0, 0.5) !important;
+            border-color: rgba(255, 215, 0, 0.4) !important;
             background-color: rgba(255, 215, 0, 0.05) !important;
-            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.08) !important;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.05) !important;
         }
 
         /* ตกแต่งแท็บเมื่อถูกคลิกเลือกใช้งาน (Active) ด้วยขอบทองสว่างรอบตัว 100% */
@@ -1690,9 +1697,10 @@ elif menu == "📑 ประวัติการทายผล":
             color: #ffd700 !important; /* อักษรและไอคอนสีทอง */
             border: 2px solid #ffd700 !important; /* ขอบทองสว่างชัดรอบด้าน 100% ครบทุกด้าน */
             border-radius: 20px !important;
-            background: linear-gradient(180deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.03) 100%) !important;
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.03) 100%) !important;
             font-weight: 700 !important;
-            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2) !important; /* ปรับลดรัศมีเงาเรืองแสงสีทองให้นุ่มนวลและไม่ล้นกรอบ */
+            /* ใช้เงานอกบางเบาสลัว ร่วมกับเงาเรืองแสงด้านใน (inset) เพื่อให้แผ่ออร่าหรูหรามีมิติโดยไม่มีวันโดนตัดขอบเหลี่ยม */
+            box-shadow: 0 2px 6px rgba(255, 215, 0, 0.12), inset 0 0 10px rgba(255, 215, 0, 0.25) !important;
         }
 
         /* ซ่อนขีดไฮไลท์สไตล์ดั้งเดิมเพื่อไม่ให้รบกวนขอบทองของเรา */
