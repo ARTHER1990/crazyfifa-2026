@@ -360,6 +360,10 @@ st.markdown(f"""
 
     .animated-ball-x {{
         position: absolute;
+        width: 38px;
+        height: 38px;
+        top: 1px;
+        left: 1px;
         z-index: 15;
         animation: goal-x 4s infinite;
         will-change: transform;
@@ -421,9 +425,9 @@ st.markdown(f"""
 @keyframes goal-y {{
     0% {{ transform: translateY(120px); }}
     18% {{ transform: translateY(-120px); }}
-    35% {{ transform: translateY(-10px); }}
-    40% {{ transform: translateY(-10px); }}
-    100% {{ transform: translateY(-10px); }}
+    35% {{ transform: translateY(0px); }}
+    40% {{ transform: translateY(0px); }}
+    100% {{ transform: translateY(0px); }}
 }}
 
 @keyframes goal-ball {{
@@ -550,7 +554,7 @@ button[data-testid="baseButton-primary"]:hover {{
 
 /* ระบบพื้นหลัง UFO เวอร์ชั่นย้อนกลับ (Step -3) - แก้ไขชิดขอบบนและขยายใหญ่ */
 [data-testid="stAppViewContainer"] {{
-    background-image: url('data:image/webp;base64,{ufo_base64}');
+    background-image: linear-gradient(to bottom, rgba(4, 6, 5, 0.93) 0%, rgba(3, 5, 4, 0.96) 100%), url('data:image/webp;base64,{ufo_base64}');
     background-repeat: no-repeat;
     background-position: center 0px; /* บังคับชิดขอบบนสุด */
     background-attachment: fixed;
@@ -561,7 +565,7 @@ button[data-testid="baseButton-primary"]:hover {{
     content: "";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(14, 20, 16, 0.9); /* ปรับเป็นสีเขียวดำทึบโปร่งแสง 90% ให้เข้ากับธีมหลัก */
+    background-color: rgba(4, 6, 5, 0.94); /* ปรับเป็นสีเขียวดำทึบโปร่งแสง 94% เพื่อความโทนมืดลึกลับ คมเข้ม สบายตา และขับส่งแบนเนอร์กับถ้วยรางวัลเด่นชัดสูงสุด */
     z-index: -1;
 }}
 [data-testid="stAppViewContainer"] > section:nth-child(2) {{
