@@ -1658,18 +1658,18 @@ elif menu == "📑 ประวัติการทายผล":
         /* ================================================================= */
         /* 0. ตกแต่งหัวข้อแท็บย่อย (st.tabs) ให้มีขอบมนและไฮไลท์กรอบเรืองแสงหรูหรา */
         /* ================================================================= */
-        /* จัดระยะห่างของลิสต์แท็บให้สวยงาม */
+        /* จัดระยะห่างของลิสต์แท็บให้สวยงาม และนำเส้นใต้พื้นหลังเดิมออก */
         .stTabs [data-baseweb="tab-list"] {
             gap: 12px !important;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+            border-bottom: none !important; /* ปิดเส้นนอนใต้แท็บแบบเดิมถาวร */
             padding-bottom: 8px !important;
         }
 
-        /* ตกแต่งแท็บแต่ละอันในสถานะปกติ (Inactive) */
+        /* ตกแต่งแท็บแต่ละอันในสถานะปกติ (Inactive) เป็นรูปทรงแคปซูลยาเม็ดพรีเมียม */
         .stTabs [data-baseweb="tab"] {
-            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 12px 12px 0 0 !important;
-            padding: 10px 24px !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 20px !important; /* ปรับเป็นขอบมนเต็มรูปแบบทรงแคปซูลลอยตัว */
+            padding: 8px 24px !important;
             background-color: rgba(255, 255, 255, 0.02) !important;
             color: rgba(255, 255, 255, 0.6) !important;
             font-weight: 500 !important;
@@ -1680,20 +1680,19 @@ elif menu == "📑 ประวัติการทายผล":
         /* เอฟเฟกต์โฮเวอร์ (Hover) ของปุ่มแท็บ */
         .stTabs [data-baseweb="tab"]:hover {
             color: #ffffff !important;
-            border-color: rgba(255, 215, 0, 0.4) !important;
-            background-color: rgba(255, 215, 0, 0.03) !important;
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.05) !important;
+            border-color: rgba(255, 215, 0, 0.5) !important;
+            background-color: rgba(255, 215, 0, 0.05) !important;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.08) !important;
         }
 
-        /* ตกแต่งแท็บเมื่อถูกคลิกเลือกใช้งาน (Active) */
+        /* ตกแต่งแท็บเมื่อถูกคลิกเลือกใช้งาน (Active) ด้วยขอบทองสว่างรอบตัว 100% */
         .stTabs [aria-selected="true"] {
             color: #ffd700 !important; /* อักษรและไอคอนสีทอง */
-            border: 2px solid #ffd700 !important; /* ขอบสีทองชัดเจนหนา 2px */
-            border-bottom: 2px solid rgba(13, 17, 23, 0.95) !important; /* ซ้อนทับเส้นนอนด้านล่าง */
-            border-radius: 12px 12px 0 0 !important;
-            background: linear-gradient(180deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 215, 0, 0.02) 100%) !important;
+            border: 2px solid #ffd700 !important; /* ขอบทองสว่างชัดรอบด้าน 100% ครบทุกด้าน */
+            border-radius: 20px !important;
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.03) 100%) !important;
             font-weight: 700 !important;
-            box-shadow: 0 -4px 15px rgba(255, 215, 0, 0.1) !important; /* แสงเรืองรองสีทองขึ้นด้านบน */
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25) !important; /* แสงสะท้อนเรืองแสงสีทองฟุ้งรอบปุ่มครบทุกด้าน */
         }
 
         /* ซ่อนขีดไฮไลท์สไตล์ดั้งเดิมเพื่อไม่ให้รบกวนขอบทองของเรา */
