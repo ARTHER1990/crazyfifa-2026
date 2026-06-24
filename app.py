@@ -1056,8 +1056,14 @@ except Exception as e:
     st.session_state.unpredicted_count = 0
     st.session_state.unpredicted_matches = []
 
-# --- ระบบเพลงประกอบ (เล่นอัตโนมัติหลัง Login) ---
+# --- ระบบเมนูและเพลงประกอบ (จัดลำดับประมวลผลสูงสุดเพื่อขจัดอาการกดย้ำ) ---
 if st.session_state.authenticated:
+    # 🧭 เมนูนำทางหลัก (ย้ายขึ้นบนสุดเพื่อลำดับสิทธิ์การทำงานลำดับแรก ขจัดปัญหาความหน่วงและอาการกดย้ำ)
+    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+    if st.session_state.username == "Art":
+        menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
+    menu = st.sidebar.radio("เมนูหลัก", menu_options)
+    
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
     
@@ -1158,10 +1164,7 @@ if st.session_state.authenticated:
 
     st.sidebar.markdown("---")
 
-menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
-if st.session_state.username == "Art":
-    menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
-menu = st.sidebar.radio("เมนูหลัก", menu_options)
+
 
 # 2. หน้าทายผลการแข่งขัน
 if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
