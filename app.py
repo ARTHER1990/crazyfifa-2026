@@ -1074,12 +1074,12 @@ if st.session_state.authenticated:
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
         with music_placeholder.container():
-            st.iframe(src=get_audio_html(song_path), height=0)
+            st.iframe(src=get_audio_html(song_path), height=1)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
     else:
         # หากกดปิด: บังคับเขียนทับในพื้นที่เดิมด้วยไอเฟรมเปล่า เพื่อบังคับเบราว์เซอร์ให้ทำลายออบเจกต์เสียงทันที!
         with music_placeholder.container():
-            st.iframe(src="<!-- music muted -->", height=0)
+            st.iframe(src="<!-- music muted -->", height=1)
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
