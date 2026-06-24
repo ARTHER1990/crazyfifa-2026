@@ -1656,45 +1656,59 @@ elif menu == "📑 ประวัติการทายผล":
     st.markdown("""
         <style>
         /* ================================================================= */
-        /* 1. ตกแต่ง st.expander ในหน้าประวัติการแข่งเสร็จแล้วให้สวยพรีเมี่ยม */
+        /* 1. ตกแต่งครอบการ์ดผลแข่งเสร็จแล้ว (Match Card Wrapper) ด้วยกรอบหนาเรืองแสง */
         /* ================================================================= */
-        div[data-testid="stExpander"] {
+        .match-card-wrapper {
             background-color: rgba(255, 255, 255, 0.02) !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
-            border-radius: 12px !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 14px !important;
+            padding: 4px !important; /* เว้นระยะห่างรอบ expander เล็กน้อยให้เห็นกรอบโค้งเด่นชัด */
+            margin-bottom: 16px !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
-            margin-bottom: 12px !important;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
         
-        div[data-testid="stExpander"]:hover {
-            border-color: rgba(255, 215, 0, 0.4) !important; /* ขอบไฮไลท์สีทองอ่อนๆ เวลาเมาส์ชี้ */
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.15) !important;
+        .match-card-wrapper:hover {
+            border-color: rgba(255, 215, 0, 0.5) !important; /* เปลี่ยนเป็นสีทองเรืองแสงเมื่อเมาส์ชี้ผ่าน */
+            box-shadow: 0 6px 22px rgba(255, 215, 0, 0.2) !important;
             background-color: rgba(255, 255, 255, 0.04) !important;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+        }
+        
+        /* ซ่อนกรอบเดิมของ st.expander เพื่อป้องกันกรอบซ้อนและขัดแย้งกันในแต่ละเบราว์เซอร์ */
+        div[data-testid="stExpander"], div.stExpander, .streamlit-expander {
+            background-color: transparent !important;
+            border: none !important;
+            margin-bottom: 0px !important;
+            box-shadow: none !important;
         }
         
         /* ตกแต่งส่วนหัวของ expander (ปุ่มสรุปข้อมูลแมตช์) */
-        div[data-testid="stExpander"] > details > summary {
+        div[data-testid="stExpander"] > details > summary,
+        div.stExpander > details > summary,
+        .streamlit-expander > details > summary {
             background-color: rgba(0, 0, 0, 0.2) !important;
-            border-radius: 12px 12px 0 0 !important;
+            border-radius: 10px 10px 0 0 !important;
             padding: 14px 18px !important;
             color: #f8fafc !important;
             font-size: 1.05rem !important;
             font-weight: 600 !important;
             transition: color 0.2s ease !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
         }
         
-        div[data-testid="stExpander"] > details > summary:hover {
+        div[data-testid="stExpander"] > details > summary:hover,
+        div.stExpander > details > summary:hover,
+        .streamlit-expander > details > summary:hover {
             color: #ffd700 !important; /* ตัวอักษรเปลี่ยนเป็นสีทองเมื่อโฮเวอร์ */
         }
         
         /* ตกแต่งเนื้อหาด้านในเมื่อขยาย expander ออกมา */
-        div[data-testid="stExpander"] > details > div[role="region"] {
+        div[data-testid="stExpander"] > details > div[role="region"],
+        div.stExpander > details > div[role="region"],
+        .streamlit-expander > details > div[role="region"] {
             padding: 20px !important;
             background-color: rgba(0, 0, 0, 0.25) !important;
-            border-radius: 0 0 12px 12px !important;
+            border-radius: 0 0 10px 10px !important;
         }
 
         /* ================================================================= */
@@ -1778,6 +1792,8 @@ elif menu == "📑 ประวัติการทายผล":
                     
                     expander_label = f"⚽ {home_disp}  {h_real} - {a_real}  {away_disp}"
                     
+                    # หุ้ม st.expander ด้วย div.match-card-wrapper เพื่อสร้างกรอบที่มองเห็นได้ 100% แน่นอนในทุกบราวเซอร์
+                    st.markdown("<div class='match-card-wrapper'>", unsafe_allow_html=True)
                     with st.expander(expander_label):
                         st.markdown(f"**⏰ เวลาแข่ง:** {pd.to_datetime(row_m['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
                         if row_m['scorers']:
@@ -1827,6 +1843,7 @@ elif menu == "📑 ประวัติการทายผล":
                                     """,
                                     unsafe_allow_html=True
                                 )
+                    st.markdown("</div>", unsafe_allow_html=True)
                 st.divider()
 
     with tab_upcoming:
