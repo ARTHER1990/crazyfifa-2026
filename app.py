@@ -136,6 +136,11 @@ db.init_db()
 bg_opacity_val = 0.67
 bg_opacity_bottom = 0.70
 
+# เปิดสไลเดอร์ปรับพิกัดสดชั่วคราวสำหรับจูนตำแหน่งถ้วยรางวัลร่วมกับคุณอาร์ต
+with st.sidebar.expander("🛠️ แผงปรับพิกัดแบนเนอร์ (ชั่วคราวสำหรับคุณอาร์ต)", expanded=True):
+    right_val = st.slider("ระยะห่างฝั่งขวา (right %)", min_value=0.0, max_value=30.0, value=12.9, step=0.1)
+    top_val = st.slider("ระยะห่างด้านบน (top %)", min_value=0.0, max_value=40.0, value=17.0, step=0.1)
+
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
 <!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) - ปรับให้นุ่มนวลขึ้นไม่ลายตา -->
@@ -322,8 +327,8 @@ st.markdown(f"""
     /* แผงมาร์กพิกเซลกาวเป้าถ้วยรางวัลทองคำของคุณอาร์ต */
     .trophy-target-overlay {{
         position: absolute;
-        right: 12.9%; /* พิกัดขวาตามสูตรทองคำ */
-        top: 17%;    /* พิกัดบนตามสูตรทองคำ */
+        right: {right_val}%; /* พิกัดขวาปรับค่าสดตามสไลเดอร์ */
+        top: {top_val}%;    /* พิกัดบนปรับค่าสดตามสไลเดอร์ */
         width: 40px;
         height: 40px;
         pointer-events: none;
