@@ -229,17 +229,18 @@ st.markdown(f"""
         padding: 10px 15px;
         border-radius: 12px;
         margin-bottom: 8px;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        cursor: pointer !important;
     }}
     div[role="radiogroup"] > label:hover {{
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid #c0c0c0; /* ขัดขอบเงินให้ชัดขึ้นเมื่อ hover */
-        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.5) !important; /* ขัดขอบเงินให้ชัดขึ้นเมื่อ hover */
+        box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05) !important;
     }}
     div[role="radiogroup"] > label[data-selected="true"] {{
         background: linear-gradient(90deg, #5c7a67 0%, #3d5244 100%) !important;
-        border: 1.5px solid #ffffff; /* ขอบสีขาวสว่างแบบโครเมี่ยมสะท้อนแสง */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        border: 1.5px solid #ffffff !important; /* ขอบสีขาวสว่างแบบโครเมี่ยมสะท้อนแสง */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
     }}
     div[role="radiogroup"] > label[data-selected="true"] span {{
         color: #ffffff !important;
