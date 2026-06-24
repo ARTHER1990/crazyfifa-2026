@@ -1651,6 +1651,94 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
 # 5. หน้าประวัติการทายผล (แยกออกมาตามคำปรึกษาคุณอาร์ต)
 elif menu == "📑 ประวัติการทายผล":
     st.header("📑 ประวัติการทายผลการแข่งขัน")
+    
+    # 🎨 แทรก CSS (ซีเอสเอส: ภาษาที่ใช้ในการกำหนดรูปแบบการแสดงผลของหน้าเว็บ) เพื่อตกแต่งกรอบและการไฮไลท์แบบพรีเมียม
+    st.markdown("""
+        <style>
+        /* ================================================================= */
+        /* 1. ตกแต่ง st.expander ในหน้าประวัติการแข่งเสร็จแล้วให้สวยพรีเมี่ยม */
+        /* ================================================================= */
+        div[data-testid="stExpander"] {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25) !important;
+            margin-bottom: 12px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        div[data-testid="stExpander"]:hover {
+            border-color: rgba(255, 215, 0, 0.4) !important; /* ขอบไฮไลท์สีทองอ่อนๆ เวลาเมาส์ชี้ */
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.15) !important;
+            background-color: rgba(255, 255, 255, 0.04) !important;
+            transform: translateY(-1px);
+        }
+        
+        /* ตกแต่งส่วนหัวของ expander (ปุ่มสรุปข้อมูลแมตช์) */
+        div[data-testid="stExpander"] > details > summary {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 14px 18px !important;
+            color: #f8fafc !important;
+            font-size: 1.05rem !important;
+            font-weight: 600 !important;
+            transition: color 0.2s ease !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        
+        div[data-testid="stExpander"] > details > summary:hover {
+            color: #ffd700 !important; /* ตัวอักษรเปลี่ยนเป็นสีทองเมื่อโฮเวอร์ */
+        }
+        
+        /* ตกแต่งเนื้อหาด้านในเมื่อขยาย expander ออกมา */
+        div[data-testid="stExpander"] > details > div[role="region"] {
+            padding: 20px !important;
+            background-color: rgba(0, 0, 0, 0.25) !important;
+            border-radius: 0 0 12px 12px !important;
+        }
+
+        /* ================================================================= */
+        /* 2. ตกแต่งการ์ดผลทายล่วงหน้า (Upcoming Match Cards) ให้เด่นชัดพรีเมียม */
+        /* ================================================================= */
+        .upcoming-card {
+            padding: 18px 22px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        /* กรณีทายผลแล้ว: ดีไซน์สีฟ้าน้ำทะเล (Cyan/Aqua) */
+        .upcoming-card.has-prediction {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 150, 255, 0.03) 100%);
+            border: 1.5px solid rgba(0, 212, 255, 0.35) !important;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.05) !important;
+        }
+        
+        .upcoming-card.has-prediction:hover {
+            border-color: rgba(0, 212, 255, 0.75) !important;
+            box-shadow: 0 6px 22px rgba(0, 212, 255, 0.2) !important;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.12) 0%, rgba(0, 150, 255, 0.05) 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* กรณีที่ยังไม่ทายผล: ดีไซน์ขอบประสีส้มแดงเพื่อเตือนสายตา */
+        .upcoming-card.no-prediction {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 107, 107, 0.02) 100%);
+            border: 1.5px dashed rgba(255, 107, 107, 0.45) !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.02) !important;
+        }
+        
+        .upcoming-card.no-prediction:hover {
+            border-color: rgba(255, 107, 107, 0.8) !important;
+            box-shadow: 0 6px 22px rgba(255, 107, 107, 0.15) !important;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.08) 0%, rgba(255, 107, 107, 0.04) 100%);
+            transform: translateY(-2px);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.info("💡 เลือกดูสรุปผลการแข่งขันและการทายผลของเพื่อนๆ แยกตามวัน โดยคนที่ทายถูกเป๊ะได้รับ 3 แต้ม (สีทอง 🏆) และถูกฝั่งได้รับ 1 แต้ม (สีเขียว 🟢)")
     st.markdown("---")
     
@@ -1797,23 +1885,15 @@ elif menu == "📑 ประวัติการทายผล":
                     if has_pred:
                         pred_h, pred_a = user_preds[safe_int(m_id)]
                         pred_text = f"🔥 ผลทายของคุณ: &nbsp;<b>{pred_h} - {pred_a}</b>"
-                        card_style = """
-                        background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 150, 255, 0.03) 100%);
-                        border: 1px solid rgba(0, 212, 255, 0.2);
-                        color: #e2e8f0;
-                        """
+                        card_class = "upcoming-card has-prediction"
                     else:
                         pred_text = "⚠️ คุณยังไม่ได้ทายผลคู่นี้"
-                        card_style = """
-                        background: rgba(255, 255, 255, 0.01);
-                        border: 1px solid rgba(255, 255, 255, 0.05);
-                        color: #a0aec0;
-                        """
+                        card_class = "upcoming-card no-prediction"
                     
                     status_text = "🔒 ปิดรับผลทายแล้ว" if is_locked else "🔓 เปิดรับผลทาย (สามารถแก้ไขได้ที่หน้าแรก)"
                     st.markdown(
                         f"""
-                        <div style='padding: 15px; border-radius: 12px; margin-bottom: 12px; {card_style}'>
+                        <div class='{card_class}'>
                             <div style='display: flex; justify-content: space-between; align-items: center;'>
                                 <span style='font-size: 1.05rem; font-weight: bold;'>⚽ {home_disp} vs {away_disp}</span>
                                 <span style='font-size: 0.85rem; color: #a0aec0;'>⏰ เวลาเตะ: {m_time.strftime('%H:%M น.')}</span>
