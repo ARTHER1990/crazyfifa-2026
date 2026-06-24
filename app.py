@@ -1656,6 +1656,55 @@ elif menu == "📑 ประวัติการทายผล":
     st.markdown("""
         <style>
         /* ================================================================= */
+        /* 0. ตกแต่งหัวข้อแท็บย่อย (st.tabs) ให้มีขอบมนและไฮไลท์กรอบเรืองแสงหรูหรา */
+        /* ================================================================= */
+        /* จัดระยะห่างของลิสต์แท็บให้สวยงาม */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 12px !important;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+            padding-bottom: 8px !important;
+        }
+
+        /* ตกแต่งแท็บแต่ละอันในสถานะปกติ (Inactive) */
+        .stTabs [data-baseweb="tab"] {
+            border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 10px 24px !important;
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            color: rgba(255, 255, 255, 0.6) !important;
+            font-weight: 500 !important;
+            font-size: 1.05rem !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        /* เอฟเฟกต์โฮเวอร์ (Hover) ของปุ่มแท็บ */
+        .stTabs [data-baseweb="tab"]:hover {
+            color: #ffffff !important;
+            border-color: rgba(255, 215, 0, 0.4) !important;
+            background-color: rgba(255, 215, 0, 0.03) !important;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.05) !important;
+        }
+
+        /* ตกแต่งแท็บเมื่อถูกคลิกเลือกใช้งาน (Active) */
+        .stTabs [aria-selected="true"] {
+            color: #ffd700 !important; /* อักษรและไอคอนสีทอง */
+            border: 2px solid #ffd700 !important; /* ขอบสีทองชัดเจนหนา 2px */
+            border-bottom: 2px solid rgba(13, 17, 23, 0.95) !important; /* ซ้อนทับเส้นนอนด้านล่าง */
+            border-radius: 12px 12px 0 0 !important;
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 215, 0, 0.02) 100%) !important;
+            font-weight: 700 !important;
+            box-shadow: 0 -4px 15px rgba(255, 215, 0, 0.1) !important; /* แสงเรืองรองสีทองขึ้นด้านบน */
+        }
+
+        /* ซ่อนขีดไฮไลท์สไตล์ดั้งเดิมเพื่อไม่ให้รบกวนขอบทองของเรา */
+        div[data-baseweb="tab-highlight"] {
+            background-color: transparent !important;
+        }
+        div[data-baseweb="tab-border"] {
+            display: none !important;
+        }
+
+        /* ================================================================= */
         /* 1. ตกแต่งครอบการ์ดผลแข่งเสร็จแล้ว (Match Card Wrapper) ด้วยกรอบหนาเรืองแสง */
         /* ================================================================= */
         .match-card-wrapper {
