@@ -55,6 +55,14 @@ ufo_base64 = get_base64_image(image_full_path)
 bg_sidebar_path = os.path.join(current_dir, "02_optimized.png")
 bg_sidebar_base64 = get_base64_image(bg_sidebar_path)
 
+# โหลดภาพแบนเนอร์ของคุณอาร์ต เครซีเว็ป.png
+banner_path = os.path.join(current_dir, "เครซีเว็ป.png")
+banner_base64 = get_base64_image(banner_path)
+
+# โหลดภาพลูกบอลทัวร์นาเมนต์ ball2026.png
+ball_path = os.path.join(current_dir, "ball2026.png")
+ball_base64 = get_base64_image(ball_path)
+
 # ฟังก์ชันสำหรับเพลง
 def get_audio_html(audio_path):
     if not os.path.exists(audio_path):
@@ -255,75 +263,120 @@ st.markdown(f"""
         letter-spacing: 0.5px !important;
     }}
 
-    .header-wrapper {{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 140px;
-    margin-top: -35px;
-    overflow: visible;
-    position: relative;
-    z-index: 10;
-}}
-.main-title {{
-    color: #FFD700;
-    font-size: 3.5rem;
-    font-weight: bold;
-    margin: 0;
-    letter-spacing: 2px;
-    position: relative;
-    animation: rising-mist 3s ease-in-out infinite;
-}}
+    /* สไตล์ส่วนหัวพรีเมี่ยมแบบโปร่งใส ไร้รอยต่อ */
+    .premium-header {{
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: -35px;
+        margin-bottom: 5px;
+        z-index: 10;
+        overflow: visible;
+    }}
 
-@keyframes rising-mist {{
-    0% {{
-        text-shadow: 
-            0 0 10px rgba(0, 212, 255, 0.8),
-            0 -4px 15px rgba(0, 150, 255, 0.5),
-            0 -8px 25px rgba(135, 206, 250, 0.3),
-            3px 3px 6px rgba(0,0,0,0.5);
+    .title-wrapper {{
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 950px;
+        padding: 0 30px;
+        z-index: 2;
     }}
-    50% {{
-        text-shadow: 
-            0 0 14px rgba(0, 212, 255, 0.9),
-            0 -8px 22px rgba(0, 150, 255, 0.7),
-            0 -16px 35px rgba(135, 206, 250, 0.5),
-            3px 3px 6px rgba(0,0,0,0.5);
+
+    /* รูปภาพแบนเนอร์ เครซีเว็ป.png กรองพื้นดำมองทะลุ 100% */
+    .crazyweb-img {{
+        width: 100%;
+        height: auto;
+        max-height: 210px;
+        object-fit: contain;
+        mix-blend-mode: screen;
+        animation: imageGlowMutedPulse 3.5s ease-in-out infinite alternate;
+        will-change: filter, transform;
     }}
-    100% {{
-        text-shadow: 
-            0 0 10px rgba(0, 212, 255, 0.8),
-            0 -4px 15px rgba(0, 150, 255, 0.5),
-            0 -8px 25px rgba(135, 206, 250, 0.3),
-            3px 3px 6px rgba(0,0,0,0.5);
+
+    /* แอนิเมชันกระเพื่อมเรืองแสงออร่านีออนสีฟ้าสวยงามชัดเจนระดับกำลังดี (4px ถึง 8px) ไม่บวมหนา */
+    @keyframes imageGlowMutedPulse {{
+        0% {{
+            filter: drop-shadow(0 0 4px rgba(58, 226, 255, 0.35));
+            transform: scale(1);
+        }}
+        100% {{
+            filter: drop-shadow(0 0 8px rgba(58, 226, 255, 0.55));
+            transform: scale(1.006);
+        }}
     }}
-}}
-.trophy-wrapper {{
-    position: relative;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    margin-left: 20px;
-}}
-.animated-ball-x {{
-    position: absolute;
-    z-index: 15;
-    animation: goal-x 4s infinite;
-    will-change: transform;
-}}
-.animated-ball-y {{
-    animation: goal-y 4s infinite;
-    will-change: transform;
-}}
-.animated-ball {{
-    display: inline-block;
-    font-size: 1.5rem;
-    animation: goal-ball 4s infinite;
-    will-change: transform;
-    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
-}}
+
+    /* แผงมาร์กพิกเซลกาวเป้าถ้วยรางวัลทองคำของคุณอาร์ต */
+    .trophy-target-overlay {{
+        position: absolute;
+        right: 12.9%; /* พิกัดขวาตามสูตรทองคำ */
+        top: 17%;    /* พิกัดบนตามสูตรทองคำ */
+        width: 40px;
+        height: 40px;
+        pointer-events: none;
+        z-index: 12;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        box-shadow: none;
+    }}
+
+    /* วงกลมออร่าแสงสีฟ้านีออนชีพจรเต้นเบื้องหลังถ้วยในรูป */
+    .trophy-target-overlay::before {{
+        content: "";
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle, rgba(58, 226, 255, 0.55) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: -1;
+        filter: blur(10px);
+        animation: trophyGlowPulse 3.5s ease-in-out infinite alternate;
+        will-change: transform, opacity;
+    }}
+
+    @keyframes trophyGlowPulse {{
+        0% {{
+            transform: scale(0.85);
+            opacity: 0.55;
+        }}
+        100% {{
+            transform: scale(1.18);
+            opacity: 1.0;
+        }}
+    }}
+
+    .animated-ball-x {{
+        position: absolute;
+        z-index: 15;
+        animation: goal-x 4s infinite;
+        will-change: transform;
+    }}
+    .animated-ball-y {{
+        animation: goal-y 4s infinite;
+        will-change: transform;
+    }}
+    .animated-ball {{
+        display: inline-block;
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+        animation: goal-ball 4s infinite;
+        will-change: transform;
+        filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
+    }}
 .firework-particle {{
     position: absolute;
     width: 5px;
@@ -577,30 +630,34 @@ footer {{visibility: hidden;}}
 }}
 </style>
 
-<div class='header-wrapper'>
-    <div class='main-title'>CRAZYFIFA 2026</div>
-    <div class='ufo-flyer-lg'>🛸</div>
-    <div class='ufo-flyer-sm'>🛸</div>
-    <div class='ufo-flyer-mid'>🛸</div>
-    <div class='trophy-wrapper'>
-        🏆
-        <div class='animated-ball-x'>
-            <div class='animated-ball-y'>
-                <span class='animated-ball'>⚽</span>
-            </div>
-        </div>
-        <div class='firework-particle p1'></div>
-        <div class='firework-particle p2'></div>
-        <div class='firework-particle p3'></div>
-        <div class='firework-particle p4'></div>
-        <div class='firework-particle p5'></div>
-        <div class='firework-particle p6 white-p'></div>
-        <div class='firework-particle p7 white-p'></div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+<header class="premium-header">
+    <div class="title-wrapper">
+        <!-- ภาพแบนเนอร์ เครซีเว็ป.png โหลดผ่าน Base64 โปร่งแสงพรีเมี่ยม -->
+        <img class="crazyweb-img" src="data:image/png;base64,{banner_base64}" alt="CRAZYFIFA 2026 Header">
+        
+        <!-- จานบินลอยจำลอง -->
+        <div class='ufo-flyer-lg'>🛸</div>
+        <div class='ufo-flyer-sm'>🛸</div>
+        <div class='ufo-flyer-mid'>🛸</div>
 
-st.markdown("<h3 style='text-align: center; margin-top: -30px; color: #888;'>WORLD CUP PREDICTION CHALLENGE</h3>", unsafe_allow_html=True)
+        <!-- จุดฉายแอนิเมชันลูกบอลทองคำตกกระทบและส่องประกายออร่าเฉพาะยอดถ้วยฝั่งขวา -->
+        <div class="trophy-target-overlay">
+            <div class='animated-ball-x'>
+                <div class='animated-ball-y'>
+                    <img class='animated-ball' src="data:image/png;base64,{ball_base64}" alt="⚽">
+                </div>
+            </div>
+            <div class='firework-particle p1'></div>
+            <div class='firework-particle p2'></div>
+            <div class='firework-particle p3'></div>
+            <div class='firework-particle p4'></div>
+            <div class='firework-particle p5'></div>
+            <div class='firework-particle p6 white-p'></div>
+            <div class='firework-particle p7 white-p'></div>
+        </div>
+    </div>
+</header>
+""", unsafe_allow_html=True)
 
 # 1. ระบบผู้ใช้งาน (Sidebar)
 if 'username' not in st.session_state:
