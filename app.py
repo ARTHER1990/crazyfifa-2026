@@ -1662,7 +1662,7 @@ elif menu == "📑 ประวัติการทายผล":
         .stTabs [data-baseweb="tab-list"] {
             gap: 12px !important;
             border-bottom: none !important; /* ปิดเส้นนอนใต้แท็บแบบเดิมถาวร */
-            padding-bottom: 8px !important;
+            padding-bottom: 10px !important; /* เพิ่มช่องว่างด้านล่างเล็กน้อยให้เงาหายใจได้ */
         }
 
         /* ตกแต่งแท็บแต่ละอันในสถานะปกติ (Inactive) เป็นรูปทรงแคปซูลยาเม็ดพรีเมียม */
@@ -1682,7 +1682,7 @@ elif menu == "📑 ประวัติการทายผล":
             color: #ffffff !important;
             border-color: rgba(255, 215, 0, 0.5) !important;
             background-color: rgba(255, 215, 0, 0.05) !important;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.08) !important;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.08) !important;
         }
 
         /* ตกแต่งแท็บเมื่อถูกคลิกเลือกใช้งาน (Active) ด้วยขอบทองสว่างรอบตัว 100% */
@@ -1692,7 +1692,7 @@ elif menu == "📑 ประวัติการทายผล":
             border-radius: 20px !important;
             background: linear-gradient(180deg, rgba(255, 215, 0, 0.12) 0%, rgba(255, 215, 0, 0.03) 100%) !important;
             font-weight: 700 !important;
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25) !important; /* แสงสะท้อนเรืองแสงสีทองฟุ้งรอบปุ่มครบทุกด้าน */
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.2) !important; /* ปรับลดรัศมีเงาเรืองแสงสีทองให้นุ่มนวลและไม่ล้นกรอบ */
         }
 
         /* ซ่อนขีดไฮไลท์สไตล์ดั้งเดิมเพื่อไม่ให้รบกวนขอบทองของเรา */
