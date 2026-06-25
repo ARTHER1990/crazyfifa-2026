@@ -2033,29 +2033,161 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
         bronze_score = top_scores[2] if len(top_scores) > 2 else -1
         
         leaderboard['อันดับ'] = range(1, len(leaderboard) + 1)
-        def add_gimmick(row):
-            score = row['total_score']
-            username = row['username']
-            if score > 0:
-                if score == gold_score:
-                    return f"👑 {username} 🥇"
-                elif score == silver_score:
-                    return f"⭐️ {username} 🥈"
-                elif score == bronze_score:
-                    return f"✨ {username} 🥉"
-            return f"👤 {username}"
         
-        leaderboard['รายชื่อผู้เล่น'] = leaderboard.apply(add_gimmick, axis=1)
-        st.dataframe(
-            leaderboard[['อันดับ', 'รายชื่อผู้เล่น', 'total_score']].rename(columns={'total_score': 'คะแนนสะสม'}), 
-            width='stretch', 
-            hide_index=True,
-            column_config={
-                "อันดับ": st.column_config.NumberColumn("อันดับ", width="small"),
-                "รายชื่อผู้เล่น": st.column_config.TextColumn("รายชื่อผู้เล่น", width="large"),
-                "คะแนนสะสม": st.column_config.NumberColumn("คะแนนสะสม", width="medium")
+        # 🎨 สร้างระบบเรนเดอร์ตารางอันดับเกียรติยศ HTML/CSS สไตล์พรีเมียมเรืองแสงทองคำตระการตาตามความพึงพอใจของคุณอาร์ต
+        def render_leaderboard_html(df):
+            html_code = """
+            <style>
+            /* กรอบสวรรค์ทองคำจำลอง แผ่ออร่าความเรืองแสงตระการตาชั้นสูง */
+            .leaderboard-gold-card {
+                background: linear-gradient(180deg, rgba(255, 215, 0, 0.04) 0%, rgba(15, 23, 18, 0.65) 100%) !important;
+                padding: 24px !important;
+                border-radius: 20px !important;
+                border: 2.5px solid #ffd700 !important; /* กรอบทองหนาพรีเมียมโดดเด่น */
+                margin-top: 15px !important;
+                margin-bottom: 25px !important;
+                /* เงาเรืองแสงรอบตัว 3 มิติ ร่วมกับเงาเรืองสะท้อนด้านใน (inset) ป้องกันการถูกตัดขอบเหลี่ยมในทุกหน้าจอ */
+                box-shadow: 0 10px 35px rgba(255, 215, 0, 0.18), inset 0 0 20px rgba(255, 215, 0, 0.08) !important;
+                overflow-x: auto !important;
+                transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
             }
-        )
+            .leaderboard-gold-card:hover {
+                box-shadow: 0 15px 45px rgba(255, 215, 0, 0.28), inset 0 0 25px rgba(255, 215, 0, 0.12) !important;
+                border-color: #ffe066 !important;
+                transform: translateY(-2px);
+            }
+            .leaderboard-table {
+                width: 100%;
+                border-collapse: collapse !important;
+                font-family: 'Kanit', sans-serif !important;
+                color: #f1f5f9 !important;
+            }
+            .leaderboard-table th {
+                background: rgba(20, 32, 24, 0.9) !important;
+                color: #ffd700 !important;
+                font-weight: 600 !important;
+                padding: 14px 10px !important;
+                text-align: center !important;
+                border-bottom: 2.5px solid rgba(255, 215, 0, 0.3) !important;
+                font-size: 0.95rem !important;
+                letter-spacing: 0.5px;
+                white-space: nowrap !important;
+            }
+            .leaderboard-table td {
+                padding: 14px 10px !important;
+                text-align: center !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+                font-size: 0.98rem !important;
+            }
+            .leaderboard-table tr:hover {
+                background-color: rgba(255, 215, 0, 0.08) !important;
+            }
+            
+            /* พื้นหลังและแถบข้างเรืองแสงตามระดับเกียรติยศ */
+            .row-rank-1 {
+                background: rgba(255, 215, 0, 0.12) !important;
+                font-weight: bold !important;
+                border-left: 5px solid #ffd700 !important;
+            }
+            .row-rank-2 {
+                background: rgba(192, 192, 192, 0.08) !important;
+                font-weight: bold !important;
+                border-left: 5px solid #c0c0c0 !important;
+            }
+            .row-rank-3 {
+                background: rgba(205, 127, 50, 0.06) !important;
+                font-weight: bold !important;
+                border-left: 5px solid #cd7f32 !important;
+            }
+            
+            /* ป้ายตราเกียรติยศอันดับ 1-3 ดีไซน์นูนต่ำลอยตัว 3D */
+            .badge-rank-1 {
+                background: linear-gradient(135deg, #ffe066 0%, #ffd700 100%) !important;
+                color: #0d1510 !important;
+                padding: 4px 12px !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+                font-size: 0.85rem !important;
+                box-shadow: 0 3px 8px rgba(255, 215, 0, 0.35) !important;
+                display: inline-block;
+            }
+            .badge-rank-2 {
+                background: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%) !important;
+                color: #0d1510 !important;
+                padding: 4px 12px !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+                font-size: 0.85rem !important;
+                box-shadow: 0 3px 8px rgba(255, 255, 255, 0.25) !important;
+                display: inline-block;
+            }
+            .badge-rank-3 {
+                background: linear-gradient(135deg, #f0a25e 0%, #8f4d22 100%) !important;
+                color: #ffffff !important;
+                padding: 4px 12px !important;
+                border-radius: 12px !important;
+                font-weight: 700 !important;
+                font-size: 0.85rem !important;
+                box-shadow: 0 3px 8px rgba(143, 77, 34, 0.25) !important;
+                display: inline-block;
+            }
+            </style>
+            <div class='leaderboard-gold-card'>
+            <table class='leaderboard-table'>
+            <thead>
+                <tr>
+                    <th style='width: 15%;'>อันดับ<br><span style='font-size: 0.68rem; opacity: 0.75; font-weight: normal;'>Rank</span></th>
+                    <th style='text-align: left; padding-left: 20px;'>รายชื่อยอดนักทายผล<br><span style='font-size: 0.68rem; opacity: 0.75; font-weight: normal;'>Competitor</span></th>
+                    <th style='width: 25%;'>คะแนนสะสม<br><span style='font-size: 0.68rem; opacity: 0.75; font-weight: normal;'>Total Score</span></th>
+                </tr>
+            </thead>
+            <tbody>
+            """
+            
+            for idx, row in df.iterrows():
+                rank = row['อันดับ']
+                username = row['username']
+                score = row['total_score']
+                
+                row_class = ""
+                rank_display = f"<b>{rank}</b>"
+                
+                if score > 0:
+                    if score == gold_score:
+                        row_class = "row-rank-1"
+                        rank_display = f"<span class='badge-rank-1'>🥇 {rank}</span>"
+                        user_display = f"👑 <b>{username}</b>"
+                    elif score == silver_score:
+                        row_class = "row-rank-2"
+                        rank_display = f"<span class='badge-rank-2'>🥈 {rank}</span>"
+                        user_display = f"⭐️ <b>{username}</b>"
+                    elif score == bronze_score:
+                        row_class = "row-rank-3"
+                        rank_display = f"<span class='badge-rank-3'>🥉 {rank}</span>"
+                        user_display = f"✨ <b>{username}</b>"
+                    else:
+                        user_display = f"👤 {username}"
+                else:
+                    user_display = f"👤 {username}"
+                    
+                html_code += f"""
+                <tr class='{row_class}'>
+                    <td>{rank_display}</td>
+                    <td style='text-align: left; padding-left: 20px; font-weight: 500;'>{user_display}</td>
+                    <td style='font-weight: 700; color: #ffd700; font-size: 1.15rem; font-family: "Courier New", monospace;'>{score}</td>
+                </tr>
+                """
+                
+            html_code += """
+            </tbody>
+            </table>
+            </div>
+            """
+            return html_code
+
+        # แสดงผลตาราง HTML สไตล์พรีเมียมจำลองลงบนหน้า Streamlit
+        st.markdown(render_leaderboard_html(leaderboard), unsafe_allow_html=True)
+
 
 # 5. หน้าประวัติการทายผล (แยกออกมาตามคำปรึกษาคุณอาร์ต)
 elif menu == "📑 ประวัติการทายผล (My Predictions)":
