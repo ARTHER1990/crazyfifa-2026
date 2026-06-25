@@ -1286,34 +1286,29 @@ if st.session_state.authenticated:
                             p_a = safe_int(row_p['pred_away'])
                             pred_win = (p_h > p_a) - (p_h < p_a)
                             
-                            # คำนวณแต้มทายผล
+                            # คำนวณแต้มและสไตล์สีสันเพื่อความพรีเมี่ยมตระการตา
                             if p_h == h_real and p_a == a_real:
-                                hl_class = "pred-highlight-exact"
+                                hl_style = "background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.3); color: #2ecc71;"
                                 pt_txt = "🏆 3 แต้ม"
                             elif pred_win == real_win:
-                                hl_class = "pred-highlight-winner"
+                                hl_style = "background: rgba(241, 196, 15, 0.1); border: 1px solid rgba(241, 196, 15, 0.25); color: #ffd700;"
                                 pt_txt = "🟢 1 แต้ม"
                             else:
-                                hl_class = "pred-highlight-wrong"
+                                hl_style = "background: rgba(231, 76, 60, 0.08); border: 1px solid rgba(231, 76, 60, 0.15); color: #e74c3c;"
                                 pt_txt = "❌ 0 แต้ม"
                             
                             preds_html_list.append(
-                                f"""
-                                <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
-                                    👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
-                                </div>
-                                """
+                                f"<div style='font-size:0.8rem; padding:6px 10px; border-radius:6px; margin-bottom:5px; {hl_style}'>"
+                                f"👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})"
+                                f"</div>"
                             )
                         
                         # หุ้มผลทายทั้งหมดไว้ในกล่อง scroll ย่อยเพื่อจำกัดความสูงไม่ให้ล้นหน้าจอ
                         all_preds_html = "".join(preds_html_list)
                         st.markdown(
-                            f"""
-                            <div style='max-height: 180px; overflow-y: auto; padding-right: 5px; 
-                                        scrollbar-width: thin; scrollbar-color: rgba(255,215,0,0.35) transparent;'>
-                                {all_preds_html}
-                            </div>
-                            """,
+                            f"<div style='max-height:180px; overflow-y:auto; padding-right:5px; scrollbar-width:thin; scrollbar-color:rgba(255,215,0,0.35) transparent;'>"
+                            f"{all_preds_html}"
+                            f"</div>",
                             unsafe_allow_html=True
                         )
         else:
