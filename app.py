@@ -1836,29 +1836,25 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
         
         # สร้างฟังก์ชันวาดตาราง HTML ในบล็อกนี้เพื่อความง่ายและปลอดภัย
         def render_html_table(df, title, is_third_placed=False):
-            html_code = f"""
-            <div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px;'>
-                <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>
-                    🏆 {title}
-                </h4>
-                <table class='standings-table'>
-                    <thead>
-                        <tr>
-                            <th style='width: 8%;'>อันดับ</th>
-                            {"<th style='width: 10%;'>กลุ่ม</th>" if is_third_placed else ""}
-                            <th style='text-align: left;'>ทีมชาติ</th>
-                            <th style='width: 8%;'>แข่ง</th>
-                            <th style='width: 8%;'>ชนะ</th>
-                            <th style='width: 8%;'>เสมอ</th>
-                            <th style='width: 8%;'>แพ้</th>
-                            <th style='width: 8%;'>ได้</th>
-                            <th style='width: 8%;'>เสีย</th>
-                            <th style='width: 10%;'>+/-</th>
-                            <th style='width: 10%;'>แต้ม</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+            html_code = f"""<div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px;'>
+<h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 {title}</h4>
+<table class='standings-table'>
+<thead>
+<tr>
+<th style='width: 8%;'>อันดับ</th>
+{"<th style='width: 10%;'>กลุ่ม</th>" if is_third_placed else ""}
+<th style='text-align: left;'>ทีมชาติ</th>
+<th style='width: 8%;'>แข่ง</th>
+<th style='width: 8%;'>ชนะ</th>
+<th style='width: 8%;'>เสมอ</th>
+<th style='width: 8%;'>แพ้</th>
+<th style='width: 8%;'>ได้</th>
+<th style='width: 8%;'>เสีย</th>
+<th style='width: 10%;'>+/-</th>
+<th style='width: 10%;'>แต้ม</th>
+</tr>
+</thead>
+<tbody>"""
             
             for idx, row in df.iterrows():
                 pos = str(row['Pos']).strip()
@@ -1916,11 +1912,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                 html_code += f"<td class='pts-cell'>{row['Pts']}</td>"
                 html_code += f"</tr>"
                 
-            html_code += """
-                    </tbody>
-                </table>
-            </div>
-            """
+            html_code += """</tbody></table></div>"""
             return html_code
 
         # สร้างแท็บย่อยสลับดูตารางคะแนนแบบสวยงาม
