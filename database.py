@@ -48,7 +48,7 @@ def get_worksheet(name):
 def init_db():
     pass
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=300)
 def get_users_df():
     try:
         ws = get_worksheet('users')
@@ -59,7 +59,7 @@ def get_users_df():
         print(f"Error fetching users: {e}")
         return pd.DataFrame(columns=['username', 'total_score', 'pin'])
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=300)
 def get_matches():
     try:
         ws = get_worksheet('matches')
@@ -70,7 +70,7 @@ def get_matches():
         print(f"Error fetching matches: {e}")
         return pd.DataFrame(columns=['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers'])
 
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=300)
 def get_predictions_df():
     try:
         ws = get_worksheet('predictions')
@@ -112,7 +112,7 @@ def get_or_create_user(username, pin=None):
     elif pin:
         idx = df.index[df['username'] == name][0] + 2
         ws.update_cell(idx, 3, pin)
-    st.cache_data.clear()
+    get_users_df.clear()
 
 def verify_user(username, pin):
     name = normalize_name(username)
@@ -133,7 +133,7 @@ def save_prediction(username, match_id, pred_home, pred_away):
         ws.update(f'C{idx}:D{idx}', [[int(pred_home), int(pred_away)]])
     else:
         ws.append_row([name, match_id, int(pred_home), int(pred_away), 0])
-    st.cache_data.clear()
+    get_predictions_df.clear()
 
 def get_user_predictions(username):
     name = normalize_name(username)
@@ -248,8 +248,9 @@ def update_scores_logic():
         
     ws_u.clear()
     ws_u.update([df_u.columns.values.tolist()] + df_u.values.tolist())
-    st.cache_data.clear()
-    st.cache_resource.clear()
+    get_predictions_df.clear()
+    get_users_df.clear()
+    get_matches.clear()
 
 def auto_sync_scores():
     try:
