@@ -359,3 +359,88 @@ def auto_sync_scores():
     return 0
 
 
+def get_world_cup_standings():
+    try:
+        import requests
+        from bs4 import BeautifulSoup
+        import re
+        import pandas as pd
+        
+        url = "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup"
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+        r = requests.get(url, headers=headers, timeout=15)
+        if r.status_code != 200:
+            return {}
+        
+        soup = BeautifulSoup(r.text, 'html.parser')
+        wikitables = soup.find_all('table', class_='wikitable')
+        
+        standings = {}
+        
+        for table in wikitables:
+            headers_raw = [th.get_text(strip=True) for th in table.find_all('th')]
+            headers_cleaned = [h.replace('Teamvte', 'Team').strip() for h in headers_raw]
+            
+            if any('Pos' in h for h in headers_cleaned) and any('Pts' in h for h in headers_cleaned):
+                sibling = table.find_previous(['h2', 'h3', 'h4'])
+                sibling_text = sibling.get_text(strip=True) if sibling else ""
+                
+                label = None
+                for g in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']:
+                    if f"Group {g}" in sibling_text:
+                        label = f"Group {g}"
+                        break
+                if not label and "third-placed" in sibling_text.lower():
+                    label = "Third-placed"
+                
+                if label:
+                    rows = table.find_all('tr')
+                    table_data = []
+                    is_third_placed = (label == "Third-placed")
+                    desired_cols = ['Pos', 'Team', 'Pld', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts']
+                    if is_third_placed:
+                        desired_cols = ['Pos', 'Grp', 'Team', 'Pld', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts']
+                    
+                    col_indices = {}
+                    for col in desired_cols:
+                        for idx, h in enumerate(headers_cleaned):
+                            if h == col or (col == 'Team' and 'Team' in h) or (col == 'Pos' and 'Pos' in h) or (col == 'Pts' and 'Pts' in h):
+                                col_indices[col] = idx
+                                break
+                    
+                    if 'Team' not in col_indices:
+                        col_indices['Team'] = 1
+                    
+                    for row in rows:
+                        cells = row.find_all(['td', 'th'])
+                        if not cells:
+                            continue
+                        
+                        row_vals = [c.get_text(strip=True) for c in cells]
+                        
+                        first_cell = row_vals[0] if len(row_vals) > 0 else ""
+                        if not re.match(r'^\d+$', first_cell):
+                            continue
+                        
+                        row_data = {}
+                        for col in desired_cols:
+                            idx = col_indices.get(col)
+                            if idx is not None and idx < len(row_vals):
+                                val = row_vals[idx]
+                            else:
+                                val = ""
+                            val = re.sub(r'\[.*?\]', '', val)
+                            val = re.sub(r'\(.*?\)', '', val)
+                            row_data[col] = val.strip()
+                        
+                        table_data.append(row_data)
+                    
+                    df = pd.DataFrame(table_data)
+                    standings[label] = df
+        return standings
+    except Exception as e:
+        print("Scrape standings error:", e)
+        return {}
+
+
+

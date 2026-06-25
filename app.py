@@ -117,6 +117,29 @@ def check_and_sync_scores():
 
 
 
+# แผนผังแปลชื่อทีมเป็นภาษาไทยพรีเมี่ยม เพื่อความสมบูรณ์แบบของหน้าตารางคะแนนและผลทาย
+TEAM_TRANSLATION_MAP = {
+    'mexico': 'เม็กซิโก', 'south africa': 'แอฟริกาใต้', 'south korea': 'เกาหลีใต้', 'czech republic': 'สาธารณรัฐเช็ก',
+    'canada': 'แคนาดา', 'bosnia and herzegovina': 'บอสเนียและเฮอร์เซโกวีนา', 'usa': 'สหรัฐอเมริกา', 'paraguay': 'ปารากวัย',
+    'spain': 'สเปน', 'morocco': 'โมร็อกโก', 'england': 'อังกฤษ', 'australia': 'ออสเตรเลีย',
+    'qatar': 'กาตาร์', 'switzerland': 'สวิตเซอร์แลนด์', 'brazil': 'บราซิล', 'haiti': 'เฮติ',
+    'scotland': 'สกอตแลนด์', 'turkey': 'ตุรกี', 'argentina': 'อาร์เจนตินา', 'france': 'ฝรั่งเศส',
+    'germany': 'เยอรมนี', 'japan': 'ญี่ปุ่น', 'portugal': 'โปรตุเกส', 'netherlands': 'เนเธอร์แลนด์',
+    'curaçao': 'คูราเซา', 'côte d\'ivoire': 'คอตดิวัวร์', 'ecuador': 'เอกวาดอร์', 'sweden': 'สวีเดน',
+    'tunisia': 'ตูนิเซีย', 'cape verde': 'เคปเวิร์ด', 'belgium': 'เบลเยียม', 'egypt': 'อียิปต์',
+    'saudi arabia': 'ซาอุดีอาระเบีย', 'uruguay': 'อุรุกวัย', 'iran': 'อิหร่าน', 'new zealand': 'นิวซีแลนด์',
+    'senegal': 'เซเนกัล', 'iraq': 'อิรัก', 'norway': 'นอร์เวย์', 'algeria': 'แอลจีเรีย',
+    'austria': 'ออสเตรีย', 'jordan': 'จอร์แดน', 'dr congo': 'ดีอาร์ คองโก', 'croatia': 'โครเอเชีย',
+    'ghana': 'กานา', 'panama': 'ปานามา', 'uzbekistan': 'อุซเบกิสถาน', 'colombia': 'โคลอมเบีย',
+    'italy': 'อิตาลี', 'costa rica': 'คอสตาริกา', 'jamaica': 'จาเมกา', 'honduras': 'ฮอนดูรัส',
+    'chile': 'ชิลี', 'peru': 'เปรู', 'venezuela': 'เวเนซุเอลา', 'nigeria': 'ไนจีเรีย',
+    'cameroon': 'แคเมอรูน', 'denmark': 'เดนมาร์ก', 'poland': 'โปแลนด์', 'ukraine': 'ยูเครน',
+    'wales': 'เวลส์', 'serbia': 'เซอร์เบีย', 'slovenia': 'สโลวีเนีย', 'romania': 'โรมาเนีย',
+    'georgia': 'จอร์เจีย', 'albania': 'แอลเบเนีย', 'hungary': 'ฮังการี', 'slovakia': 'สโลวาเกีย',
+    'china': 'จีน', 'vietnam': 'เวียดนาม', 'thailand': 'ไทย', 'malaysia': 'มาเลเซีย',
+    'china pr': 'จีน', 'united states': 'สหรัฐอเมริกา'
+}
+
 def get_team_display(team_name):
     clean_name = team_name.strip()
     alias_map = {
@@ -125,14 +148,19 @@ def get_team_display(team_name):
         'türkiye': 'turkey',
         'ir iran': 'iran',
         'ivory coast': 'côte d\'ivoire',
-        'korea republic': 'south korea'
+        'korea republic': 'south korea',
+        'united states': 'usa',
+        'china pr': 'china'
     }
     lookup_name = clean_name.lower()
     if lookup_name in alias_map:
         lookup_name = alias_map[lookup_name]
         
     flag = FLAG_MAP.get(lookup_name, '🏳️')
-    return f"{clean_name} {flag}"
+    thai_name = TEAM_TRANSLATION_MAP.get(lookup_name, clean_name)
+    
+    # แสดงผลเป็น "ธงชาติ ชื่อภาษาไทย" (เช่น 🇩🇪 เยอรมนี) เพื่อความสมมาตร พรีเมี่ยม และเหมาะสมกับทุกพื้นที่แสดงผล
+    return f"{flag} {thai_name}"
 
 # เริ่มต้นฐานข้อมูล
 db.init_db()
@@ -166,10 +194,23 @@ st.markdown(f"""
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
         position: relative;
-        overflow-y: auto !important; /* เปิด scrolling ในแนวตั้งสำหรับ sidebar หลัก */
+        overflow: hidden !important; /* ล็อกความสูงเพื่อคลิปแสงและถ้วยไม่ให้ทะลุออก */
         border-right: none;
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+        height: 100vh !important;
     }}
+    
+    [data-testid="stSidebarContent"] {{
+        overflow-y: auto !important; /* ย้ายสกรอลล์มาไว้ที่เนื้อหาหลัก เพื่อไม่ให้โดนเอฟเฟกต์เบียดบัง */
+        height: 100% !important;
+        max-height: 100vh !important;
+    }}
+
+    [data-testid="stSidebarUserContent"] {{
+        overflow-y: visible !important;
+        max-height: none !important;
+    }}
+
     
     /* เลเยอร์เส้นแสงสะท้อนพาดผ่าน (Premium Soft Light Sweep) - แก้ไขให้วิ่งทะลุไม่ค้างที่ขอบ */
     [data-testid="stSidebar"]::before {{
@@ -652,6 +693,9 @@ footer {{visibility: hidden;}}
     }}
     /* ล็อก Sidebar หลักไม่ให้แสงเงาทะลุออกนอกขอบเขตด้านล่าง */
     [data-testid="stSidebar"] {{
+        overflow: hidden !important;
+    }}
+    [data-testid="stSidebarContent"] {{
         overflow-y: auto !important;
     }}
     /* ปล่อยให้เฉพาะเนื้อหาภายใน Sidebar เลื่อนแนวตั้งได้ และจะหยุดทันทีเมื่อสุดเนื้อหา */
@@ -1163,7 +1207,7 @@ except Exception as e:
 # --- ระบบเมนูและเพลงประกอบ (จัดลำดับประมวลผลสูงสุดเพื่อขจัดอาการกดย้ำ) ---
 if st.session_state.authenticated:
     # 🧭 เมนูนำทางหลัก (ย้ายขึ้นบนสุดเพื่อลำดับสิทธิ์การทำงานลำดับแรก ขจัดปัญหาความหน่วงและอาการกดย้ำ)
-    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "🏅 ตารางคะแนนกลุ่ม (Standings)", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
     if st.session_state.username == "Art":
         menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
     menu = st.sidebar.radio("เมนูหลัก", menu_options)
@@ -1221,10 +1265,10 @@ if st.session_state.authenticated:
                 a_real = safe_int(row_m['away_score'])
                 real_win = (h_real > a_real) - (h_real < a_real)
                 
-                home_flag = FLAG_MAP.get(row_m['home_team'].strip().lower(), '🏳️')
-                away_flag = FLAG_MAP.get(row_m['away_team'].strip().lower(), '🏳️')
+                home_display = get_team_display(row_m['home_team'])
+                away_display = get_team_display(row_m['away_team'])
                 
-                exp_title = f"{row_m['home_team']} {home_flag} {h_real} - {a_real} {row_m['away_team']} {away_flag}"
+                exp_title = f"{home_display} {h_real} - {a_real} {away_display}"
                 
                 with st.sidebar.expander(exp_title):
                     st.markdown(f"**⚽ ผู้ทำประตู:** {row_m['scorers'] if row_m['scorers'] else 'ไม่มีข้อมูล'}")
@@ -1235,6 +1279,7 @@ if st.session_state.authenticated:
                     if m_preds.empty:
                         st.markdown("<small style='color:#888;'>ยังไม่มีผู้เล่นทายคู่นี้</small>", unsafe_allow_html=True)
                     else:
+                        preds_html_list = []
                         for _, row_p in m_preds.iterrows():
                             u_name = row_p['username']
                             p_h = safe_int(row_p['pred_home'])
@@ -1252,14 +1297,25 @@ if st.session_state.authenticated:
                                 hl_class = "pred-highlight-wrong"
                                 pt_txt = "❌ 0 แต้ม"
                             
-                            st.markdown(
+                            preds_html_list.append(
                                 f"""
                                 <div class='{hl_class}' style='font-size:0.8rem; padding:6px; border-radius:6px; margin-bottom:4px;'>
                                     👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})
                                 </div>
-                                """, 
-                                unsafe_allow_html=True
+                                """
                             )
+                        
+                        # หุ้มผลทายทั้งหมดไว้ในกล่อง scroll ย่อยเพื่อจำกัดความสูงไม่ให้ล้นหน้าจอ
+                        all_preds_html = "".join(preds_html_list)
+                        st.markdown(
+                            f"""
+                            <div style='max-height: 180px; overflow-y: auto; padding-right: 5px; 
+                                        scrollbar-width: thin; scrollbar-color: rgba(255,215,0,0.35) transparent;'>
+                                {all_preds_html}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
         else:
             st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
     except Exception as sb_err:
@@ -1714,6 +1770,206 @@ elif menu == "📜 ผลการแข่งขันย้อนหลัง"
                     else:
                         st.write("ไม่มีข้อมูลการยิงประตู")
             st.divider()
+
+elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
+    st.header("🏅 ตารางคะแนนแบ่งกลุ่มศึกฟุตบอลโลก 2026")
+    st.info("💡 **กฎการเข้ารอบน็อกเอาต์ (รอบ 32 ทีมสุดท้าย):**\n- 🟢 อันดับ 1 และ 2 ของทุกกลุ่ม (A ถึง L) เข้ารอบโดยอัตโนมัติ (รวม 24 ทีม)\n- 🟡 ทีมอันดับ 3 ที่มีผลงานดีที่สุด 8 ทีม จากทั้ง 12 กลุ่ม จะได้รับตั๋วเข้ารอบเช่นกัน!")
+    st.markdown("---")
+    
+    # ดึงข้อมูลตารางคะแนนจากหลังบ้าน
+    with st.spinner("🔄 กำลังดึงตารางคะแนนเรียลไทม์จากระบบสากล..."):
+        standings = db.get_world_cup_standings()
+        
+    if not standings:
+        st.error("⚠️ ไม่สามารถดึงข้อมูลตารางคะแนนได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง")
+    else:
+        # แทรก CSS สำหรับแต่งตารางให้พรีเมี่ยม
+        st.markdown("""
+        <style>
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(30, 45, 36, 0.3) !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            color: #e0e6ed !important;
+            font-family: 'Kanit', sans-serif !important;
+            margin-bottom: 5px !important;
+        }
+        .standings-table th {
+            background: rgba(20, 32, 24, 0.85) !important;
+            color: #ffd700 !important;
+            font-weight: 600 !important;
+            padding: 10px !important;
+            text-align: center !important;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.15) !important;
+            font-size: 0.85rem !important;
+        }
+        .standings-table td {
+            padding: 10px !important;
+            text-align: center !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            font-size: 0.85rem !important;
+        }
+        .standings-table tr:hover {
+            background-color: rgba(255, 215, 0, 0.08) !important;
+        }
+        .standings-table .team-cell {
+            text-align: left !important;
+            font-weight: 500 !important;
+            color: #ffffff !important;
+        }
+        .standings-table .qualified-glow {
+            background: rgba(46, 204, 113, 0.08) !important;
+            border-left: 4px solid #2ecc71 !important;
+        }
+        .standings-table .qualified-warning {
+            background: rgba(241, 196, 15, 0.05) !important;
+            border-left: 4px solid #f1c40f !important;
+        }
+        .standings-table .pts-cell {
+            font-weight: bold !important;
+            color: #ffd700 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # สร้างฟังก์ชันวาดตาราง HTML ในบล็อกนี้เพื่อความง่ายและปลอดภัย
+        def render_html_table(df, title, is_third_placed=False):
+            html_code = f"""
+            <div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px;'>
+                <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>
+                    🏆 {title}
+                </h4>
+                <table class='standings-table'>
+                    <thead>
+                        <tr>
+                            <th style='width: 8%;'>อันดับ</th>
+                            {"<th style='width: 10%;'>กลุ่ม</th>" if is_third_placed else ""}
+                            <th style='text-align: left;'>ทีมชาติ</th>
+                            <th style='width: 8%;'>แข่ง</th>
+                            <th style='width: 8%;'>ชนะ</th>
+                            <th style='width: 8%;'>เสมอ</th>
+                            <th style='width: 8%;'>แพ้</th>
+                            <th style='width: 8%;'>ได้</th>
+                            <th style='width: 8%;'>เสีย</th>
+                            <th style='width: 10%;'>+/-</th>
+                            <th style='width: 10%;'>แต้ม</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """
+            
+            for idx, row in df.iterrows():
+                pos = str(row['Pos']).strip()
+                team_name = str(row['Team']).strip()
+                team_display = get_team_display(team_name)
+                
+                # ตกแต่งแถวตามสถานการณ์เข้ารอบ
+                row_class = ""
+                badge = ""
+                if is_third_placed:
+                    try:
+                        pos_num = int(pos)
+                        if pos_num <= 8:
+                            row_class = "qualified-glow"
+                            badge = " <span style='color: #2ecc71; font-size: 0.75rem; font-weight: bold;'>[เข้ารอบ]</span>"
+                        else:
+                            row_class = ""
+                            badge = " <span style='color: #e74c3c; font-size: 0.75rem; font-weight: bold;'>[ตกรอบ]</span>"
+                    except:
+                        pass
+                else:
+                    if pos == "1" or pos == "2":
+                        row_class = "qualified-glow"
+                        badge = " <span style='color: #2ecc71; font-size: 0.75rem; font-weight: bold;'>[เข้ารอบ]</span>"
+                    elif pos == "3":
+                        row_class = "qualified-warning"
+                        badge = " <span style='color: #f1c40f; font-size: 0.75rem; font-weight: bold;'>[ลุ้นอันดับ 3]</span>"
+                    else:
+                        row_class = ""
+                        badge = ""
+                        
+                html_code += f"<tr class='{row_class}'>"
+                html_code += f"<td><b>{pos}</b></td>"
+                if is_third_placed:
+                    grp = str(row.get('Grp', '')).strip()
+                    html_code += f"<td><span style='background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;'><b>{grp}</b></span></td>"
+                    
+                html_code += f"<td class='team-cell'>{team_display}{badge}</td>"
+                html_code += f"<td>{row['Pld']}</td>"
+                html_code += f"<td>{row['W']}</td>"
+                html_code += f"<td>{row['D']}</td>"
+                html_code += f"<td>{row['L']}</td>"
+                html_code += f"<td>{row['GF']}</td>"
+                html_code += f"<td>{row['GA']}</td>"
+                
+                # ตกแต่งสีสันของผลต่างประตูได้เสีย (+ เป็นเขียว, - เป็นแดง)
+                gd = str(row['GD']).strip()
+                gd_style = "color: #e0e6ed;"
+                if gd.startswith('+'):
+                    gd_style = "color: #2ecc71; font-weight: bold;"
+                elif gd.startswith('-') or gd.startswith('−'):
+                    gd_style = "color: #e74c3c; font-weight: bold;"
+                html_code += f"<td><span style='{gd_style}'>{gd}</span></td>"
+                
+                html_code += f"<td class='pts-cell'>{row['Pts']}</td>"
+                html_code += f"</tr>"
+                
+            html_code += """
+                    </tbody>
+                </table>
+            </div>
+            """
+            return html_code
+
+        # สร้างแท็บย่อยสลับดูตารางคะแนนแบบสวยงาม
+        t1, t2, t3, t4 = st.tabs(["🔥 กลุ่ม A - D", "⚡ กลุ่ม E - H", "🌟 กลุ่ม I - L", "🏅 ทีมอันดับ 3 ที่ดีที่สุด"])
+        
+        with t1:
+            col1, col2 = st.columns(2)
+            with col1:
+                if "Group A" in standings:
+                    st.markdown(render_html_table(standings["Group A"], "กลุ่ม A"), unsafe_allow_html=True)
+                if "Group C" in standings:
+                    st.markdown(render_html_table(standings["Group C"], "กลุ่ม C"), unsafe_allow_html=True)
+            with col2:
+                if "Group B" in standings:
+                    st.markdown(render_html_table(standings["Group B"], "กลุ่ม B"), unsafe_allow_html=True)
+                if "Group D" in standings:
+                    st.markdown(render_html_table(standings["Group D"], "กลุ่ม D"), unsafe_allow_html=True)
+                    
+        with t2:
+            col1, col2 = st.columns(2)
+            with col1:
+                if "Group E" in standings:
+                    st.markdown(render_html_table(standings["Group E"], "กลุ่ม E"), unsafe_allow_html=True)
+                if "Group G" in standings:
+                    st.markdown(render_html_table(standings["Group G"], "กลุ่ม G"), unsafe_allow_html=True)
+            with col2:
+                if "Group F" in standings:
+                    st.markdown(render_html_table(standings["Group F"], "กลุ่ม F"), unsafe_allow_html=True)
+                if "Group H" in standings:
+                    st.markdown(render_html_table(standings["Group H"], "กลุ่ม H"), unsafe_allow_html=True)
+                    
+        with t3:
+            col1, col2 = st.columns(2)
+            with col1:
+                if "Group I" in standings:
+                    st.markdown(render_html_table(standings["Group I"], "กลุ่ม I"), unsafe_allow_html=True)
+                if "Group K" in standings:
+                    st.markdown(render_html_table(standings["Group K"], "กลุ่ม K"), unsafe_allow_html=True)
+            with col2:
+                if "Group J" in standings:
+                    st.markdown(render_html_table(standings["Group J"], "กลุ่ม J"), unsafe_allow_html=True)
+                if "Group L" in standings:
+                    st.markdown(render_html_table(standings["Group L"], "กลุ่ม L"), unsafe_allow_html=True)
+                    
+        with t4:
+            if "Third-placed" in standings:
+                st.markdown(render_html_table(standings["Third-placed"], "ตารางเปรียบเทียบอันดับ 3 (คัดเลือก 8 ทีมที่ดีที่สุดเข้ารอบ)", is_third_placed=True), unsafe_allow_html=True)
+            else:
+                st.info("ยังไม่มีข้อมูลการเปรียบเทียบทีมอันดับ 3 ในขณะนี้")
 
 # 4. หน้า Leaderboard
 elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
