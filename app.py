@@ -1826,6 +1826,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             font-weight: 600 !important;
             padding: 8px 2px !important;
             text-align: center !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
             border-bottom: 2px solid rgba(255, 215, 0, 0.15) !important;
             font-size: 0.76rem !important;
             line-height: 1.25 !important;
@@ -1834,7 +1835,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
         .standings-table td {
             padding: 8px 4px !important;
             text-align: center !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
             font-size: 0.84rem !important;
         }
         .standings-table tr:hover {
@@ -1847,12 +1848,16 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             padding-left: 10px !important;
         }
         .standings-table .qualified-glow {
-            background: rgba(46, 204, 113, 0.08) !important;
-            border-left: 4px solid #2ecc71 !important;
+            background: rgba(46, 204, 113, 0.06) !important;
+        }
+        .standings-table .qualified-glow td {
+            border: 1px solid rgba(46, 204, 113, 0.15) !important;
         }
         .standings-table .qualified-warning {
-            background: rgba(241, 196, 15, 0.05) !important;
-            border-left: 4px solid #f1c40f !important;
+            background: rgba(241, 196, 15, 0.04) !important;
+        }
+        .standings-table .qualified-warning td {
+            border: 1px solid rgba(241, 196, 15, 0.12) !important;
         }
         .standings-table .pts-cell {
             font-weight: bold !important;
