@@ -5,6 +5,10 @@ from datetime import datetime
 import os
 import json
 import streamlit as st
+import socket
+
+# ตั้งค่า Network Timeout สูงสุดไม่เกิน 4.0 วินาที เพื่อป้องกันอาการหน้าเว็บค้างหมุนจาก Google API หรือ Wikipedia ล่ม
+socket.setdefaulttimeout(4.0)
 
 # ตั้งค่า Credentials
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
@@ -52,44 +56,81 @@ def get_worksheet(name):
         sh = get_spreadsheet()
         return sh.worksheet(name)
 
+def save_local_backup(name, df):
+    try:
+        backup_dir = os.path.join(BASE_DIR, '.backup_data')
+        os.makedirs(backup_dir, exist_ok=True)
+        path = os.path.join(backup_dir, f"{name}.json")
+        df.to_json(path, orient='records', force_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error saving local backup for {name}: {e}")
+
+def load_local_backup(name, columns):
+    try:
+        backup_dir = os.path.join(BASE_DIR, '.backup_data')
+        path = os.path.join(backup_dir, f"{name}.json")
+        if os.path.exists(path):
+            df = pd.read_json(path)
+            # รักษาคอลัมน์ดั้งเดิมให้สมบูรณ์แบบ
+            for col in columns:
+                if col not in df.columns:
+                    df[col] = ""
+            return df
+    except Exception as e:
+        print(f"Error loading local backup for {name}: {e}")
+    return pd.DataFrame(columns=columns)
+
 def init_db():
     pass
 
 @st.cache_data(ttl=300)
 def get_users_df():
+    cols = ['username', 'total_score', 'pin']
     try:
         ws = get_worksheet('users')
         data = ws.get_all_values()
-        if not data: return pd.DataFrame(columns=['username', 'total_score', 'pin'])
-        return pd.DataFrame(data[1:], columns=data[0])
+        if not data:
+            df = pd.DataFrame(columns=cols)
+        else:
+            df = pd.DataFrame(data[1:], columns=data[0])
+        save_local_backup('users', df)
+        return df
     except Exception as e:
-        print(f"Error fetching users: {e}")
-        return pd.DataFrame(columns=['username', 'total_score', 'pin'])
+        print(f"Error fetching users, returning local backup: {e}")
+        return load_local_backup('users', cols)
 
 @st.cache_data(ttl=300)
 def get_matches():
+    cols = ['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers']
     try:
         ws = get_worksheet('matches')
         data = ws.get_all_values()
-        if not data: return pd.DataFrame(columns=['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers'])
-        return pd.DataFrame(data[1:], columns=data[0])
+        if not data:
+            df = pd.DataFrame(columns=cols)
+        else:
+            df = pd.DataFrame(data[1:], columns=data[0])
+        save_local_backup('matches', df)
+        return df
     except Exception as e:
-        print(f"Error fetching matches: {e}")
-        return pd.DataFrame(columns=['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers'])
+        print(f"Error fetching matches, returning local backup: {e}")
+        return load_local_backup('matches', cols)
 
 @st.cache_data(ttl=300)
 def get_predictions_df():
+    cols = ['username', 'match_id', 'pred_home', 'pred_away', 'points_earned']
     try:
         ws = get_worksheet('predictions')
         data = ws.get_all_values()
-        if not data: return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
-        df = pd.DataFrame(data[1:], columns=data[0])
-        # ป้องกันและกรองรายการทำนายที่ซ้ำซ้อนในคู่เดียวกันของผู้ใช้แต่ละคน (ห้ามเปิ้ลคะแนนในคู่เดียว)
+        if not data:
+            df = pd.DataFrame(columns=cols)
+        else:
+            df = pd.DataFrame(data[1:], columns=data[0])
         df = df.drop_duplicates(subset=['username', 'match_id'], keep='first')
+        save_local_backup('predictions', df)
         return df
     except Exception as e:
-        print(f"Error fetching predictions: {e}")
-        return pd.DataFrame(columns=['username', 'match_id', 'pred_home', 'pred_away', 'points_earned'])
+        print(f"Error fetching predictions, returning local backup: {e}")
+        return load_local_backup('predictions', cols)
 
 def sync_results_from_web():
     """ฟังก์ชันหลักสำหรับเรียกใช้การซิงค์ข้อมูลจากแหล่งภายนอก (Wikipedia)"""
