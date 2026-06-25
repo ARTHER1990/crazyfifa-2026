@@ -1296,10 +1296,10 @@ if st.session_state.authenticated:
                             
                             # คำนวณแต้มและสไตล์สีสันเพื่อความพรีเมี่ยมตระการตา
                             if p_h == h_real and p_a == a_real:
-                                hl_style = "background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.3); color: #2ecc71;"
+                                hl_style = "background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.35); color: #ffd700;"
                                 pt_txt = "🏆 3 แต้ม"
                             elif pred_win == real_win:
-                                hl_style = "background: rgba(241, 196, 15, 0.1); border: 1px solid rgba(241, 196, 15, 0.25); color: #ffd700;"
+                                hl_style = "background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.25); color: #2ecc71;"
                                 pt_txt = "🟢 1 แต้ม"
                             else:
                                 hl_style = "background: rgba(231, 76, 60, 0.08); border: 1px solid rgba(231, 76, 60, 0.15); color: #e74c3c;"
