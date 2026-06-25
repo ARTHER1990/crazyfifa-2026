@@ -40,12 +40,43 @@ def safe_int(val, default=0):
         return default
 
 
+# แคชระดับโมดูลเพื่อประมวลผลความเร็วสูงสุด (เก็บไว้ใน RAM ข้ามการล้างแคช st.cache_data.clear() ได้อย่างพรีเมี่ยม)
+_IMAGE_CACHE = {}
+_AUDIO_CACHE = {}
+
 # ฟังก์ชันแปลงรูปภาพในเครื่องเป็น Base64
 def get_base64_image(image_path):
+    if image_path in _IMAGE_CACHE:
+        return _IMAGE_CACHE[image_path]
     if not os.path.exists(image_path):
         return ""
     with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
+        b64 = base64.b64encode(img_file.read()).decode()
+        _IMAGE_CACHE[image_path] = b64
+        return b64
+
+# ฟังก์ชันสำหรับเพลง
+def get_audio_html(audio_path):
+    if not os.path.exists(audio_path):
+        return ""
+    if audio_path in _AUDIO_CACHE:
+        audio_base64 = _AUDIO_CACHE[audio_path]
+    else:
+        with open(audio_path, "rb") as f:
+            audio_base64 = base64.b64encode(f.read()).decode()
+            _AUDIO_CACHE[audio_path] = audio_base64
+            
+    return f"""
+        <audio autoplay loop id="bg-music">
+            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+        </audio>
+        <script>
+            var audio = document.getElementById("bg-music");
+            audio.volume = 0.3; // ตั้งความดังที่ 30% เพื่อความพรีเมี่ยม
+        </script>
+    """
+
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_full_path = os.path.join(current_dir, "ต่างดาว_optimized.webp")
@@ -67,21 +98,6 @@ banner_base64 = get_base64_image(banner_path)
 ball_path = os.path.join(current_dir, "ball2026.png")
 ball_base64 = get_base64_image(ball_path)
 
-# ฟังก์ชันสำหรับเพลง
-def get_audio_html(audio_path):
-    if not os.path.exists(audio_path):
-        return ""
-    with open(audio_path, "rb") as f:
-        audio_base64 = base64.b64encode(f.read()).decode()
-    return f"""
-        <audio autoplay loop id="bg-music">
-            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-        </audio>
-        <script>
-            var audio = document.getElementById("bg-music");
-            audio.volume = 0.3; // ตั้งความดังที่ 30% เพื่อความพรีเมี่ยม
-        </script>
-    """
 
 # --- ตั้งค่าหน้าเว็บ ---
 st.set_page_config(page_title="🏆 CRAZYFIFA WORLD CUP 2026", layout="wide", page_icon="⚽")
@@ -1179,8 +1195,9 @@ check_and_sync_scores()
 # --- คำนวณคู่แข่งขันที่ยังไม่ได้ทายผลสำหรับเตือนความจำ ---
 if 'toast_shown' not in st.session_state:
     st.session_state.toast_shown = False
-if 'music_enabled' not in st.session_state:
-    st.session_state.music_enabled = True
+if 'music_saved_preference' not in st.session_state:
+    st.session_state.music_saved_preference = True
+
 
 try:
     all_matches_rem = db.get_matches()
@@ -1223,12 +1240,16 @@ if st.session_state.authenticated:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
     
-    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization: ความไม่สอดคล้องกันของสถานะตัวแปรและการเรนเดอร์)
-    # โดยผูกกับ Session State (เซสชัน สเตต: หน่วยความจำชั่วคราวสำหรับเก็บบันทึกค่าสถานะต่างๆ ของผู้ใช้) ผ่าน key ตรงตัว
+    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization) และปัญหาปุ่ม toggle รีเซ็ตตัวเองตอนเปลี่ยนหน้า
+    # โดยใช้ค่าเริ่มต้น (value) จากตัวแปรสถานะพึงประสงค์อิสระที่เก็บบันทึกถาวรใน Session State
     music_on = st.sidebar.toggle(
         "เปิดเสียงเชียร์", 
-        key="music_enabled"
+        value=st.session_state.music_saved_preference,
+        key="music_toggle_widget"
     )
+    # อัปเดตและล็อกบันทึกสถานะความชอบของผู้ใช้ทันทีแบบเรียลไทม์ ป้องกันบั๊กลืมสถานะเปิด/ปิดเพลง
+    st.session_state.music_saved_preference = music_on
+
     
     # จองพื้นที่ (Placeholder: กล่องจองพื้นที่บนหน้าเว็บ) เพื่อบังคับให้ระบบประมวลผลเขียนทับและลบตัวเล่นเพลงอย่างทันทีทันใด
     music_placeholder = st.sidebar.empty()
