@@ -1837,13 +1837,48 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             font-weight: bold !important;
             color: #ffd700 !important;
         }
+        /* ตกแต่งการ์ดตารางเปรียบเทียบอันดับ 3 เป็นกรอบทองเรืองแสงหรูหราพรีเมียม */
+        .third-placed-gold-card {
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.04) 0%, rgba(15, 23, 18, 0.65) 100%) !important;
+            padding: 20px !important;
+            border-radius: 16px !important;
+            border: 2.2px solid #ffd700 !important; /* ขอบทองคำสว่างชัดเจน */
+            margin-bottom: 25px !important;
+            overflow-x: auto !important;
+            /* เงาเรืองแสงสีทองพรีเมียมแบบมีมิติไล่ระดับชั้นลึกตระการตา */
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.15), inset 0 0 15px rgba(255, 215, 0, 0.08) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .third-placed-gold-card:hover {
+            border-color: #ffe066 !important; /* ทองสว่างขึ้นเมื่อเมาส์ชี้ผ่าน */
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.28), inset 0 0 20px rgba(255, 215, 0, 0.15) !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        /* ตกแต่งการ์ดตารางกลุ่มปกติ (A-L) ให้ดูเป็นระเบียบสวยงาม */
+        .normal-table-card {
+            background: rgba(15, 23, 18, 0.55) !important;
+            padding: 15px !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(255, 215, 0, 0.1) !important;
+            margin-bottom: 20px !important;
+            overflow-x: auto !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .normal-table-card:hover {
+            border-color: rgba(255, 215, 0, 0.25) !important;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.05) !important;
+            transform: translateY(-1px) !important;
+        }
         </style>
         """, unsafe_allow_html=True)
         
         # สร้างฟังก์ชันวาดตาราง HTML ในบล็อกนี้เพื่อความง่ายและปลอดภัย
         def render_html_table(df, title, is_third_placed=False):
             team_width = "25%" if is_third_placed else "33%"
-            html_code = f"""<div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px; overflow-x: auto;'>
+            wrapper_class = "third-placed-gold-card" if is_third_placed else "normal-table-card"
+            html_code = f"""<div class='{wrapper_class}'>
 <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 {title}</h4>
 <table class='standings-table' style='width: 100%; table-layout: fixed;'>
 <thead>
