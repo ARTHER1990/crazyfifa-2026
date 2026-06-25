@@ -1991,8 +1991,8 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             html_code += """</tbody></table></div>"""
             return html_code
 
-        # สร้างแท็บย่อยสลับดูตารางคะแนนแบบสวยงาม
-        t1, t2, t3, t4 = st.tabs(["🔥 กลุ่ม A - D", "⚡ กลุ่ม E - H", "🌟 กลุ่ม I - L", "🏅 ทีมอันดับ 3 ที่ดีที่สุด"])
+        # สร้างแท็บย่อยสลับดูตารางคะแนนแบบสวยงาม (เพิ่มแท็บที่ 5 สรุปทีมเข้ารอบชัวร์ๆ ตามสั่งคุณอาร์ต)
+        t1, t2, t3, t4, t5 = st.tabs(["🔥 กลุ่ม A - D", "⚡ กลุ่ม E - H", "🌟 กลุ่ม I - L", "🏅 ทีมอันดับ 3 ที่ดีที่สุด", "🏆 สรุปทีมเข้ารอบ 32 ทีม (Qualified)"])
         
         with t1:
             col1, col2 = st.columns(2)
@@ -2034,10 +2034,244 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                     st.markdown(render_html_table(standings["Group L"], "กลุ่ม L"), unsafe_allow_html=True)
                     
         with t4:
+            # 1. แถบชี้แจงระดับพรีเมียมสีทองเรืองแสง (Premium Info Card) ช่วยคลายความสับสนตามคำแนะนำของคุณอาร์ต
+            st.markdown("""
+                <div style='background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(15, 23, 18, 0.75) 100%); padding: 18px; border-radius: 14px; border: 1.8px solid #ffd700; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1), inset 0 0 12px rgba(255, 215, 0, 0.05); margin-bottom: 25px;'>
+                    <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 8px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>💡 ทำไมตารางนี้ไม่มีทีมยักษ์ใหญ่อย่าง ฝรั่งเศส, อังกฤษ หรือสเปน?</h4>
+                    <p style='color: #e0e6ed; font-size: 0.86rem; line-height: 1.5; margin: 0;'>
+                        เนื่องจากทีมชั้นยอดที่ได้ <b>อันดับ 1 (แชมป์กลุ่ม) และอันดับ 2 (รองแชมป์กลุ่ม)</b> ของแต่ละกลุ่ม (A ถึง L) ได้สิทธิ์ <b>ผ่านเข้ารอบ 32 ทีมสุดท้ายโดยตรงทันที</b> เรียบร้อยแล้ว! 
+                        ดังนั้น ตารางด้านล่างนี้จึงเป็น <b>"ตารางเปรียบเทียบอันดับ 3"</b> เพื่อหา 8 ทีมที่มีผลงานดีที่สุดไปสมทบเท่านั้น 
+                        คุณอาร์ตสามารถเลื่อนลงไปดูรายชื่อทีมแกร่งเหล่านั้นได้ที่ตาราง <b>"👑 ทีมชั้นนำที่ผ่านเข้ารอบโดยตรงแล้ว"</b> ที่อยู่ด้านล่างหน้าจอเดียวกันนี้ หรือสลับดูแท็บย่อยที่ 5 ได้เลยครับ
+                    </p>
+                </div>
+            """, unsafe_allow_html=True)
+
             if "Third-placed" in standings:
                 st.markdown(render_html_table(standings["Third-placed"], "ตารางเปรียบเทียบอันดับ 3 (คัดเลือก 8 ทีมที่ดีที่สุดเข้ารอบ)", is_third_placed=True), unsafe_allow_html=True)
             else:
                 st.info("ยังไม่มีข้อมูลการเปรียบเทียบทีมอันดับ 3 ในขณะนี้")
+                
+            st.markdown("<br><hr style='border: 1px solid rgba(255, 255, 255, 0.05);'><br>", unsafe_allow_html=True)
+            
+            # 2. เพิ่มตารางสรุป "ทีมชั้นยอดที่ผ่านเข้ารอบโดยตรงแล้ว (Directly Qualified - Top Teams)"
+            st.markdown("""
+                <div style='margin-bottom: 15px;'>
+                    <h3 style='color: #2ecc71; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px; margin-bottom: 5px;'>👑 ทีมชั้นนำที่ผ่านเข้ารอบน็อกเอาต์โดยตรงแล้ว (อันดับ 1 & 2)</h3>
+                    <p style='color: #a0aec0; font-size: 0.84rem; margin-top: 0;'>รายชื่อทีมชาติผลงานสุดแกร่งที่ได้อันดับ 1 และ 2 ของแต่ละกลุ่ม (Group A-L) ซึ่งผ่านเข้ารอบโดยอัตโนมัติ ไม่ต้องลุ้นอันดับ 3</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # สกัดทีมอันดับ 1 และ 2 จากทุกกลุ่ม
+            direct_teams = []
+            for g in ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F", "Group G", "Group H", "Group I", "Group J", "Group K", "Group L"]:
+                if g in standings:
+                    df_g = standings[g]
+                    for _, row in df_g.iterrows():
+                        pos = str(row['Pos']).strip()
+                        if pos in ["1", "2"]:
+                            direct_teams.append({
+                                'Pos': pos,
+                                'Grp': g.replace("Group ", ""),
+                                'Team': row['Team'],
+                                'Pld': row['Pld'],
+                                'W': row['W'],
+                                'D': row['D'],
+                                'L': row['L'],
+                                'GF': row['GF'],
+                                'GA': row['GA'],
+                                'GD': row['GD'],
+                                'Pts': row['Pts']
+                            })
+            
+            if direct_teams:
+                import pandas as pd
+                df_direct = pd.DataFrame(direct_teams)
+                
+                # แปลงคอลัมน์ตัวเลขเพื่อจัดเรียงประสิทธิภาพรอบแบ่งกลุ่มอย่างแม่นยำ
+                df_direct['Pts_int'] = df_direct['Pts'].apply(safe_int)
+                
+                def parse_gd(val):
+                    val_str = str(val).replace('+', '').replace('−', '-').replace('-', '-').strip()
+                    try:
+                        return int(val_str)
+                    except:
+                        return 0
+                        
+                df_direct['GD_int'] = df_direct['GD'].apply(parse_gd)
+                df_direct['GF_int'] = df_direct['GF'].apply(safe_int)
+                
+                # เรียงลำดับจากผลงานสะสมสูงสุด: คะแนนสูงสุด -> ผลต่างได้เสียสูงสุด -> ยิงประตูได้มากที่สุด
+                df_direct = df_direct.sort_values(by=['Pts_int', 'GD_int', 'GF_int'], ascending=[False, False, False]).reset_index(drop=True)
+                
+                # แสดงเป็นตาราง HTML สวยงามพรีเมียมเรืองแสงเขียวอ่อน
+                html_direct = """<div class='normal-table-card' style='border: 1.8px solid rgba(46, 204, 113, 0.4); box-shadow: 0 4px 20px rgba(46, 204, 113, 0.05);'>
+<h4 style='color: #2ecc71; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>✨ ตารางผลงานสโมสรชาติเข้ารอบน็อกเอาต์โดยตรง (24 ทีมแรก)</h4>
+<table class='standings-table' style='width: 100%; table-layout: fixed;'>
+<thead>
+<tr>
+<th style='width: 8%;'>อันดับ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Rank</span></th>
+<th style='width: 8%;'>กลุ่ม<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Grp</span></th>
+<th style='text-align: left; width: 28%; padding-left: 10px;'>ทีมชาติ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Team</span></th>
+<th style='width: 12%;'>อันดับในกลุ่ม<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Group Pos</span></th>
+<th style='width: 7%;'>แข่ง<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Pld</span></th>
+<th style='width: 7%;'>ชนะ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>W</span></th>
+<th style='width: 7%;'>เสมอ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>D</span></th>
+<th style='width: 7%;'>แพ้<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>L</span></th>
+<th style='width: 8%;'>+/-<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>GD</span></th>
+<th style='width: 10%;'>แต้ม<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Pts</span></th>
+</tr>
+</thead>
+<tbody>"""
+                for idx, row in df_direct.iterrows():
+                    rank = idx + 1
+                    grp = row['Grp']
+                    team_name = row['Team']
+                    team_display = get_team_display(team_name)
+                    group_pos = row['Pos']
+                    
+                    parts = team_display.split(" ", 1)
+                    if len(parts) == 2:
+                        flag_emoji, clean_thai_name = parts[0], parts[1]
+                    else:
+                        flag_emoji, clean_thai_name = "🏳️", team_display
+                        
+                    if group_pos == "1":
+                        pos_badge = "<span style='color: #ffd700; background: rgba(255,215,0,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: bold;'>🥇 แชมป์กลุ่ม</span>"
+                    else:
+                        pos_badge = "<span style='color: #29b6f6; background: rgba(41,182,246,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.72rem; font-weight: bold;'>🥈 รองแชมป์</span>"
+                        
+                    html_direct += f"""<tr class='qualified-glow'>
+<td><b>{rank}</b></td>
+<td><span style='background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;'><b>{grp}</b></span></td>
+<td class='team-cell'>
+<div style='display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden;'>
+<span style='font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); line-height: 1; display: inline-block;'>{flag_emoji}</span>
+<span style='font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;' title='{clean_thai_name}'>{clean_thai_name}</span>
+</div>
+</td>
+<td>{pos_badge}</td>
+<td>{row['Pld']}</td>
+<td>{row['W']}</td>
+<td>{row['D']}</td>
+<td>{row['L']}</td>"""
+                    
+                    gd = str(row['GD']).strip()
+                    gd_style = "color: #e0e6ed;"
+                    if gd.startswith('+'):
+                        gd_style = "color: #2ecc71; font-weight: bold;"
+                    elif gd.startswith('-') or gd.startswith('−'):
+                        gd_style = "color: #e74c3c; font-weight: bold;"
+                        
+                    html_direct += f"<td><span style='{gd_style}'>{gd}</span></td>"
+                    html_direct += f"<td class='pts-cell' style='font-weight: bold; color: #2ecc71;'>{row['Pts']}</td>"
+                    html_direct += f"</tr>"
+                    
+                html_direct += "</tbody></table></div>"
+                st.markdown(html_direct, unsafe_allow_html=True)
+            else:
+                st.info("ยังไม่มีข้อมูลทีมเข้ารอบโดยตรงในขณะนี้")
+                
+        with t5:
+            st.markdown("""
+                <div style='background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(15, 23, 18, 0.65) 100%); padding: 20px; border-radius: 16px; border: 2.2px solid #2ecc71; box-shadow: 0 8px 32px rgba(46, 204, 113, 0.15), inset 0 0 15px rgba(46, 204, 113, 0.08); margin-bottom: 25px;'>
+                    <h3 style='color: #2ecc71; margin-top: 0; margin-bottom: 5px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 ทำเนียบสโมสรชาติผ่านเข้ารอบ 32 ทีมสุดท้าย</h3>
+                    <p style='color: #e0e6ed; font-size: 0.88rem; margin-bottom: 20px;'>รายชื่อทีมชาติที่สามารถการันตีสิทธิ์ผ่านเข้าสู่รอบน็อกเอาต์ (Round of 32) อย่างเป็นทางการแล้วตามกติกาเรียลไทม์</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # สกัดทีมเข้ารอบแบบเรียลไทม์
+            group_winners = []      # แชมป์กลุ่ม (Pos 1)
+            group_runners_up = []   # รองแชมป์กลุ่ม (Pos 2)
+            best_3rd_places = []    # อันดับ 3 ที่ดีที่สุด 8 ทีม
+            
+            for g in ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F", "Group G", "Group H", "Group I", "Group J", "Group K", "Group L"]:
+                if g in standings:
+                    df_g = standings[g]
+                    for _, row in df_g.iterrows():
+                        pos = str(row['Pos']).strip()
+                        pld = safe_int(row.get('Pld', 0))
+                        pts = safe_int(row.get('Pts', 0))
+                        team_n = str(row['Team']).strip()
+                        
+                        # กติกาเข้ารอบชัวร์ๆ: อันดับ 1 และ 2 ของกลุ่มเมื่อแข่งจบหรือการันตีเข้ารอบ
+                        if pos == "1":
+                            group_winners.append((g.replace("Group ", "กลุ่ม "), team_n, pts, pld))
+                        elif pos == "2":
+                            group_runners_up.append((g.replace("Group ", "กลุ่ม "), team_n, pts, pld))
+                            
+            if "Third-placed" in standings:
+                df_third = standings["Third-placed"]
+                for _, row in df_third.iterrows():
+                    try:
+                        pos = int(str(row['Pos']).strip())
+                        if pos <= 8:
+                            best_3rd_places.append((f"กลุ่ม {row.get('Grp', '').strip()}", str(row['Team']).strip(), safe_int(row.get('Pts', 0)), safe_int(row.get('Pld', 0))))
+                    except:
+                        pass
+                        
+            col_q1, col_q2, col_q3 = st.columns(3)
+            
+            with col_q1:
+                st.markdown("""
+                    <div style='background: rgba(15, 23, 18, 0.55); padding: 18px; border-radius: 12px; border: 1.5px solid #ffd700; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                        <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 15px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>👑 แชมป์กลุ่ม (Group Winners)</h4>
+                        <div style='display: flex; flex-direction: column; gap: 10px;'>
+                """, unsafe_allow_html=True)
+                
+                if group_winners:
+                    for grp, team, pts, pld in group_winners:
+                        display = get_team_display(team)
+                        st.markdown(f"""
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(255, 215, 0, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #ffd700; border-bottom: 1px solid rgba(255,215,0,0.05);'>
+                                <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
+                                <span style='font-size: 0.72rem; color: #ffd700; background: rgba(255,215,0,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
+                            </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.markdown("<p style='color: #718096; font-size: 0.88rem; text-align: center;'>ยังไม่มีข้อมูลสรุปแชมป์กลุ่ม</p>", unsafe_allow_html=True)
+                st.markdown("</div></div>", unsafe_allow_html=True)
+                
+            with col_q2:
+                st.markdown("""
+                    <div style='background: rgba(15, 23, 18, 0.55); padding: 18px; border-radius: 12px; border: 1.5px solid #29b6f6; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                        <h4 style='color: #29b6f6; margin-top: 0; margin-bottom: 15px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🥈 รองแชมป์กลุ่ม (Runners-up)</h4>
+                        <div style='display: flex; flex-direction: column; gap: 10px;'>
+                """, unsafe_allow_html=True)
+                
+                if group_runners_up:
+                    for grp, team, pts, pld in group_runners_up:
+                        display = get_team_display(team)
+                        st.markdown(f"""
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(41, 182, 246, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #29b6f6; border-bottom: 1px solid rgba(41,182,246,0.05);'>
+                                <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
+                                <span style='font-size: 0.72rem; color: #29b6f6; background: rgba(41,182,246,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
+                            </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.markdown("<p style='color: #718096; font-size: 0.88rem; text-align: center;'>ยังไม่มีข้อมูลสรุปรองแชมป์กลุ่ม</p>", unsafe_allow_html=True)
+                st.markdown("</div></div>", unsafe_allow_html=True)
+                
+            with col_q3:
+                st.markdown("""
+                    <div style='background: rgba(15, 23, 18, 0.55); padding: 18px; border-radius: 12px; border: 1.5px solid #2ecc71; height: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                        <h4 style='color: #2ecc71; margin-top: 0; margin-bottom: 15px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏅 อันดับ 3 ที่ดีที่สุด (Best 3rd)</h4>
+                        <div style='display: flex; flex-direction: column; gap: 10px;'>
+                """, unsafe_allow_html=True)
+                
+                if best_3rd_places:
+                    for grp, team, pts, pld in best_3rd_places:
+                        display = get_team_display(team)
+                        st.markdown(f"""
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(46, 204, 113, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #2ecc71; border-bottom: 1px solid rgba(46,204,113,0.05);'>
+                                <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
+                                <span style='font-size: 0.72rem; color: #2ecc71; background: rgba(46,204,113,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
+                            </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.markdown("<p style='color: #718096; font-size: 0.88rem; text-align: center;'>ยังไม่มีข้อมูลสรุปอันดับ 3 ที่ดีที่สุด</p>", unsafe_allow_html=True)
+                st.markdown("</div></div>", unsafe_allow_html=True)
+                
+            st.markdown("<br>", unsafe_allow_html=True)
 
 # 4. หน้า Leaderboard
 elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
