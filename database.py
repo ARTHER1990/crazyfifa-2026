@@ -42,8 +42,15 @@ def get_spreadsheet():
     return client.open_by_url(SHEET_URL)
 
 def get_worksheet(name):
-    sh = get_spreadsheet()
-    return sh.worksheet(name)
+    try:
+        sh = get_spreadsheet()
+        return sh.worksheet(name)
+    except Exception as e:
+        print(f"gspread connection issue in get_worksheet({name}), clearing resource cache and retrying: {e}")
+        get_gspread_client.clear()
+        get_spreadsheet.clear()
+        sh = get_spreadsheet()
+        return sh.worksheet(name)
 
 def init_db():
     pass
