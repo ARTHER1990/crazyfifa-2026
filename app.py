@@ -2227,7 +2227,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                     for grp, team, pts, pld in group_winners:
                         display = get_team_display(team)
                         st.markdown(f"""
-                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(255, 215, 0, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #ffd700; border-bottom: 1px solid rgba(255,215,0,0.05);'>
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(255, 215, 0, 0.04); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.15);'>
                                 <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
                                 <span style='font-size: 0.72rem; color: #ffd700; background: rgba(255,215,0,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
                             </div>
@@ -2247,7 +2247,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                     for grp, team, pts, pld in group_runners_up:
                         display = get_team_display(team)
                         st.markdown(f"""
-                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(41, 182, 246, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #29b6f6; border-bottom: 1px solid rgba(41,182,246,0.05);'>
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(41, 182, 246, 0.04); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(41, 182, 246, 0.15);'>
                                 <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
                                 <span style='font-size: 0.72rem; color: #29b6f6; background: rgba(41,182,246,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
                             </div>
@@ -2267,7 +2267,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                     for grp, team, pts, pld in best_3rd_places:
                         display = get_team_display(team)
                         st.markdown(f"""
-                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(46, 204, 113, 0.05); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #2ecc71; border-bottom: 1px solid rgba(46,204,113,0.05);'>
+                            <div style='display: flex; align-items: center; justify-content: space-between; background: rgba(46, 204, 113, 0.04); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(46, 204, 113, 0.15);'>
                                 <span style='font-size: 0.92rem; font-weight: 500; color: #ffffff;'>{display}</span>
                                 <span style='font-size: 0.72rem; color: #2ecc71; background: rgba(46,204,113,0.1); padding: 2px 6px; border-radius: 4px; font-weight: bold;'>{grp} | {pts} Pts</span>
                             </div>
