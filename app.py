@@ -1800,16 +1800,17 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             background: rgba(20, 32, 24, 0.85) !important;
             color: #ffd700 !important;
             font-weight: 600 !important;
-            padding: 10px !important;
+            padding: 8px 4px !important;
             text-align: center !important;
             border-bottom: 2px solid rgba(255, 215, 0, 0.15) !important;
-            font-size: 0.85rem !important;
+            font-size: 0.8rem !important;
+            line-height: 1.25 !important;
         }
         .standings-table td {
-            padding: 10px !important;
+            padding: 8px 4px !important;
             text-align: center !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-            font-size: 0.85rem !important;
+            font-size: 0.84rem !important;
         }
         .standings-table tr:hover {
             background-color: rgba(255, 215, 0, 0.08) !important;
@@ -1818,6 +1819,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             text-align: left !important;
             font-weight: 500 !important;
             color: #ffffff !important;
+            padding-left: 10px !important;
         }
         .standings-table .qualified-glow {
             background: rgba(46, 204, 113, 0.08) !important;
@@ -1836,22 +1838,23 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
         
         # สร้างฟังก์ชันวาดตาราง HTML ในบล็อกนี้เพื่อความง่ายและปลอดภัย
         def render_html_table(df, title, is_third_placed=False):
-            html_code = f"""<div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px;'>
+            team_width = "36%" if is_third_placed else "44%"
+            html_code = f"""<div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px; overflow-x: auto;'>
 <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 {title}</h4>
-<table class='standings-table'>
+<table class='standings-table' style='width: 100%; table-layout: fixed;'>
 <thead>
 <tr>
-<th style='width: 8%;'>อันดับ</th>
-{"<th style='width: 10%;'>กลุ่ม</th>" if is_third_placed else ""}
-<th style='text-align: left;'>ทีมชาติ</th>
-<th style='width: 8%;'>แข่ง</th>
-<th style='width: 8%;'>ชนะ</th>
-<th style='width: 8%;'>เสมอ</th>
-<th style='width: 8%;'>แพ้</th>
-<th style='width: 8%;'>ได้</th>
-<th style='width: 8%;'>เสีย</th>
-<th style='width: 10%;'>+/-</th>
-<th style='width: 10%;'>แต้ม</th>
+<th style='width: 6%;'>อันดับ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pos</span></th>
+{"<th style='width: 8%;'>กลุ่ม<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Grp</span></th>" if is_third_placed else ""}
+<th style='text-align: left; width: {team_width}; padding-left: 10px;'>ทีมชาติ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Team</span></th>
+<th style='width: 6%;'>แข่ง<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pld</span></th>
+<th style='width: 6%;'>ชนะ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>W</span></th>
+<th style='width: 6%;'>เสมอ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>D</span></th>
+<th style='width: 6%;'>แพ้<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>L</span></th>
+<th style='width: 6%;'>ได้<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GF</span></th>
+<th style='width: 6%;'>เสีย<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GA</span></th>
+<th style='width: 7%;'>+/-<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GD</span></th>
+<th style='width: 7%;'>แต้ม<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pts</span></th>
 </tr>
 </thead>
 <tbody>"""
@@ -1861,6 +1864,13 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                 team_name = str(row['Team']).strip()
                 team_display = get_team_display(team_name)
                 
+                # แยกธงและชื่อชาติเพื่อจัดระเบียบ UI ให้ไม่มีปัญหารอยต่อและการตัดบรรทัดใหม่
+                parts = team_display.split(" ", 1)
+                if len(parts) == 2:
+                    flag_emoji, clean_thai_name = parts[0], parts[1]
+                else:
+                    flag_emoji, clean_thai_name = "🏳️", team_display
+                
                 # ตกแต่งแถวตามสถานการณ์เข้ารอบ
                 row_class = ""
                 badge = ""
@@ -1869,19 +1879,19 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                         pos_num = int(pos)
                         if pos_num <= 8:
                             row_class = "qualified-glow"
-                            badge = " <span style='color: #2ecc71; font-size: 0.75rem; font-weight: bold;'>[เข้ารอบ]</span>"
+                            badge = " <span style='color: #2ecc71; font-size: 0.72rem; font-weight: bold; margin-left: auto; padding-left: 5px; white-space: nowrap;'>[เข้ารอบ]</span>"
                         else:
                             row_class = ""
-                            badge = " <span style='color: #e74c3c; font-size: 0.75rem; font-weight: bold;'>[ตกรอบ]</span>"
+                            badge = " <span style='color: #e74c3c; font-size: 0.72rem; font-weight: bold; margin-left: auto; padding-left: 5px; white-space: nowrap;'>[ตกรอบ]</span>"
                     except:
                         pass
                 else:
                     if pos == "1" or pos == "2":
                         row_class = "qualified-glow"
-                        badge = " <span style='color: #2ecc71; font-size: 0.75rem; font-weight: bold;'>[เข้ารอบ]</span>"
+                        badge = " <span style='color: #2ecc71; font-size: 0.72rem; font-weight: bold; margin-left: auto; padding-left: 5px; white-space: nowrap;'>[เข้ารอบ]</span>"
                     elif pos == "3":
                         row_class = "qualified-warning"
-                        badge = " <span style='color: #f1c40f; font-size: 0.75rem; font-weight: bold;'>[ลุ้นอันดับ 3]</span>"
+                        badge = " <span style='color: #f1c40f; font-size: 0.72rem; font-weight: bold; margin-left: auto; padding-left: 5px; white-space: nowrap;'>[ลุ้นอันดับ 3]</span>"
                     else:
                         row_class = ""
                         badge = ""
@@ -1892,7 +1902,13 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
                     grp = str(row.get('Grp', '')).strip()
                     html_code += f"<td><span style='background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;'><b>{grp}</b></span></td>"
                     
-                html_code += f"<td class='team-cell'>{team_display}{badge}</td>"
+                html_code += f"""<td class='team-cell'>
+<div style='display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden;'>
+<span style='font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); line-height: 1; display: inline-block;'>{flag_emoji}</span>
+<span style='font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;' title='{clean_thai_name}'>{clean_thai_name}</span>
+{badge}
+</div>
+</td>"""
                 html_code += f"<td>{row['Pld']}</td>"
                 html_code += f"<td>{row['W']}</td>"
                 html_code += f"<td>{row['D']}</td>"
