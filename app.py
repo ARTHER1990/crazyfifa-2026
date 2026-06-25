@@ -267,7 +267,12 @@ st.markdown(f"""
         color: #ffffff !important;
     }}
     
-    /* ปรับแต่งปุ่มเมนู พร้อมขอบเงินโครเมี่ยม */
+    /* ปรับแต่งปุ่มเมนูหลักของไซด์บาร์ให้กรอบกว้างและแผ่ขนาดเท่ากันเป๊ะเสมอกันทุกปุ่ม 100% */
+    div[role="radiogroup"] {{
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }}
     div[role="radiogroup"] > label {{
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid #c0c0c066; /* ขอบเงินโครเมี่ยมจางๆ */
@@ -276,6 +281,9 @@ st.markdown(f"""
         margin-bottom: 8px;
         transition: all 0.2s ease;
         cursor: pointer !important;
+        width: 100% !important; /* บังคับให้ขนาดกรอบขยายตัวสมมาตรเท่ากันทั้งหมด */
+        box-sizing: border-box !important;
+        display: flex !important;
     }}
     div[role="radiogroup"] > label:hover {{
         background: rgba(255, 255, 255, 0.08) !important;
@@ -1207,7 +1215,7 @@ except Exception as e:
 # --- ระบบเมนูและเพลงประกอบ (จัดลำดับประมวลผลสูงสุดเพื่อขจัดอาการกดย้ำ) ---
 if st.session_state.authenticated:
     # 🧭 เมนูนำทางหลัก (ย้ายขึ้นบนสุดเพื่อลำดับสิทธิ์การทำงานลำดับแรก ขจัดปัญหาความหน่วงและอาการกดย้ำ)
-    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026", "📜 ผลการแข่งขันย้อนหลัง", "🏅 ตารางคะแนนกลุ่ม (Standings)", "📑 ประวัติการทายผล", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026 (World Cup)", "📜 ผลการแข่งขันย้อนหลัง (Match Results)", "🏅 ตารางคะแนนกลุ่ม (Standings)", "📑 ประวัติการทายผล (My Predictions)", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
     if st.session_state.username == "Art":
         menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
     menu = st.sidebar.radio("เมนูหลัก", menu_options)
@@ -1321,7 +1329,7 @@ if st.session_state.authenticated:
 
 
 # 2. หน้าทายผลการแข่งขัน
-if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
+if menu == "🏟️ ศึกชิงแชมป์โลก 2026 (World Cup)":
     # 🚨 แสดงระบบกันลืม (Smart Prediction Reminder)
     if 'unpredicted_matches' in st.session_state and st.session_state.unpredicted_matches:
         matches_list_html = []
@@ -1719,7 +1727,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026":
         st.info("ไม่มีการแข่งขันที่กำลังจะมาถึงในขณะนี้ครับ")
 
 # 3. หน้าผลการแข่งขันย้อนหลัง
-elif menu == "📜 ผลการแข่งขันย้อนหลัง":
+elif menu == "📜 ผลการแข่งขันย้อนหลัง (Match Results)":
     st.header("📜 ผลการแข่งขันย้อนหลังทั้งหมด")
     st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้ว")
     st.markdown("---")
@@ -1795,11 +1803,12 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             background: rgba(20, 32, 24, 0.85) !important;
             color: #ffd700 !important;
             font-weight: 600 !important;
-            padding: 8px 4px !important;
+            padding: 8px 2px !important;
             text-align: center !important;
             border-bottom: 2px solid rgba(255, 215, 0, 0.15) !important;
-            font-size: 0.8rem !important;
+            font-size: 0.76rem !important;
             line-height: 1.25 !important;
+            white-space: nowrap !important; /* บังคับตัวหนังสือหัวข้อเรียงบรรทัดเดียวกัน ห้ามแตกตัวแนวตั้ง */
         }
         .standings-table td {
             padding: 8px 4px !important;
@@ -1833,23 +1842,23 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
         
         # สร้างฟังก์ชันวาดตาราง HTML ในบล็อกนี้เพื่อความง่ายและปลอดภัย
         def render_html_table(df, title, is_third_placed=False):
-            team_width = "36%" if is_third_placed else "44%"
+            team_width = "25%" if is_third_placed else "33%"
             html_code = f"""<div style='background: rgba(15, 23, 18, 0.55); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.1); margin-bottom: 20px; overflow-x: auto;'>
 <h4 style='color: #ffd700; margin-top: 0; margin-bottom: 12px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 {title}</h4>
 <table class='standings-table' style='width: 100%; table-layout: fixed;'>
 <thead>
 <tr>
-<th style='width: 6%;'>อันดับ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pos</span></th>
-{"<th style='width: 8%;'>กลุ่ม<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Grp</span></th>" if is_third_placed else ""}
-<th style='text-align: left; width: {team_width}; padding-left: 10px;'>ทีมชาติ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Team</span></th>
-<th style='width: 6%;'>แข่ง<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pld</span></th>
-<th style='width: 6%;'>ชนะ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>W</span></th>
-<th style='width: 6%;'>เสมอ<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>D</span></th>
-<th style='width: 6%;'>แพ้<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>L</span></th>
-<th style='width: 6%;'>ได้<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GF</span></th>
-<th style='width: 6%;'>เสีย<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GA</span></th>
-<th style='width: 7%;'>+/-<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>GD</span></th>
-<th style='width: 7%;'>แต้ม<br><span style='font-size: 0.68rem; opacity: 0.7; font-weight: normal;'>Pts</span></th>
+<th style='width: 7%;'>อันดับ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Pos</span></th>
+{"<th style='width: 8%;'>กลุ่ม<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Grp</span></th>" if is_third_placed else ""}
+<th style='text-align: left; width: {team_width}; padding-left: 10px;'>ทีมชาติ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Team</span></th>
+<th style='width: 7%;'>แข่ง<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Pld</span></th>
+<th style='width: 7%;'>ชนะ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>W</span></th>
+<th style='width: 7%;'>เสมอ<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>D</span></th>
+<th style='width: 7%;'>แพ้<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>L</span></th>
+<th style='width: 7%;'>ได้<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>GF</span></th>
+<th style='width: 7%;'>เสีย<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>GA</span></th>
+<th style='width: 8%;'>+/-<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>GD</span></th>
+<th style='width: 10%;'>แต้ม<br><span style='font-size: 0.66rem; opacity: 0.75; font-weight: normal;'>Pts</span></th>
 </tr>
 </thead>
 <tbody>"""
@@ -2014,7 +2023,7 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
         )
 
 # 5. หน้าประวัติการทายผล (แยกออกมาตามคำปรึกษาคุณอาร์ต)
-elif menu == "📑 ประวัติการทายผล":
+elif menu == "📑 ประวัติการทายผล (My Predictions)":
     st.header("📑 ประวัติการทายผลการแข่งขัน")
     
     # 🎨 แทรก CSS (ซีเอสเอส: ภาษาที่ใช้ในการกำหนดรูปแบบการแสดงผลของหน้าเว็บ) เพื่อตกแต่งกรอบและการไฮไลท์แบบพรีเมียม
