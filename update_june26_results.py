@@ -25,6 +25,18 @@ def main():
             'away_score': '1',
             'status': 'Finished',
             'scorers': 'Angulo (9), Plata (77) | Sané (2)'
+        },
+        '53': {
+            'home_score': '1',
+            'away_score': '1',
+            'status': 'Finished',
+            'scorers': 'Daizen (56) | Elanga (62)'
+        },
+        '54': {
+            'home_score': '1',
+            'away_score': '3',
+            'status': 'Finished',
+            'scorers': 'Mastouri (54) | Skhiri (3 og), Brobbey (7), van Hecke (62)'
         }
     }
 
