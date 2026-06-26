@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-06-26 08:20 (Auto updated: Iran 2-2 New Zealand)
+# Last cache clear and score update: 2026-06-26 09:56 (Auto updated: South Africa vs Canada in Match 67)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
