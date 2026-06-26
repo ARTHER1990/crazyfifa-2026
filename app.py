@@ -351,24 +351,27 @@ st.markdown(f"""
         font-family: 'Kanit', sans-serif;
     }}
 
-    /* 🌟 ซ่อนอิโมจิเบราว์เซอร์มาตรฐานเดิม และแทนที่ด้วยไอคอนทองคำเรืองแสงสไตล์บอร์ดกีฬา ✨ */
+    /* 🌟 ซ่อนอิโมจิเบราว์เซอร์มาตรฐานเดิม และแทนที่ด้วยไอคอนทองคำสไตล์บอร์ดกีฬา ✨ */
     div[role="radiogroup"] > label p {{
-        text-indent: -1.2rem !important;
+        text-indent: -1.8rem !important;
         padding-left: 2rem !important;
         position: relative !important;
+        overflow: hidden !important;
+        display: block !important;
+        white-space: nowrap !important;
     }}
 
     div[role="radiogroup"] > label p::before {{
         content: "" !important;
         position: absolute !important;
-        left: 8px !important;
+        left: 4px !important;
         top: 50% !important;
         transform: translateY(-50%) !important;
         width: 18px !important;
         height: 18px !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
-        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.7));
+        filter: none !important; /* นำฟิวเตอร์ฟุ้งเรืองแสงออกตามสั่ง เพื่อสีทองที่คมชัดเรียบหรู */
     }}
 
     div[role="radiogroup"] > label:nth-of-type(1) p::before {{
