@@ -297,7 +297,7 @@ st.markdown(f"""
     div[role="radiogroup"] > label {{
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid #c0c0c066; /* ขอบเงินโครเมี่ยมจางๆ */
-        padding: 10px 15px 10px 45px !important; /* จัด padding ซ้ายให้เว้นที่กว้างสำหรับวางไอคอนทองคำ */
+        padding: 10px 14px !important; /* คืนค่า padding ปกติเพื่อให้วงกลมตัวเลือกอยู่ในพิกัดธรรมชาติอย่างสมมาตร */
         border-radius: 12px;
         margin-bottom: 8px;
         transition: all 0.2s ease;
@@ -353,31 +353,49 @@ st.markdown(f"""
         font-family: 'Kanit', sans-serif;
     }}
 
-    /* 🌟 ซ่อนอิโมจิดั้งเดิมในข้อความ 100% และปรับการแสดงผลข้อความอย่างสวยงาม ไม่ให้กินกรอบ */
-    div[role="radiogroup"] > label span,
-    div[role="radiogroup"] > label p,
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p,
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] span {{
-        text-indent: -1.75rem !important; /* ดันข้อความไปทางซ้ายเพื่อซ่อนเฉพาะอิโมจิดั้งเดิม */
-        padding-left: 0 !important; /* ยกเลิก padding-left เก่าที่นี่ เพราะเราย้ายไปจัดการในระดับ label แล้ว */
+    /* 🌟 จัดวาง stMarkdownContainer ให้อยู่ถัดจากวงกลมตัวเลือกวิทยุตามธรรมชาติ และเว้นระยะห่างด้านซ้ายไว้สำหรับวางไอคอนทอง */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] {{
+        position: relative !important;
+        padding-left: 28px !important; /* เว้นที่ว่าง 28px ถัดจากวงกลมสำหรับวางไอคอนทอง */
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }}
+
+    /* 🌟 ดันซ่อนอิโมจิดั้งเดิมเฉพาะในแท็ก p ระดับเดียวเท่านั้น เพื่อไม่ให้เกิดการเยื้องซ้ำซ้อนสองชั้นจนตัวหนังสือบังกัน */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
+        text-indent: -1.45rem !important; /* ดันเยื้องไปทางซ้ายเฉพาะอิโมจิแรกอย่างพอดีคำ */
+        padding-left: 0.15rem !important; /* เว้นช่องไฟนิดหน่อยให้ตัวหนังสือข้อความถัดออกมาอย่างพรีเมี่ยม */
         margin: 0 !important;
         position: relative !important;
-        overflow: hidden !important; /* ตัดขอบซ่อนอิโมจิดั้งเดิมทิ้ง 100% อย่างเด็ดขาด */
+        overflow: hidden !important; /* ซ่อนอิโมจิดั้งเดิมทิ้ง 100% อย่างหมดจด */
         display: inline-block !important;
-        white-space: normal !important; /* ยอมให้ข้อความหักขึ้นบรรทัดใหม่ได้เมื่อพื้นที่ไม่พอ ป้องกันกินกรอบหรือตกขอบ */
-        word-break: break-word !important; /* หักพยางค์ของข้อความยาวๆ เพื่อความบาลานซ์ */
-        font-size: 0.8rem !important; /* ขนาดฟอนต์กะทัดรัด บาลานซ์ลงตัวพอดีกรอบ */
+        white-space: normal !important; /* ยอมให้ข้อความหักขึ้นบรรทัดใหม่ได้เมื่อพื้นที่ไม่พอ ป้องกันกินกรอบ */
+        word-break: break-word !important; /* หักพยางค์ของข้อความยาวๆ */
+        font-size: 0.8rem !important; /* ขนาดฟอนต์กะทัดรัด บาลานซ์ลงตัว */
         font-family: 'Kanit', sans-serif !important;
         line-height: 1.35 !important;
         width: 100% !important;
         box-sizing: border-box !important;
     }}
 
-    /* วางไอคอนสีทองพิกัดคงที่ สวยงาม คมชัด ไม่มีฟุ้ง ไม่ซ้อนกัน โดยวางที่ label::before */
-    div[role="radiogroup"] > label::before {{
+    /* 🌟 เคลียร์สไตล์ในแท็ก span ที่อยู่ข้างใน เพื่อยกเลิกการดันเยื้องซ้ำซ้อน ช่วยให้ข้อความดั้งเดิมแสดงผลปกติ 100% */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] span {{
+        text-indent: 0 !important; /* ยกเลิกการเยื้องซ้ำซ้อนเด็ดขาด ช่วยแก้ปัญหาคำด้านหน้าโดนบัง */
+        padding-left: 0 !important;
+        margin: 0 !important;
+        position: relative !important;
+        overflow: visible !important;
+        display: inline !important; /* ให้ไหลตามแนวข้อความปกติ */
+        white-space: normal !important;
+    }}
+
+    /* วางไอคอนสีทองพิกัดคงที่ สวยงาม คมชัด ไม่มีฟุ้ง โดยอิงกับ stMarkdownContainer::before เพื่อให้อยู่หลังวงกลมเสมอ */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"]::before {{
         content: "" !important;
         position: absolute !important;
-        left: 15px !important; /* วางพิกัดไอคอนชิดขอบซ้ายอย่างมั่นคงและห่างจากขอบปุ่ม */
+        left: 2px !important; /* วางพิกัดถัดจากวงกลมวิทยุพอดีเป๊ะ */
         top: 50% !important;
         transform: translateY(-50%) !important;
         width: 18px !important;
@@ -388,22 +406,22 @@ st.markdown(f"""
         z-index: 5 !important;
     }}
 
-    div[role="radiogroup"] > label:nth-of-type(1)::before {{
+    div[role="radiogroup"] > label:nth-of-type(1) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(2)::before {{
+    div[role="radiogroup"] > label:nth-of-type(2) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(3)::before {{
+    div[role="radiogroup"] > label:nth-of-type(3) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M16 11V3H8v6H2v12h20V11h-6zM10 5h4v14h-4V5zM4 11h4v8H4v-8zm16 8h-4v-8h4v8z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(4)::before {{
+    div[role="radiogroup"] > label:nth-of-type(4) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(5)::before {{
+    div[role="radiogroup"] > label:nth-of-type(5) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M2 4l3 12h14l3-12-6 7-4-7-6 7-4-7z'/%3E%3Ccircle fill='%23F1C40F' cx='12' cy='17' r='2'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(6)::before {{
+    div[role="radiogroup"] > label:nth-of-type(6) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12.19 2.02c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/%3E%3C/svg%3E") !important;
     }}
 
@@ -826,16 +844,29 @@ footer {{visibility: hidden;}}
     }}
     /* ย่อขนาดและจัดกระชับปุ่มเลือกเมนูหลักใน Sidebar เพื่อให้เห็นครบทุกเมนูโดยไม่ต้องเลื่อน */
     div[role="radiogroup"] > label {{
-        padding: 5px 10px 5px 42px !important; /* บังคับให้รักษา padding-left อย่างน้อย 42px สำหรับเว้นที่ให้ไอคอนสีทอง */
+        padding: 5px 10px !important; /* คืนค่าความสูงกระชับระดับโมบาย */
         margin-bottom: 4px !important;
         border-radius: 6px !important;
     }}
-    div[role="radiogroup"] > label span {{
-        font-size: 0.8rem !important;
-        text-indent: -1.75rem !important; /* ดันข้อความไปทางซ้ายเพื่อซ่อนเฉพาะอิโมจิดั้งเดิม */
-        overflow: hidden !important; /* ตัดขอบซ่อนอิโมจิดั้งเดิมทิ้งอย่างเด็ดขาด */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] {{
+        padding-left: 28px !important; /* รักษาที่ว่างสำหรับไอคอนทองบนหน้าจอเล็ก */
+    }}
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
+        font-size: 0.78rem !important;
+        text-indent: -1.45rem !important;
+        padding-left: 0.15rem !important;
+        overflow: hidden !important;
         display: inline-block !important;
-        white-space: normal !important; /* ป้องกันกินกรอบบนจอขนาดเล็ก */
+        white-space: normal !important;
+    }}
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] span,
+    div[role="radiogroup"] > label span {{
+        font-size: 0.78rem !important;
+        text-indent: 0 !important; /* เคลียร์การเยื้องซ้อน ช่วยให้ข้อความแสดงผลปกติ 100% */
+        padding-left: 0 !important;
+        overflow: visible !important;
+        display: inline !important;
+        white-space: normal !important;
     }}
 }}
 </style>
