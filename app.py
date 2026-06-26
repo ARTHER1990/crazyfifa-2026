@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-06-26 12:28 (Forced clean placeholders IDs 68, 69, 70 backup synced)
+# Last cache clear and score update: 2026-06-26 12:29 (Forced clean placeholders and Congo DR flag fix)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -115,7 +115,7 @@ FLAG_MAP = {
     'tunisia': '🇹🇳', 'cape verde': '🇨🇻', 'belgium': '🇧🇪', 'egypt': '🇪🇬',
     'saudi arabia': '🇸🇦', 'uruguay': '🇺🇾', 'iran': '🇮🇷', 'new zealand': '🇳🇿',
     'senegal': '🇸🇳', 'iraq': '🇮🇶', 'norway': '🇳🇴', 'algeria': '🇩🇿',
-    'austria': '🇦🇹', 'jordan': '🇯🇴', 'dr congo': '🇨🇩', 'croatia': '🇭🇷',
+    'austria': '🇦🇹', 'jordan': '🇯🇴', 'dr congo': '🇨🇩', 'congo dr': '🇨🇩', 'croatia': '🇭🇷',
     'ghana': '🇬🇭', 'panama': '🇵🇦', 'uzbekistan': '🇺🇿', 'colombia': '🇨🇴',
     'italy': '🇮🇹', 'costa rica': '🇨🇷', 'jamaica': '🇯🇲', 'honduras': '🇭🇳',
     'chile': '🇨🇱', 'peru': '🇵🇪', 'venezuela': '🇻🇪', 'nigeria': '🇳🇬',
@@ -154,7 +154,7 @@ TEAM_TRANSLATION_MAP = {
     'tunisia': 'ตูนิเซีย', 'cape verde': 'เคปเวิร์ด', 'belgium': 'เบลเยียม', 'egypt': 'อียิปต์',
     'saudi arabia': 'ซาอุดีอาระเบีย', 'uruguay': 'อุรุกวัย', 'iran': 'อิหร่าน', 'new zealand': 'นิวซีแลนด์',
     'senegal': 'เซเนกัล', 'iraq': 'อิรัก', 'norway': 'นอร์เวย์', 'algeria': 'แอลจีเรีย',
-    'austria': 'ออสเตรีย', 'jordan': 'จอร์แดน', 'dr congo': 'ดีอาร์ คองโก', 'croatia': 'โครเอเชีย',
+    'austria': 'ออสเตรีย', 'jordan': 'จอร์แดน', 'dr congo': 'ดีอาร์ คองโก', 'congo dr': 'ดีอาร์ คองโก', 'croatia': 'โครเอเชีย',
     'ghana': 'กานา', 'panama': 'ปานามา', 'uzbekistan': 'อุซเบกิสถาน', 'colombia': 'โคลอมเบีย',
     'italy': 'อิตาลี', 'costa rica': 'คอสตาริกา', 'jamaica': 'จาเมกา', 'honduras': 'ฮอนดูรัส',
     'chile': 'ชิลี', 'peru': 'เปรู', 'venezuela': 'เวเนซุเอลา', 'nigeria': 'ไนจีเรีย',
@@ -179,7 +179,8 @@ def get_team_display(team_name):
         'ivory coast': 'côte d\'ivoire',
         'korea republic': 'south korea',
         'united states': 'usa',
-        'china pr': 'china'
+        'china pr': 'china',
+        'congo dr': 'dr congo'
     }
     lookup_name = clean_name.lower()
     if lookup_name in alias_map:
