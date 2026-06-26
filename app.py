@@ -352,44 +352,52 @@ st.markdown(f"""
     }}
 
     /* 🌟 ซ่อนอิโมจิเบราว์เซอร์มาตรฐานเดิม และแทนที่ด้วยไอคอนทองคำสไตล์บอร์ดกีฬา ✨ */
-    div[role="radiogroup"] > label p {{
-        text-indent: -1.8rem !important;
-        padding-left: 2rem !important;
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
+        text-indent: -1.75rem !important; /* ผลักอิโมจิเดิมไปนอกขอบซ้าย */
+        padding-left: 1.85rem !important; /* เว้นระยะทางซ้ายอย่างสมดุลเพื่อวางไอคอนสีทอง */
         position: relative !important;
-        overflow: hidden !important;
+        overflow: hidden !important; /* ตัดขอบซ่อนอิโมจิเก่าทิ้ง 100% ไม่ให้ซ้อนหลัง */
         display: block !important;
-        white-space: nowrap !important;
+        white-space: nowrap !important; /* ป้องกันเนื้อหาขึ้นบรรทัดใหม่ */
+        text-overflow: ellipsis !important; /* จัดบาลานซ์ตัวหนังสือที่ยาวเกินให้ตัดท้ายเป็น ... */
+        font-size: 0.82rem !important; /* จัดขนาดข้อความเมนูหลักให้กะทัดรัดพอดีกรอบ */
+        font-family: 'Kanit', sans-serif !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }}
 
-    div[role="radiogroup"] > label p::before {{
+    /* วางไอคอนสีทองพิกัดคงที่ ไม่ทับซ้อนกับเนื้อหา */
+    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p::before {{
         content: "" !important;
         position: absolute !important;
-        left: 4px !important;
+        left: 2px !important; /* พิกัดวางไอคอนดักไว้ทางซ้ายสุด */
         top: 50% !important;
         transform: translateY(-50%) !important;
         width: 18px !important;
         height: 18px !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
-        filter: none !important; /* นำฟิวเตอร์ฟุ้งเรืองแสงออกตามสั่ง เพื่อสีทองที่คมชัดเรียบหรู */
+        filter: none !important; /* ไม่มีฟุ้งเรืองแสง เรียบหรู คมชัดสีทอง */
+        text-indent: 0px !important; /* ลบล้างเอฟเฟกต์ text-indent เพื่อพิกัดที่มั่นคง 100% */
+        z-index: 5 !important;
     }}
 
-    div[role="radiogroup"] > label:nth-of-type(1) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(1) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(2) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(2) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(3) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(3) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M16 11V3H8v6H2v12h20V11h-6zM10 5h4v14h-4V5zM4 11h4v8H4v-8zm16 8h-4v-8h4v8z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(4) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(4) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(5) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(5) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M2 4l3 12h14l3-12-6 7-4-7-6 7-4-7z'/%3E%3Ccircle fill='%23F1C40F' cx='12' cy='17' r='2'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(6) p::before {{
+    div[role="radiogroup"] > label:nth-of-type(6) [data-testid="stMarkdownContainer"] p::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12.19 2.02c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/%3E%3C/svg%3E") !important;
     }}
 
