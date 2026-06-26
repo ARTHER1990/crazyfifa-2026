@@ -47,7 +47,7 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Boualem Khoukhi (90+5) | Breel Embolo (73 pen)"
+    "scorers":"Miro Muheim (90+4 OG) | Breel Embolo (17)"
   },
   {
     "id":"6",
@@ -67,7 +67,7 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"John McGinn (16)"
+    "scorers":"John McGinn (29)"
   },
   {
     "id":"8",
@@ -77,7 +77,7 @@
     "home_score":"2",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Nestory Irankunda (73), Connor Metcalfe (85)"
+    "scorers":"Nestory Irankunda (27) | Connor Metcalfe (75)"
   },
   {
     "id":"9",
@@ -87,7 +87,7 @@
     "home_score":"7",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+2 pen, 88), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78) | Livano Comenencia (21)"
+    "scorers":"Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+5), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78), Kai Havertz (88) | Livano Comenencia (21)"
   },
   {
     "id":"10",
@@ -97,7 +97,7 @@
     "home_score":"2",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Virgil van Dijk (51), Crysencio Summerville (64) | Keito Nakamura (57), Daichi Kamada (89)"
+    "scorers":"Virgil van Dijk (51) | Keito Nakamura (57) | Crysencio Summerville (64) | Daichi Kamada (89)"
   },
   {
     "id":"11",
@@ -107,7 +107,7 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Amad Diallo (89)"
+    "scorers":"Amad Diallo (90)"
   },
   {
     "id":"12",
@@ -117,7 +117,7 @@
     "home_score":"5",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Yasin Ayari (7, 90+6), Alexander Isak (30), Viktor Gyökeres (60), Mattias Svanberg (86) | Omar Rekik (43)"
+    "scorers":"Yasin Ayari (7) | Omar Rekik (43), Alexander Isak (30), Viktor Gyokeres (59), Mattias Svanberg (84), Yasin Ayari (90+6)"
   },
   {
     "id":"13",
@@ -137,7 +137,7 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Mohamed Hany (66 OG) | Emam Ashour (20)"
+    "scorers":"Mohamed Hany (66 OG) | Emam Ashour (19)"
   },
   {
     "id":"15",
@@ -147,7 +147,7 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Abdulelah Al-Amri (41) | Maximiliano Araújo (80)"
+    "scorers":"Abdulelah Al-Amri (41) | Maxi Araujo (80)"
   },
   {
     "id":"16",
@@ -157,7 +157,7 @@
     "home_score":"2",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Ramin Rezaeian, Mohammad Mohebbi (64) | Elijah Just (2)"
+    "scorers":"Ramin Rezaeian (32), Mohammad Mohebi (64) | Elijah Just (7), Elijah Just (54)"
   },
   {
     "id":"17",
@@ -504,10 +504,10 @@
     "home_team":"Curaçao",
     "away_team":"Ivory Coast",
     "match_time":"2026-06-26 03:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"0",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"| Nicolas Pépé (7, 64)"
   },
   {
     "id":"52",
@@ -517,27 +517,27 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Angulo9'Plata77' | Sané2'"
+    "scorers":"Angulo (9), Plata (77) | Sané (2)"
   },
   {
     "id":"53",
     "home_team":"Japan",
     "away_team":"Sweden",
     "match_time":"2026-06-26 06:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Daizen (56) | Elanga (62)"
   },
   {
     "id":"54",
     "home_team":"Tunisia",
     "away_team":"Netherlands",
     "match_time":"2026-06-26 06:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"1",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Mastouri (54) | Skhiri (3 og), Brobbey (7), van Hecke (62)"
   },
   {
     "id":"55",
@@ -598,5 +598,165 @@
     "away_score":"0",
     "status":"Finished",
     "scorers":"Daniel Muñoz (76)"
+  },
+  {
+    "id":"61",
+    "home_team":"Jordan",
+    "away_team":"Argentina",
+    "match_time":"2026-06-27 03:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"62",
+    "home_team":"Algeria",
+    "away_team":"Austria",
+    "match_time":"2026-06-27 03:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"63",
+    "home_team":"Colombia",
+    "away_team":"Portugal",
+    "match_time":"2026-06-27 06:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"64",
+    "home_team":"DR Congo",
+    "away_team":"Uzbekistan",
+    "match_time":"2026-06-27 06:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"65",
+    "home_team":"Panama",
+    "away_team":"England",
+    "match_time":"2026-06-27 09:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"66",
+    "home_team":"Croatia",
+    "away_team":"Ghana",
+    "match_time":"2026-06-27 09:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"67",
+    "home_team":"Runner-up Group A",
+    "away_team":"Runner-up Group B",
+    "match_time":"2026-06-28 05:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"68",
+    "home_team":"Winner Group E",
+    "away_team":"3rd Group A\/B\/C\/D\/F",
+    "match_time":"2026-06-29 02:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"69",
+    "home_team":"Winner Group F",
+    "away_team":"Runner-up Group C",
+    "match_time":"2026-06-29 05:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"70",
+    "home_team":"Winner Group C",
+    "away_team":"Runner-up Group F",
+    "match_time":"2026-06-29 08:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"71",
+    "home_team":"Norway",
+    "away_team":"France",
+    "match_time":"2026-06-27 02:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"72",
+    "home_team":"Senegal",
+    "away_team":"Iraq",
+    "match_time":"2026-06-27 02:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"73",
+    "home_team":"Cabo Verde",
+    "away_team":"Saudi Arabia",
+    "match_time":"2026-06-27 07:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"74",
+    "home_team":"Uruguay",
+    "away_team":"Spain",
+    "match_time":"2026-06-27 07:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"75",
+    "home_team":"Egypt",
+    "away_team":"IR Iran",
+    "match_time":"2026-06-27 10:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"76",
+    "home_team":"New Zealand",
+    "away_team":"Belgium",
+    "match_time":"2026-06-27 10:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
   }
 ]
