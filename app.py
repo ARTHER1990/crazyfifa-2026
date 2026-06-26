@@ -363,13 +363,13 @@ st.markdown(f"""
         box-sizing: border-box !important;
     }}
 
-    /* 🌟 ดันซ่อนอิโมจิดั้งเดิมเฉพาะในแท็ก p ระดับเดียวเท่านั้น เพื่อไม่ให้เกิดการเยื้องซ้ำซ้อนสองชั้นจนตัวหนังสือบังกัน */
+    /* 🌟 ยกเลิกการเยื้องติดลบและเปิด overflow ให้แสดงตัวหนังสือทั้งหมดได้ครบถ้วนโดยไม่มีการบดบัง */
     div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
-        text-indent: -1.45rem !important; /* ดันเยื้องไปทางซ้ายเฉพาะอิโมจิแรกอย่างพอดีคำ */
+        text-indent: 0 !important; /* คืนค่าปกติเพื่อไม่ให้ตัวหนังสือแรกโดนดึงไปบังหรือตัดหาย */
         padding-left: 0.15rem !important; /* เว้นช่องไฟนิดหน่อยให้ตัวหนังสือข้อความถัดออกมาอย่างพรีเมี่ยม */
         margin: 0 !important;
         position: relative !important;
-        overflow: hidden !important; /* ซ่อนอิโมจิดั้งเดิมทิ้ง 100% อย่างหมดจด */
+        overflow: visible !important; /* เปิดการแสดงผลแบบ visible เพื่อความสมบูรณ์แบบของตัวอักษร */
         display: inline-block !important;
         white-space: normal !important; /* ยอมให้ข้อความหักขึ้นบรรทัดใหม่ได้เมื่อพื้นที่ไม่พอ ป้องกันกินกรอบ */
         word-break: break-word !important; /* หักพยางค์ของข้อความยาวๆ */
@@ -853,9 +853,9 @@ footer {{visibility: hidden;}}
     }}
     div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
         font-size: 0.78rem !important;
-        text-indent: -1.45rem !important;
+        text-indent: 0 !important; /* คืนค่าปกติสำหรับจอขนาดเล็กเช่นกัน */
         padding-left: 0.15rem !important;
-        overflow: hidden !important;
+        overflow: visible !important; /* แสดงตัวหนังสือได้สมบูรณ์บนจอเล็ก */
         display: inline-block !important;
         white-space: normal !important;
     }}
@@ -1358,9 +1358,9 @@ except Exception as e:
 # --- ระบบเมนูและเพลงประกอบ (จัดลำดับประมวลผลสูงสุดเพื่อขจัดอาการกดย้ำ) ---
 if st.session_state.authenticated:
     # 🧭 เมนูนำทางหลัก (ย้ายขึ้นบนสุดเพื่อลำดับสิทธิ์การทำงานลำดับแรก ขจัดปัญหาความหน่วงและอาการกดย้ำ)
-    menu_options = ["🏟️ ศึกชิงแชมป์โลก 2026 (World Cup)", "📜 ผลการแข่งขันย้อนหลัง (Match Results)", "🏅 ตารางคะแนนกลุ่ม (Standings)", "📑 ประวัติการทายผล (My Predictions)", "🏆 ทำเนียบแชมป์ (Leaderboard)"]
+    menu_options = ["ศึกชิงแชมป์โลก 2026 (World Cup)", "ผลการแข่งขันย้อนหลัง (Match Results)", "ตารางคะแนนกลุ่ม (Standings)", "ประวัติการทายผล (My Predictions)", "ทำเนียบแชมป์ (Leaderboard)"]
     if st.session_state.username == "Art":
-        menu_options.append("💎 ห้องควบคุมระบบ (Admin)")
+        menu_options.append("ห้องควบคุมระบบ (Admin)")
     menu = st.sidebar.radio("เมนูหลัก", menu_options)
     
     st.sidebar.markdown("---")
@@ -1476,7 +1476,7 @@ if st.session_state.authenticated:
 
 
 # 2. หน้าทายผลการแข่งขัน
-if menu == "🏟️ ศึกชิงแชมป์โลก 2026 (World Cup)":
+if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
     # 🚨 แสดงระบบกันลืม (Smart Prediction Reminder)
     if 'unpredicted_matches' in st.session_state and st.session_state.unpredicted_matches:
         matches_list_html = []
@@ -1874,7 +1874,7 @@ if menu == "🏟️ ศึกชิงแชมป์โลก 2026 (World Cup)"
         st.info("ไม่มีการแข่งขันที่กำลังจะมาถึงในขณะนี้ครับ")
 
 # 3. หน้าผลการแข่งขันย้อนหลัง
-elif menu == "📜 ผลการแข่งขันย้อนหลัง (Match Results)":
+elif menu == "ผลการแข่งขันย้อนหลัง (Match Results)":
     st.header("📜 ผลการแข่งขันย้อนหลังทั้งหมด")
     st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้ว")
     st.markdown("---")
@@ -1921,7 +1921,7 @@ elif menu == "📜 ผลการแข่งขันย้อนหลัง 
                         st.write("ไม่มีข้อมูลการยิงประตู")
             st.divider()
 
-elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
+elif menu == "ตารางคะแนนกลุ่ม (Standings)":
     st.header("🏅 ตารางคะแนนแบ่งกลุ่มศึกฟุตบอลโลก 2026")
     st.info("💡 **กฎการเข้ารอบน็อกเอาต์ (รอบ 32 ทีมสุดท้าย):**\n- 🟢 อันดับ 1 และ 2 ของทุกกลุ่ม (A ถึง L) เข้ารอบโดยอัตโนมัติ (รวม 24 ทีม)\n- 🟡 ทีมอันดับ 3 ที่มีผลงานดีที่สุด 8 ทีม จากทั้ง 12 กลุ่ม จะได้รับตั๋วเข้ารอบเช่นกัน!")
     st.markdown("---")
@@ -2405,7 +2405,7 @@ elif menu == "🏅 ตารางคะแนนกลุ่ม (Standings)":
             st.markdown("<br>", unsafe_allow_html=True)
 
 # 4. หน้า Leaderboard
-elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
+elif menu == "ทำเนียบแชมป์ (Leaderboard)":
     st.header("🏆 ทำเนียบยอดนักทายผล")
     st.info("💡 **กฎการให้คะแนน:**\n- ✅ ทายถูกฝั่ง: 1 คะแนน\n- 🎯 ทายถูกเป๊ะ (รวมเสมอ): 3 คะแนน\n- ❌ ทายผิด: 0 คะแนน")
     st.markdown("---")
@@ -2572,7 +2572,7 @@ elif menu == "🏆 ทำเนียบแชมป์ (Leaderboard)":
 
 
 # 5. หน้าประวัติการทายผล (แยกออกมาตามคำปรึกษาคุณอาร์ต)
-elif menu == "📑 ประวัติการทายผล (My Predictions)":
+elif menu == "ประวัติการทายผล (My Predictions)":
     st.header("📑 ประวัติการทายผลการแข่งขัน")
     
     # 🎨 แทรก CSS (ซีเอสเอส: ภาษาที่ใช้ในการกำหนดรูปแบบการแสดงผลของหน้าเว็บ) เพื่อตกแต่งกรอบและการไฮไลท์แบบพรีเมียม
@@ -2903,7 +2903,7 @@ elif menu == "📑 ประวัติการทายผล (My Predictions
                     )
 
 # 4. หน้า Admin
-elif menu == "💎 ห้องควบคุมระบบ (Admin)":
+elif menu == "ห้องควบคุมระบบ (Admin)":
     st.header("💎 ศูนย์ควบคุมการจัดการ (Director)")
     
     # ทางลัดเปิด Google Sheets
