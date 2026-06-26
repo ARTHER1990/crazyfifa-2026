@@ -123,6 +123,10 @@ FLAG_MAP = {
     'wales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'serbia': '🇷🇸', 'slovenia': '🇸🇮', 'romania': '🇷🇴',
     'georgia': '🇬🇪', 'albania': '🇦🇱', 'hungary': '🇭🇺', 'slovakia': '🇸🇰',
     'china': '🇨🇳', 'vietnam': '🇻🇳', 'thailand': '🇹🇭', 'malaysia': '🇲🇾',
+    'runner-up group a': '⚔️', 'runner-up group b': '⚔️',
+    'winner group c': '👑', 'runner-up group c': '⚡',
+    'winner group e': '👑', 'winner group f': '👑',
+    'runner-up group f': '⚡', '3rd group a/b/c/d/f': '🎖️',
 }
 
 @st.cache_data(ttl=1800)
@@ -158,7 +162,11 @@ TEAM_TRANSLATION_MAP = {
     'wales': 'เวลส์', 'serbia': 'เซอร์เบีย', 'slovenia': 'สโลวีเนีย', 'romania': 'โรมาเนีย',
     'georgia': 'จอร์เจีย', 'albania': 'แอลเบเนีย', 'hungary': 'ฮังการี', 'slovakia': 'สโลวาเกีย',
     'china': 'จีน', 'vietnam': 'เวียดนาม', 'thailand': 'ไทย', 'malaysia': 'มาเลเซีย',
-    'china pr': 'จีน', 'united states': 'สหรัฐอเมริกา'
+    'china pr': 'จีน', 'united states': 'สหรัฐอเมริกา',
+    'runner-up group a': 'รองแชมป์กลุ่ม A', 'runner-up group b': 'รองแชมป์กลุ่ม B',
+    'winner group c': 'แชมป์กลุ่ม C', 'runner-up group c': 'รองแชมป์กลุ่ม C',
+    'winner group e': 'แชมป์กลุ่ม E', 'winner group f': 'แชมป์กลุ่ม F',
+    'runner-up group f': 'รองแชมป์กลุ่ม F', '3rd group a/b/c/d/f': 'อันดับ 3 กลุ่ม A/B/C/D/F'
 }
 
 def get_team_display(team_name):
