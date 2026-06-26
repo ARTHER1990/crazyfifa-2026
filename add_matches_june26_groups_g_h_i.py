@@ -10,17 +10,17 @@ sys.path.append(BASE_DIR)
 import database as db
 
 def main():
-    print("🚀 เริ่มกระบวนการเพิ่มตารางการแข่งขัน 6 แมตช์ใหม่ของกลุ่ม G, H, I วันที่ 26 มิถุนายน 2026 เข้าสู่ระบบ...")
+    print("🚀 เริ่มกระบวนการเพิ่มตารางการแข่งขัน 6 แมตช์ใหม่ของกลุ่ม G, H, I วันที่ 27 มิถุนายน 2026 เข้าสู่ระบบ...")
 
     # ตาราง 6 คู่แข่งขันใหม่ของกลุ่ม G, H, I (ID 71 ถึง 76)
-    # วันที่ 26 มิถุนายน 2026
+    # วันที่ 27 มิถุนายน 2026
     new_matches = [
-        # กลุ่ม I (เวลาเตะ: 02:00 น. ของวันที่ 26 มิ.ย.)
+        # กลุ่ม I (เวลาเตะ: 02:00 น. ของวันที่ 27 มิ.ย.)
         {
             'id': '71',
             'home_team': 'Norway',
             'away_team': 'France',
-            'match_time': '2026-06-26 02:00:00',
+            'match_time': '2026-06-27 02:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
@@ -30,18 +30,18 @@ def main():
             'id': '72',
             'home_team': 'Senegal',
             'away_team': 'Iraq',
-            'match_time': '2026-06-26 02:00:00',
+            'match_time': '2026-06-27 02:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
             'scorers': ''
         },
-        # กลุ่ม H (เวลาเตะ: 07:00 น. ของวันที่ 26 มิ.ย.)
+        # กลุ่ม H (เวลาเตะ: 07:00 น. ของวันที่ 27 มิ.ย.)
         {
             'id': '73',
             'home_team': 'Cabo Verde',
             'away_team': 'Saudi Arabia',
-            'match_time': '2026-06-26 07:00:00',
+            'match_time': '2026-06-27 07:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
@@ -51,18 +51,18 @@ def main():
             'id': '74',
             'home_team': 'Uruguay',
             'away_team': 'Spain',
-            'match_time': '2026-06-26 07:00:00',
+            'match_time': '2026-06-27 07:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
             'scorers': ''
         },
-        # กลุ่ม G (เวลาเตะ: 10:00 น. ของวันที่ 26 มิ.ย.)
+        # กลุ่ม G (เวลาเตะ: 10:00 น. ของวันที่ 27 มิ.ย.)
         {
             'id': '75',
             'home_team': 'Egypt',
             'away_team': 'IR Iran',
-            'match_time': '2026-06-26 10:00:00',
+            'match_time': '2026-06-27 10:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
@@ -72,7 +72,7 @@ def main():
             'id': '76',
             'home_team': 'New Zealand',
             'away_team': 'Belgium',
-            'match_time': '2026-06-26 10:00:00',
+            'match_time': '2026-06-27 10:00:00',
             'home_score': '',
             'away_score': '',
             'status': 'Upcoming',
@@ -154,7 +154,7 @@ def main():
         print(f"❌ เกิดข้อผิดพลาดในการรันระบบคำนวณแต้ม: {e}")
 
     print("\n🏆 --- กระบวนการเสร็จสมบูรณ์ 100% --- 🏆")
-    print("⚽ ตารางการแข่งขัน 6 คู่ใหม่ของกลุ่ม G, H, I (ID 71 ถึง 76) ของวันที่ 26 มิถุนายน 2026 แสดงบนเว็บบอร์ดเรียบร้อยแล้ว!")
+    print("⚽ ตารางการแข่งขัน 6 คู่ใหม่ของกลุ่ม G, H, I (ID 71 ถึง 76) ของวันที่ 27 มิถุนายน 2026 แสดงบนเว็บบอร์ดเรียบร้อยแล้ว!")
 
 if __name__ == '__main__':
     main()
