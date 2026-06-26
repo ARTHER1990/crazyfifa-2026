@@ -1,0 +1,602 @@
+[
+  {
+    "id":"1",
+    "home_team":"Mexico",
+    "away_team":"South Africa",
+    "match_time":"2026-06-12 02:00:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Julián Quiñones (9), Raúl Jiménez (67)"
+  },
+  {
+    "id":"2",
+    "home_team":"South Korea",
+    "away_team":"Czech Republic",
+    "match_time":"2026-06-12 09:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Hwang In-beom (66), Oh Hyeon-gyu (80)"
+  },
+  {
+    "id":"3",
+    "home_team":"Canada",
+    "away_team":"Bosnia and Herzegovina",
+    "match_time":"2026-06-13 02:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Jovo Lukić (21), Cyle Larin (78)"
+  },
+  {
+    "id":"4",
+    "home_team":"USA",
+    "away_team":"Paraguay",
+    "match_time":"2026-06-13 08:00:00",
+    "home_score":"4",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Damián Bobadilla (7 OG), Folarin Balogun (31, 45+5), Mauricio (73), Gio Reyna (90+8)"
+  },
+  {
+    "id":"5",
+    "home_team":"Qatar",
+    "away_team":"Switzerland",
+    "match_time":"2026-06-14 01:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Boualem Khoukhi (90+5) | Breel Embolo (73 pen)"
+  },
+  {
+    "id":"6",
+    "home_team":"Brazil",
+    "away_team":"Morocco",
+    "match_time":"2026-06-14 02:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Vinícius Júnior (32) | Ismael Saibari (21)"
+  },
+  {
+    "id":"7",
+    "home_team":"Haiti",
+    "away_team":"Scotland",
+    "match_time":"2026-06-14 04:00:00",
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"John McGinn (16)"
+  },
+  {
+    "id":"8",
+    "home_team":"Australia",
+    "away_team":"Turkey",
+    "match_time":"2026-06-14 07:00:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Nestory Irankunda (73), Connor Metcalfe (85)"
+  },
+  {
+    "id":"9",
+    "home_team":"Germany",
+    "away_team":"Curaçao",
+    "match_time":"2026-06-15 00:00:00",
+    "home_score":"7",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+2 pen, 88), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78) | Livano Comenencia (21)"
+  },
+  {
+    "id":"10",
+    "home_team":"Netherlands",
+    "away_team":"Japan",
+    "match_time":"2026-06-15 03:00:00",
+    "home_score":"2",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Virgil van Dijk (51), Crysencio Summerville (64) | Keito Nakamura (57), Daichi Kamada (89)"
+  },
+  {
+    "id":"11",
+    "home_team":"Côte d'Ivoire",
+    "away_team":"Ecuador",
+    "match_time":"2026-06-15 06:00:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Amad Diallo (89)"
+  },
+  {
+    "id":"12",
+    "home_team":"Sweden",
+    "away_team":"Tunisia",
+    "match_time":"2026-06-15 09:00:00",
+    "home_score":"5",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Yasin Ayari (7, 90+6), Alexander Isak (30), Viktor Gyökeres (60), Mattias Svanberg (86) | Omar Rekik (43)"
+  },
+  {
+    "id":"13",
+    "home_team":"Spain",
+    "away_team":"Cape Verde",
+    "match_time":"2026-06-15 23:00:00",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":""
+  },
+  {
+    "id":"14",
+    "home_team":"Belgium",
+    "away_team":"Egypt",
+    "match_time":"2026-06-16 02:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Mohamed Hany (66 OG) | Emam Ashour (20)"
+  },
+  {
+    "id":"15",
+    "home_team":"Saudi Arabia",
+    "away_team":"Uruguay",
+    "match_time":"2026-06-16 05:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Abdulelah Al-Amri (41) | Maximiliano Araújo (80)"
+  },
+  {
+    "id":"16",
+    "home_team":"Iran",
+    "away_team":"New Zealand",
+    "match_time":"2026-06-16 08:00:00",
+    "home_score":"2",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Ramin Rezaeian, Mohammad Mohebbi (64) | Elijah Just (2)"
+  },
+  {
+    "id":"17",
+    "home_team":"France",
+    "away_team":"Senegal",
+    "match_time":"2026-06-17 02:00:00",
+    "home_score":"3",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Kylian Mbappé (66, 90+6), Bradley Barcola (82) | Ibrahim Mbaye (90+5)"
+  },
+  {
+    "id":"18",
+    "home_team":"Iraq",
+    "away_team":"Norway",
+    "match_time":"2026-06-17 05:00:00",
+    "home_score":"1",
+    "away_score":"4",
+    "status":"Finished",
+    "scorers":"Aymen Hussein (39) | Erling Haaland (29, 43), Leo Østigård (76), Aymen Hussein (90+6 OG)"
+  },
+  {
+    "id":"19",
+    "home_team":"Argentina",
+    "away_team":"Algeria",
+    "match_time":"2026-06-17 08:00:00",
+    "home_score":"3",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Lionel Messi (17, 60, 76)"
+  },
+  {
+    "id":"20",
+    "home_team":"Austria",
+    "away_team":"Jordan",
+    "match_time":"2026-06-17 11:00:00",
+    "home_score":"3",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Romano Schmid (20), Yazan Al-Arab (77 OG), Marko Arnautović (90+11 pen) | Ali Olwan (50)"
+  },
+  {
+    "id":"21",
+    "home_team":"Portugal",
+    "away_team":"DR Congo",
+    "match_time":"2026-06-18 02:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"João Neves (12) | Yoane Wissa (45+2)"
+  },
+  {
+    "id":"22",
+    "home_team":"England",
+    "away_team":"Croatia",
+    "match_time":"2026-06-18 05:00:00",
+    "home_score":"4",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Harry Kane (12 pen, 42), Jude Bellingham (47), Marcus Rashford (85) | Martin Baturina (36), Petar Musa (45+5)"
+  },
+  {
+    "id":"23",
+    "home_team":"Ghana",
+    "away_team":"Panama",
+    "match_time":"2026-06-18 08:00:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Caleb Yirenkyi (90+5)"
+  },
+  {
+    "id":"24",
+    "home_team":"Uzbekistan",
+    "away_team":"Colombia",
+    "match_time":"2026-06-18 11:00:00",
+    "home_score":"1",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Abbosbek Fayzullaev (60) | Daniel Muñoz (40), Luis Díaz (65), Jaminton Campaz (90+9)"
+  },
+  {
+    "id":"25",
+    "home_team":"USA",
+    "away_team":"Australia",
+    "match_time":"2026-06-20 02:00:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Burgess11' (o.g.)Freeman43'"
+  },
+  {
+    "id":"26",
+    "home_team":"Scotland",
+    "away_team":"Morocco",
+    "match_time":"2026-06-20 05:00:00",
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Saibari2'"
+  },
+  {
+    "id":"27",
+    "home_team":"Brazil",
+    "away_team":"Haiti",
+    "match_time":"2026-06-20 08:30:00",
+    "home_score":"3",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Cunha23',36'Vinícius45+3'"
+  },
+  {
+    "id":"28",
+    "home_team":"Netherlands",
+    "away_team":"Sweden",
+    "match_time":"2026-06-21 01:00:00",
+    "home_score":"5",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Brobbey5',17'Gakpo47',54'Summerville89' | Elanga59'"
+  },
+  {
+    "id":"29",
+    "home_team":"Germany",
+    "away_team":"Ivory Coast",
+    "match_time":"2026-06-21 03:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Deniz Undav (68, 90+4) | Franck Kessié (30)"
+  },
+  {
+    "id":"30",
+    "home_team":"Ecuador",
+    "away_team":"Curaçao",
+    "match_time":"2026-06-21 07:00:00",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":""
+  },
+  {
+    "id":"31",
+    "home_team":"Tunisia",
+    "away_team":"Japan",
+    "match_time":"2026-06-21 09:00:00",
+    "home_score":"0",
+    "away_score":"4",
+    "status":"Finished",
+    "scorers":"Kamada4'Ueda31',83'J. Itō69'"
+  },
+  {
+    "id":"32",
+    "home_team":"Czech Republic",
+    "away_team":"South Africa",
+    "match_time":"2026-06-18 15:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Sadílek 6' | Mokoena 83' (pen.)"
+  },
+  {
+    "id":"33",
+    "home_team":"Switzerland",
+    "away_team":"Bosnia and Herzegovina",
+    "match_time":"2026-06-18 18:00:00",
+    "home_score":"4",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Manzambi 74', 90', Vargas 84', Xhaka 90+7' (pen.) | Mahmić 90+3'"
+  },
+  {
+    "id":"34",
+    "home_team":"Canada",
+    "away_team":"Qatar",
+    "match_time":"2026-06-18 21:00:00",
+    "home_score":"6",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Larin 16', J. David 29', 45+3', 90+2', Saliba 64', Manai 75' (o.g.) |"
+  },
+  {
+    "id":"35",
+    "home_team":"Mexico",
+    "away_team":"South Korea",
+    "match_time":"2026-06-18 23:30:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Romo 50' |"
+  },
+  {
+    "id":"36",
+    "home_team":"Turkey",
+    "away_team":"Paraguay",
+    "match_time":"2026-06-20 11:00:00",
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Galarza2'"
+  },
+  {
+    "id":"37",
+    "home_team":"Spain",
+    "away_team":"Saudi Arabia",
+    "match_time":"2026-06-21 23:00:00",
+    "home_score":"4",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Yamal10'Oyarzabal21',24'Al-Tambakti49' (o.g.)"
+  },
+  {
+    "id":"38",
+    "home_team":"Belgium",
+    "away_team":"Iran",
+    "match_time":"2026-06-22 02:00:00",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":""
+  },
+  {
+    "id":"39",
+    "home_team":"Uruguay",
+    "away_team":"Cape Verde",
+    "match_time":"2026-06-22 05:00:00",
+    "home_score":"2",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"M. Araújo44'Canobbio45+6' | K. Pina21'Varela61'"
+  },
+  {
+    "id":"40",
+    "home_team":"New Zealand",
+    "away_team":"Egypt",
+    "match_time":"2026-06-22 08:00:00",
+    "home_score":"1",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Surman15' | Ziko58'Salah67'Trézéguet82'"
+  },
+  {
+    "id":"41",
+    "home_team":"Argentina",
+    "away_team":"Austria",
+    "match_time":"2026-06-23 00:00:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Messi38',90+5'"
+  },
+  {
+    "id":"42",
+    "home_team":"France",
+    "away_team":"Iraq",
+    "match_time":"2026-06-23 04:00:00",
+    "home_score":"3",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Mbappé14',54'Dembélé66'"
+  },
+  {
+    "id":"43",
+    "home_team":"Norway",
+    "away_team":"Senegal",
+    "match_time":"2026-06-23 07:00:00",
+    "home_score":"3",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Holmgren Pedersen43'Haaland48',58' | I. Sarr53',90+3'"
+  },
+  {
+    "id":"44",
+    "home_team":"Jordan",
+    "away_team":"Algeria",
+    "match_time":"2026-06-23 09:00:00",
+    "home_score":"1",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Al-Rashdan36' | Benbouali69'Gouiri82'"
+  },
+  {
+    "id":"45",
+    "home_team":"Switzerland",
+    "away_team":"Canada",
+    "match_time":"2026-06-25 02:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Rubén Vargas (46), Johan Manzambi (57) | Promise David (76)"
+  },
+  {
+    "id":"46",
+    "home_team":"Bosnia and Herzegovina",
+    "away_team":"Qatar",
+    "match_time":"2026-06-25 02:00:00",
+    "home_score":"3",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Kerim Alajbegović (29), Ermin Mahmić (80), Hassan Al-Haydos (42) | Salah Zakaria (34 og)"
+  },
+  {
+    "id":"47",
+    "home_team":"Scotland",
+    "away_team":"Brazil",
+    "match_time":"2026-06-25 05:00:00",
+    "home_score":"0",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Gabriel Martinelli (12), Rodrygo (34), Raphinha (78)"
+  },
+  {
+    "id":"48",
+    "home_team":"Morocco",
+    "away_team":"Haiti",
+    "match_time":"2026-06-25 05:00:00",
+    "home_score":"4",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Youssef En-Nesyri (18, 45), Achraf Hakimi (32), Amine Harit (67) | Frantzdy Pierrot (10, 89)"
+  },
+  {
+    "id":"49",
+    "home_team":"Czech Republic",
+    "away_team":"Mexico",
+    "match_time":"2026-06-25 08:00:00",
+    "home_score":"0",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Mateo Chávez (55), Julián Quiñones (61), Álvaro Fidalgo (90+4)"
+  },
+  {
+    "id":"50",
+    "home_team":"South Africa",
+    "away_team":"South Korea",
+    "match_time":"2026-06-25 08:00:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Thapelo Maseko (63)"
+  },
+  {
+    "id":"51",
+    "home_team":"Curaçao",
+    "away_team":"Ivory Coast",
+    "match_time":"2026-06-26 03:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"52",
+    "home_team":"Ecuador",
+    "away_team":"Germany",
+    "match_time":"2026-06-26 03:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Angulo9'Plata77' | Sané2'"
+  },
+  {
+    "id":"53",
+    "home_team":"Japan",
+    "away_team":"Sweden",
+    "match_time":"2026-06-26 06:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"54",
+    "home_team":"Tunisia",
+    "away_team":"Netherlands",
+    "match_time":"2026-06-26 06:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"55",
+    "home_team":"Turkey",
+    "away_team":"USA",
+    "match_time":"2026-06-26 09:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"56",
+    "home_team":"Paraguay",
+    "away_team":"Australia",
+    "match_time":"2026-06-26 09:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"57",
+    "home_team":"Portugal",
+    "away_team":"Uzbekistan",
+    "match_time":"2026-06-24 00:00:00",
+    "home_score":"5",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Abduvohid Nematov (11 og), Cristiano Ronaldo (15, 65), Nuno Mendes (32), Rafael Leão (88)"
+  },
+  {
+    "id":"58",
+    "home_team":"England",
+    "away_team":"Ghana",
+    "match_time":"2026-06-24 03:00:00",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":""
+  },
+  {
+    "id":"59",
+    "home_team":"Panama",
+    "away_team":"Croatia",
+    "match_time":"2026-06-24 06:00:00",
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Ante Budimir (74)"
+  },
+  {
+    "id":"60",
+    "home_team":"Colombia",
+    "away_team":"DR Congo",
+    "match_time":"2026-06-24 09:00:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Daniel Muñoz (76)"
+  }
+]
