@@ -192,6 +192,78 @@ def get_team_display(team_name):
     # แสดงผลเป็น "ธงชาติ ชื่อภาษาไทย" (เช่น 🇩🇪 เยอรมนี) เพื่อความสมมาตร พรีเมี่ยม และเหมาะสมกับทุกพื้นที่แสดงผล
     return f"{flag} {thai_name}"
 
+def generate_gold_match_card(row):
+    home = row['home_team']
+    away = row['away_team']
+    
+    home_disp = get_team_display(home)
+    away_disp = get_team_display(away)
+    
+    h_parts = home_disp.split(" ", 1)
+    a_parts = away_disp.split(" ", 1)
+    
+    h_flag = h_parts[0] if len(h_parts) > 0 else "🏳️"
+    h_name = h_parts[1] if len(h_parts) > 1 else home
+    
+    a_flag = a_parts[0] if len(a_parts) > 0 else "🏳️"
+    a_name = a_parts[1] if len(a_parts) > 1 else away
+    
+    h_score = safe_int(row['home_score'])
+    a_score = safe_int(row['away_score'])
+    
+    h_winner_badge = ""
+    a_winner_badge = ""
+    if h_score > a_score:
+        h_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
+    elif a_score > h_score:
+        a_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
+        
+    scorers_html = ""
+    if row['scorers'] and row['scorers'].strip() != "":
+        scorers_list = [s.strip() for s in row['scorers'].split(',')]
+        items = []
+        for s in scorers_list:
+            text = s
+            time_badge = ""
+            if "(" in s and ")" in s:
+                start_idx = s.find("(")
+                end_idx = s.find(")")
+                name_part = s[:start_idx].strip()
+                time_part = s[start_idx+1:end_idx].strip()
+                text = name_part
+                time_badge = f' <span class="scorer-time-gold">({time_part})</span>'
+            
+            items.append(f'<li class="scorer-item-gold"><span class="scorer-icon-gold">⚽✨</span><span>{text}{time_badge}</span></li>')
+        
+        scorers_html = f'<div class="scorers-container-gold"><div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div><ul class="scorers-list-gold">{"".join(items)}</ul></div>'
+    else:
+        scorers_html = '<div class="scorers-container-gold"><div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div><div style="font-size: 0.85rem; color: #718096; font-style: italic;">ไม่มีรายงานผู้ทำประตู</div></div>'
+        
+    match_time_str = pd.to_datetime(row['match_time']).strftime('%H:%M น.')
+    
+    card_html = (
+        f'<div class="gold-match-card">'
+        f'<div class="match-card-grid">'
+        f'<div class="team-side">'
+        f'<span class="team-flag-gold">{h_flag}</span>'
+        f'<span class="team-name-gold">{h_name}</span>'
+        f'{h_winner_badge}'
+        f'</div>'
+        f'<div>'
+        f'<div class="score-gold">{h_score} - {a_score}</div>'
+        f'<div class="match-time-gold">⏱️ {match_time_str}</div>'
+        f'</div>'
+        f'<div class="team-side">'
+        f'<span class="team-flag-gold">{a_flag}</span>'
+        f'<span class="team-name-gold">{a_name}</span>'
+        f'{a_winner_badge}'
+        f'</div>'
+        f'</div>'
+        f'{scorers_html}'
+        f'</div>'
+    )
+    return card_html
+
 # เริ่มต้นฐานข้อมูล
 db.init_db()
 
@@ -200,19 +272,6 @@ bg_opacity_bottom = 0.70
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
-<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) - ปรับให้นุ่มนวลขึ้นไม่ลายตา -->
-<svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
-  <filter id="slow-waving-filter" x="-10%" y="-10%" width="120%" height="120%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="1" result="turbulence">
-      <animate attributeName="baseFrequency" 
-               values="0.01 0.03; 0.01 0.04; 0.01 0.03" 
-               dur="12s" 
-               repeatCount="indefinite" />
-    </feTurbulence>
-    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="12" xChannelSelector="R" yChannelSelector="G" />
-  </filter>
-</svg>
-
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
     
@@ -220,7 +279,7 @@ st.markdown(f"""
         font-family: 'Kanit', sans-serif;
     }}
     
-    /* ปรับแต่ง Sidebar ให้ดูพรีเมี่ยม โทนเขียวตุ่น */
+    /* ปรับแต่ง Sidebar ให้ดูพรีเมี่ยม โทนเขียวตุ่น และบังคับให้ทำ GPU Composite Layer ป้องกันบั๊กภาพเบลอลามจากจอหลัก */
     [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #2d3a31 0%, #1a241e 100%);
         position: relative;
@@ -228,6 +287,10 @@ st.markdown(f"""
         border-right: none;
         box-shadow: 2px 0 15px rgba(0,0,0,0.3);
         height: 100vh !important;
+        transform: translateZ(0) !important;
+        -webkit-transform: translateZ(0) !important;
+        backface-visibility: hidden !important;
+        -webkit-backface-visibility: hidden !important;
     }}
     
     [data-testid="stSidebarContent"] {{
@@ -270,7 +333,7 @@ st.markdown(f"""
         100% {{ transform: translateX(400%) rotate(-45deg); }}
     }}
 
-    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
+    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลก - นำ SVG Filter ออกเพื่อคืนความคมชัดระดับ HD */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -283,10 +346,10 @@ st.markdown(f"""
         background-size: cover;
         background-position: center;
         opacity: 0.22;
-        filter: grayscale(100%) contrast(110%) brightness(85%) url(#slow-waving-filter); /* ใช้ SVG Filter กวนพิกเซล */
+        filter: grayscale(100%) contrast(110%) brightness(85%); /* แก้ไขบั๊กภาพมัวโดยเอา SVG Filter บิดเบี้ยวออก */
         pointer-events: none;
         z-index: -2; /* ล็อคไว้หลังสุดไม่ให้รบกวนเมนู */
-        transform: scale(1.1); /* ขยายเผื่อขอบจากการบิดเบี้ยวของ Filter */
+        transform: none; /* คืนค่าสเกลปกติเพื่อป้องกันความเบลอจากการขยายขนาด */
     }}
 
     /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */
@@ -297,6 +360,12 @@ st.markdown(f"""
         color: #ffffff !important;
     }}
     
+    /* 🌟 ปรับแต่งคอนเทนเนอร์ stRadio นอกสุดให้กว้างเต็ม 100% ของไซด์บาร์อย่างแท้จริง แก้ปัญหากล่องหดตัวปุ่มโดนบีบแคบ */
+    div[data-testid="stRadio"], .stRadio {{
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }}
+
     /* ปรับแต่งปุ่มเมนูหลักของไซด์บาร์ให้กรอบกว้างและแผ่ขนาดเท่ากันเป๊ะเสมอกันทุกปุ่ม 100% */
     div[role="radiogroup"] {{
         width: 100% !important;
@@ -1884,29 +1953,88 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 
 # 3. หน้าผลการแข่งขันย้อนหลัง (Match Results - Championship Golden Upgrade)
 elif menu == "ผลการแข่งขันย้อนหลัง (Match Results)":
-    st.header("📜 ผลการแข่งขันย้อนหลังทั้งหมด")
-    st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้วในเกียรติยศแห่งแชมป์เปี้ยน")
+    st.markdown("""
+    <div class="premium-results-header">
+        <div class="premium-results-title">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" style="fill: #ffd700; filter: drop-shadow(0 0 6px rgba(255,215,0,0.45)); margin-right: 12px; flex-shrink: 0;"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.44 1.72 4.44 4 4.9V19H5v2h14v-2h-2v-4.1c2.28-.46 4-2.46 4-4.9V7c0-1.1-.9-2-2-2zM5 10V7h2v3H5zm14 0h-2V7h2v3z"/></svg>
+            <span>ผลการแข่งขันย้อนหลังทั้งหมด</span>
+        </div>
+        <div class="premium-results-subtitle">
+            <span class="gold-sparkle">✨</span> รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้วในเกียรติยศแห่งแชมเปี้ยน
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # สไตล์ CSS เพิ่มเติมสำหรับธีมทองพรีเมียม (Gold Accents & Golden Champion Style)
     st.markdown("""
     <style>
-    /* สไตล์แถบคาดวันที่สีทองหรูหรา */
+    /* สไตล์แถบคาดวันที่สีทองหรูหราแบบกรอบทองบางประกายเรืองแสง (Championship Premium Glassy Header) */
     .gold-date-header {
-        background: linear-gradient(135deg, #e5c060 0%, #b38820 50%, #8c6212 100%);
-        color: #0f1c13;
-        padding: 12px 22px;
-        font-weight: 800;
-        font-size: 1.18rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(229, 192, 96, 0.25);
+        background: rgba(18, 30, 22, 0.92); /* ปรับทึบขึ้นเพื่อป้องกันบั๊กภาพเบลอลามจาก backdrop-filter ของเบราว์เซอร์ */
+        color: #ffd700;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         margin-top: 30px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-family: 'Kanit', 'Segoe UI', sans-serif;
-        text-transform: uppercase;
-        border: 1px solid rgba(229, 192, 96, 0.4);
+        gap: 10px;
+        font-family: 'Kanit', sans-serif;
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        z-index: 5;
+    }
+    .gold-date-header:hover {
+        border-color: rgba(212, 175, 55, 0.6);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.12);
+        background: rgba(24, 40, 30, 0.95);
+    }
+    
+    /* สไตล์หัวข้อหลักหน้าผลการแข่งขัน (Premium Results Page Header - Glassmorphic Gold Thin Border) */
+    .premium-results-header {
+        background: rgba(18, 30, 22, 0.90); /* ปรับทึบขึ้นเพื่อป้องกันบั๊กภาพเบลอลามจาก backdrop-filter ของเบราว์เซอร์ */
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-top: 5px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 5;
+    }
+    .premium-results-header:hover {
+        border-color: rgba(212, 175, 55, 0.45);
+        box-shadow: 0 6px 24px rgba(212, 175, 55, 0.08);
+        background: rgba(22, 38, 27, 0.95);
+    }
+    .premium-results-title {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffd700;
+        margin-bottom: 6px;
+        font-family: 'Kanit', sans-serif;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+    }
+    .premium-results-subtitle {
+        color: #e2e8f0;
+        font-size: 0.9rem;
+        line-height: 1.45;
+        font-family: 'Kanit', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .gold-sparkle {
+        color: #ffd700;
+        display: inline-block;
+        font-weight: bold;
     }
     
     /* สไตล์การ์ดแมตช์ขอบทองเรืองแสง (Championship Premium Card) */
@@ -1921,6 +2049,7 @@ elif menu == "ผลการแข่งขันย้อนหลัง (Matc
         font-family: 'Kanit', sans-serif;
         position: relative;
         overflow: hidden;
+        z-index: 5;
     }
     .gold-match-card:hover {
         transform: translateY(-4px);
@@ -2063,8 +2192,60 @@ elif menu == "ผลการแข่งขันย้อนหลัง (Matc
         font-weight: 700;
         font-size: 0.82rem;
     }
+
+    /* ========================================================================= */
+    /* 🌟 CRITICAL SYSTEM OVERRIDES: บังคับปลดล็อกและเปิดระบบสกรอลแนวตั้งสำหรับหน้านี้ */
+    /* ========================================================================= */
+    
+    /* ปลุกระดับคอนเทนเนอร์หลักส่วนเนื้อหาของ Streamlit ให้สกรอลแนวตั้งได้ฉลุยลื่นไหล โดยไม่ยุ่งเกี่ยวกับ Sidebar และโครงสร้างสากล */
+    [data-testid="stAppViewContainer"] > section:nth-child(2), 
+    .main {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        scrollbar-gutter: stable !important;
+    }
+    .main .block-container {
+        overflow-y: visible !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* คืนสิทธิ์การตอบรับเมาส์เลื่อนให้แก่แผงคอนเทนเนอร์การแสดงผล */
+    [data-testid="stAppViewContainer"] > section:nth-child(2) {
+        pointer-events: auto !important;
+    }
+
+    /* 🌟 รักษาและสปอยล์ขนาดปุ่มเลื่อนสีทอง (Scrollbar Thumb) กว้าง 16px เด่นสะกดสายตา ติ๊กง่าย ลากลื่น 100% */
+    [data-testid="stAppViewContainer"] > section:nth-child(2)::-webkit-scrollbar,
+    .main::-webkit-scrollbar {
+        width: 16px !important;
+        height: 16px !important;
+        display: block !important;
+    }
+    [data-testid="stAppViewContainer"] > section:nth-child(2)::-webkit-scrollbar-track,
+    .main::-webkit-scrollbar-track {
+        background: rgba(10, 20, 14, 0.65) !important;
+        border-radius: 10px !important;
+        border-left: 1px solid rgba(255, 215, 0, 0.1) !important;
+    }
+    [data-testid="stAppViewContainer"] > section:nth-child(2)::-webkit-scrollbar-thumb,
+    .main::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #ffd700 0%, #d4af37 50%, #b38820 100%) !important;
+        border: 3px solid rgba(15, 28, 19, 0.95) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.3) !important;
+    }
+    [data-testid="stAppViewContainer"] > section:nth-child(2)::-webkit-scrollbar-thumb:hover,
+    .main::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #ffffff 0%, #ffd700 45%, #cfa32e 100%) !important;
+        border: 2px solid rgba(15, 28, 19, 0.95) !important;
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.6) !important;
+    }
     </style>
-    """, unsafe_allow_html=True)
+    """,unsafe_allow_html=True)
     
     all_matches = db.get_matches()
     finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
@@ -2077,115 +2258,20 @@ elif menu == "ผลการแข่งขันย้อนหลัง (Matc
         unique_dates = finished['match_dt'].dt.date.unique()
         
         for d in unique_dates:
-            # ใช้แถบหัวข้อวันที่สีทองพรีเมียม
+            # ใช้แถบหัวข้อวันที่สีทองพรีเมียม (กรอบทองบางโปร่งแสงพร้อมไอคอนคู่ธีม)
             date_str = d.strftime('%d/%m/%Y')
             st.markdown(f"""
             <div class="gold-date-header">
-                <span>🗓️ วันที่ {date_str}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" style="fill: #ffd700; flex-shrink: 0; filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.45));"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                <span style="letter-spacing: 0.6px; font-weight: 600; text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);">วันที่ {date_str}</span>
             </div>
             """, unsafe_allow_html=True)
             
             day_matches = finished[finished['match_dt'].dt.date == d]
             
             for _, row in day_matches.iterrows():
-                home = row['home_team']
-                away = row['away_team']
-                
-                # แยกธงและชื่อไทยออกจาก get_team_display เพื่อตกแต่งอิสระ
-                home_disp = get_team_display(home)
-                away_disp = get_team_display(away)
-                
-                h_parts = home_disp.split(" ", 1)
-                a_parts = away_disp.split(" ", 1)
-                
-                h_flag = h_parts[0] if len(h_parts) > 0 else "🏳️"
-                h_name = h_parts[1] if len(h_parts) > 1 else home
-                
-                a_flag = a_parts[0] if len(a_parts) > 0 else "🏳️"
-                a_name = a_parts[1] if len(a_parts) > 1 else away
-                
-                h_score = safe_int(row['home_score'])
-                a_score = safe_int(row['away_score'])
-                
-                # คำนวณหาผู้ชนะเพื่อจัดป้ายทองคำ
-                h_winner_badge = ""
-                a_winner_badge = ""
-                if h_score > a_score:
-                    h_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
-                elif a_score > h_score:
-                    a_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
-                
-                # รายชื่อผู้ยิงประตู
-                scorers_html = ""
-                if row['scorers'] and row['scorers'].strip() != "":
-                    scorers_list = [s.strip() for s in row['scorers'].split(',')]
-                    items = []
-                    for s in scorers_list:
-                        # แยกนาทีออกถ้ามี เช่น Florian Wirtz (15') เพื่อแต่งให้เป็นตัวอักษรสีทองโดดเด่น
-                        text = s
-                        time_badge = ""
-                        if "(" in s and ")" in s:
-                            start_idx = s.find("(")
-                            end_idx = s.find(")")
-                            name_part = s[:start_idx].strip()
-                            time_part = s[start_idx+1:end_idx].strip()
-                            text = name_part
-                            time_badge = f' <span class="scorer-time-gold">({time_part})</span>'
-                        
-                        items.append(f"""
-                        <li class="scorer-item-gold">
-                            <span class="scorer-icon-gold">⚽✨</span>
-                            <span>{text}{time_badge}</span>
-                        </li>
-                        """)
-                    
-                    scorers_html = f"""
-                    <div class="scorers-container-gold">
-                        <div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div>
-                        <ul class="scorers-list-gold">
-                            {"".join(items)}
-                        </ul>
-                    </div>
-                    """
-                else:
-                    scorers_html = f"""
-                    <div class="scorers-container-gold">
-                        <div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div>
-                        <div style="font-size: 0.85rem; color: #718096; font-style: italic;">ไม่มีรายงานผู้ทำประตู</div>
-                    </div>
-                    """
-                
-                match_time_str = pd.to_datetime(row['match_time']).strftime('%H:%M น.')
-                
-                # วาดการ์ดแชมป์เปี้ยนสีทองทั้งชิ้น
-                st.markdown(f"""
-                <div class="gold-match-card">
-                    <div class="match-card-grid">
-                        <!-- ฝั่งทีมเหย้า -->
-                        <div class="team-side">
-                            <span class="team-flag-gold">{h_flag}</span>
-                            <span class="team-name-gold">{h_name}</span>
-                            {h_winner_badge}
-                        </div>
-                        
-                        <!-- สกอร์กลางและการแข่งขัน -->
-                        <div>
-                            <div class="score-gold">{h_score} - {a_score}</div>
-                            <div class="match-time-gold">⏱️ {match_time_str}</div>
-                        </div>
-                        
-                        <!-- ฝั่งทีมเยือน -->
-                        <div class="team-side">
-                            <span class="team-flag-gold">{a_flag}</span>
-                            <span class="team-name-gold">{a_name}</span>
-                            {a_winner_badge}
-                        </div>
-                    </div>
-                    
-                    <!-- ส่วนผู้ยิงประตู -->
-                    {scorers_html}
-                </div>
-                """, unsafe_allow_html=True)
+                card_html = generate_gold_match_card(row)
+                st.markdown(card_html, unsafe_allow_html=True)
                 
             st.divider()
 
