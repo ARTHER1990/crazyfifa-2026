@@ -175,21 +175,42 @@ def build_analyst_prompt(leaderboard_df, matches_df, predictions_df):
     else:
         upcoming_matches = "ไม่มีข้อมูลการแข่งขันล่วงหน้า\n"
                 
-    # 4. เจาะหาการทำนายสุดเป๊ะ (Perfect Prediction) ล่าสุด เพื่อหาตัวท็อปเดลี
+    # 4. เจาะหาการทำนายสุดเป๊ะ (Perfect Prediction) หรือฟอร์มโดดเด่นในรอบล่าสุด เพื่อหาตัวท็อปเดลี
     prediction_trivia = ""
     if not predictions_df.empty and not matches_df.empty:
         merged = predictions_df.merge(matches_df, left_on='match_id', right_on='id')
         finished_predictions = merged[merged['status'] == 'Finished'].copy()
         if not finished_predictions.empty:
-            perfect_predictions = finished_predictions[finished_predictions['points_earned'].astype(str) == '3'].copy()
-            if not perfect_predictions.empty:
-                perfect_predictions['id_int'] = pd.to_numeric(perfect_predictions['id'], errors='coerce').fillna(0).astype(int)
-                recent_perfect = perfect_predictions.sort_values('id_int', ascending=False).head(4)
-                for _, row in recent_perfect.iterrows():
-                    prediction_trivia += f"- คุณ {row['username']} ทายคู่ {row['home_team']} vs {row['away_team']} ได้ผลลัพธ์ {row['pred_home']}-{row['pred_away']} ตรงเผงสะเทือนวงการ! (รับ 3 แต้มเต็ม)\n"
+            # ค้นหา ID ของกลุ่มแมตช์ที่เสร็จสิ้นล่าสุด 4 นัด (ซึ่งเป็นกลุ่มคู่แข่งขันรอบล่าสุดของวันนี้)
+            finished_predictions['id_int'] = pd.to_numeric(finished_predictions['id'], errors='coerce').fillna(0).astype(int)
+            latest_match_ids = finished_predictions.sort_values('id_int', ascending=False).head(4)['id'].unique().tolist()
+            
+            # กรองข้อมูลการทำนายเฉพาะแมตช์ในกลุ่มรอบล่าสุดนี้
+            recent_round_preds = finished_predictions[finished_predictions['match_id'].isin(latest_match_ids)].copy()
+            
+            # 4.1 ลองหาผู้ที่ทายถูกเป๊ะ (ได้ 3 แต้มเต็ม) ในกลุ่มแมตช์รอบล่าสุดนี้ก่อน
+            perfect_recent = recent_round_preds[recent_round_preds['points_earned'].astype(str) == '3']
+            if not perfect_recent.empty:
+                for _, row in perfect_recent.sort_values('id_int', ascending=False).head(4).iterrows():
+                    prediction_trivia += f"- คุณ {row['username']} ทายคู่ {row['home_team']} vs {row['away_team']} ได้ผลลัพธ์ {row['pred_home']}-{row['pred_away']} ตรงเผงสะเทือนวงการ! (รับ 3 แต้มเต็มในนัดล่าสุดวันนี้)\n"
+            else:
+                # 4.2 หากรอบล่าสุดนี้ไม่มีใครทายสกอร์เป๊ะเลย ให้หาผู้เดาทิศทางถูก (รับ 1 แต้มสำคัญ) ในรอบล่าสุดนี้มาไฮไลท์แทน เพื่อให้เกาะติดกระแสข่าววันนี้
+                correct_dir_recent = recent_round_preds[recent_round_preds['points_earned'].astype(str) == '1']
+                if not correct_dir_recent.empty:
+                    prediction_trivia += "*(หมายเหตุสำหรับ AI: แมตช์ล่าสุดวันนี้ไม่มีใครเดาสกอร์เป๊ะ 3 แต้ม แต่มีผู้ทายทิศทางผู้ชนะ/เสมอได้ถูกต้องรับ 1 แต้มเด่น ได้แก่)*\n"
+                    # ดึงผู้เล่นฟอร์มดี 4 คนล่าสุดของรอบนี้
+                    for _, row in correct_dir_recent.sort_values('id_int', ascending=False).head(4).iterrows():
+                        prediction_trivia += f"- คุณ {row['username']} เดาทางคู่ {row['home_team']} vs {row['away_team']} ได้ถูกต้อง (ทาย {row['pred_home']}-{row['pred_away']} | ผลจริง {row['home_score']}-{row['away_score']}) คว้า 1 แต้มสว่างวาบของวันนี้!\n"
+            
+            # 4.3 กรณีที่รอบล่าสุดไม่มีคะแนนเลยจริงๆ (เช่นเพิ่งเปิดวันใหม่และยังไม่มีใครแข่งเสร็จ) ค่อยตกกลับไปใช้ Perfect 3 แต้มในอดีตมาแสดงประคองไว้ก่อน
+            if not prediction_trivia:
+                perfect_all = finished_predictions[finished_predictions['points_earned'].astype(str) == '3'].copy()
+                if not perfect_all.empty:
+                    for _, row in perfect_all.sort_values('id_int', ascending=False).head(4).iterrows():
+                        prediction_trivia += f"- คุณ {row['username']} ทายคู่ {row['home_team']} vs {row['away_team']} ได้ผลลัพธ์ {row['pred_home']}-{row['pred_away']} ตรงเผงสะเทือนวงการ! (รับ 3 แต้มเต็มในนัดก่อนหน้านี้)\n"
     
     if not prediction_trivia:
-        prediction_trivia = "- ช่วงนี้ผลการทายค่อนข้างคลาดเคลื่อน ไม่มีใครเก็บ 3 แต้มเต็มได้ในนัดล่าสุดครับ\n"
+        prediction_trivia = "- ช่วงนี้ผลการทายค่อนข้างคลาดเคลื่อน ไม่มีคะแนนใหม่ถูกบันทึกในนัดล่าสุดครับ\n"
 
     prompt = f"""
 คุณคือ "ปีเตอร์" (Peter) AI นักวิเคราะห์ฟุตบอลอัจฉริยะ (AI Analyst) และผู้ดำเนินรายการผู้รอบรู้ประจำเว็บทายผลบอลโลก CRAZYFIFA 2026 ของคุณอาร์ต
