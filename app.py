@@ -321,6 +321,75 @@ st.markdown(f"""
         font-weight: 600;
     }}
 
+    /* 🎯 สเปรชพื้นที่เว้นระยะห่างระหว่างเมนูกลุ่มที่ 1 และกลุ่มที่ 2 พร้อมติดป้ายหมวดหมู่แบบหรูหรา */
+    div[role="radiogroup"] > label:nth-of-type(4) {{
+        margin-top: 57px !important;
+        position: relative !important;
+    }}
+    
+    /* ลายเส้นแบ่งส่วน (Separator Line) ยกขึ้นลอยเด่นอยู่เหนือหัวข้อข้อความอย่างชัดเจน */
+    div[role="radiogroup"] > label:nth-of-type(4)::before {{
+        content: "";
+        position: absolute;
+        top: -35px !important;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.25) 50%, rgba(255, 215, 0, 0) 100%);
+    }}
+
+    /* ติดป้ายบอกประเภทหมวดหมู่ (Section Label) แขวนไว้ด้านล่างเส้น */
+    div[role="radiogroup"] > label:nth-of-type(4)::after {{
+        content: "📁 บัญชีผู้ใช้ & สรุปคะแนนสะสม" !important;
+        position: absolute;
+        top: -26px !important;
+        left: 8px;
+        font-size: 0.68rem;
+        color: rgba(255, 215, 0, 0.55);
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        font-family: 'Kanit', sans-serif;
+    }}
+
+    /* 🌟 ซ่อนอิโมจิเบราว์เซอร์มาตรฐานเดิม และแทนที่ด้วยไอคอนทองคำเรืองแสงสไตล์บอร์ดกีฬา ✨ */
+    div[role="radiogroup"] > label p {{
+        text-indent: -1.2rem !important;
+        padding-left: 2rem !important;
+        position: relative !important;
+    }}
+
+    div[role="radiogroup"] > label p::before {{
+        content: "" !important;
+        position: absolute !important;
+        left: 8px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        width: 18px !important;
+        height: 18px !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.7));
+    }}
+
+    div[role="radiogroup"] > label:nth-of-type(1) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") !important;
+    }}
+    div[role="radiogroup"] > label:nth-of-type(2) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E") !important;
+    }}
+    div[role="radiogroup"] > label:nth-of-type(3) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M16 11V3H8v6H2v12h20V11h-6zM10 5h4v14h-4V5zM4 11h4v8H4v-8zm16 8h-4v-8h4v8z'/%3E%3C/svg%3E") !important;
+    }}
+    div[role="radiogroup"] > label:nth-of-type(4) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/%3E%3C/svg%3E") !important;
+    }}
+    div[role="radiogroup"] > label:nth-of-type(5) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M2 4l3 12h14l3-12-6 7-4-7-6 7-4-7z'/%3E%3Ccircle fill='%23F1C40F' cx='12' cy='17' r='2'/%3E%3C/svg%3E") !important;
+    }}
+    div[role="radiogroup"] > label:nth-of-type(6) p::before {{
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12.19 2.02c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/%3E%3C/svg%3E") !important;
+    }}
+
     /* ปรับแต่งช่องกรอกคะแนน (st.number_input) ให้ดูโมเดิร์นคลีนและมีมิติ */
     div[data-testid="stNumberInput"] {{
         background: rgba(255, 255, 255, 0.02) !important;
