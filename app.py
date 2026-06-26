@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-06-26 12:29 (Forced clean placeholders and Congo DR flag fix)
+# Last cache clear and score update: 2026-06-26 14:03 (Forced clean placeholders, Congo DR flag fix, and Gold Match Results Upgrade)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1882,11 +1882,189 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
     else:
         st.info("ไม่มีการแข่งขันที่กำลังจะมาถึงในขณะนี้ครับ")
 
-# 3. หน้าผลการแข่งขันย้อนหลัง
+# 3. หน้าผลการแข่งขันย้อนหลัง (Match Results - Championship Golden Upgrade)
 elif menu == "ผลการแข่งขันย้อนหลัง (Match Results)":
     st.header("📜 ผลการแข่งขันย้อนหลังทั้งหมด")
-    st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้ว")
-    st.markdown("---")
+    st.info("💡 รวบรวมข้อมูลผลสกอร์และรายชื่อผู้ทำประตูในทุกแมตช์ที่จบการแข่งขันแล้วในเกียรติยศแห่งแชมป์เปี้ยน")
+    
+    # สไตล์ CSS เพิ่มเติมสำหรับธีมทองพรีเมียม (Gold Accents & Golden Champion Style)
+    st.markdown("""
+    <style>
+    /* สไตล์แถบคาดวันที่สีทองหรูหรา */
+    .gold-date-header {
+        background: linear-gradient(135deg, #e5c060 0%, #b38820 50%, #8c6212 100%);
+        color: #0f1c13;
+        padding: 12px 22px;
+        font-weight: 800;
+        font-size: 1.18rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(229, 192, 96, 0.25);
+        margin-top: 30px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Kanit', 'Segoe UI', sans-serif;
+        text-transform: uppercase;
+        border: 1px solid rgba(229, 192, 96, 0.4);
+    }
+    
+    /* สไตล์การ์ดแมตช์ขอบทองเรืองแสง (Championship Premium Card) */
+    .gold-match-card {
+        background: rgba(15, 28, 19, 0.88);
+        border: 1.5px solid #d4af37;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 22px;
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.08);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Kanit', sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+    .gold-match-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.30);
+        border-color: #f1c40f;
+    }
+    
+    /* ปลอกแสงสว่างวาบขอบมุมการ์ด */
+    .gold-match-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,215,0,0.15) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        transition: 0.75s;
+    }
+    .gold-match-card:hover::before {
+        left: 150%;
+        transition: 0.75s;
+    }
+
+    .match-card-grid {
+        display: grid;
+        grid-template-columns: 1fr 140px 1fr;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .team-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* ธงชาติสะบัดสง่างามขนาดใหญ่ */
+    .team-flag-gold {
+        font-size: 2.3rem;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 2px rgba(212, 175, 55, 0.4));
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+    
+    .team-name-gold {
+        font-size: 1.22rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    
+    /* ป้ายผู้ชนะขอบทองคำเรืองแสง */
+    .team-winner-badge {
+        color: #ffd700;
+        font-size: 0.78rem;
+        font-weight: bold;
+        margin-top: 8px;
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(139, 101, 8, 0.1) 100%);
+        padding: 3px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(212, 175, 55, 0.5);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 6px rgba(212,175,55,0.15);
+    }
+    
+    /* สกอร์สีทองสว่าง */
+    .score-gold {
+        font-size: 2.6rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #fff3a1 0%, #ffd700 30%, #cca01d 70%, #997300 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 3px 10px rgba(212, 175, 55, 0.4));
+        font-family: 'Outfit', 'Arial Black', sans-serif;
+        letter-spacing: 2px;
+        line-height: 1;
+    }
+    
+    .match-time-gold {
+        font-size: 0.76rem;
+        color: #a0aec0;
+        margin-top: 8px;
+        font-weight: 500;
+    }
+    
+    /* รายชื่อผู้ทำประตู (Scorers Grid) */
+    .scorers-container-gold {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px dashed rgba(212, 175, 55, 0.25);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .scorers-title-gold {
+        font-size: 0.8rem;
+        color: #92a498;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .scorers-list-gold {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .scorer-item-gold {
+        font-size: 0.88rem;
+        color: #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.04);
+        padding: 4px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+    
+    .scorer-icon-gold {
+        color: #ffd700;
+        filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.6));
+    }
+    
+    .scorer-time-gold {
+        color: #f1c40f;
+        font-weight: 700;
+        font-size: 0.82rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
     all_matches = db.get_matches()
     finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
@@ -1899,35 +2077,116 @@ elif menu == "ผลการแข่งขันย้อนหลัง (Matc
         unique_dates = finished['match_dt'].dt.date.unique()
         
         for d in unique_dates:
-            st.subheader(f"🗓️ วันที่ {d.strftime('%d/%m/%Y')}")
+            # ใช้แถบหัวข้อวันที่สีทองพรีเมียม
+            date_str = d.strftime('%d/%m/%Y')
+            st.markdown(f"""
+            <div class="gold-date-header">
+                <span>🗓️ วันที่ {date_str}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
             day_matches = finished[finished['match_dt'].dt.date == d]
             
             for _, row in day_matches.iterrows():
                 home = row['home_team']
                 away = row['away_team']
-                home_display = get_team_display(home)
-                away_display = get_team_display(away)
+                
+                # แยกธงและชื่อไทยออกจาก get_team_display เพื่อตกแต่งอิสระ
+                home_disp = get_team_display(home)
+                away_disp = get_team_display(away)
+                
+                h_parts = home_disp.split(" ", 1)
+                a_parts = away_disp.split(" ", 1)
+                
+                h_flag = h_parts[0] if len(h_parts) > 0 else "🏳️"
+                h_name = h_parts[1] if len(h_parts) > 1 else home
+                
+                a_flag = a_parts[0] if len(a_parts) > 0 else "🏳️"
+                a_name = a_parts[1] if len(a_parts) > 1 else away
+                
                 h_score = safe_int(row['home_score'])
                 a_score = safe_int(row['away_score'])
                 
-                expander_label = f"⚽ {home_display}  {h_score} - {a_score}  {away_display}"
+                # คำนวณหาผู้ชนะเพื่อจัดป้ายทองคำ
+                h_winner_badge = ""
+                a_winner_badge = ""
+                if h_score > a_score:
+                    h_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
+                elif a_score > h_score:
+                    a_winner_badge = '<span class="team-winner-badge">👑 WINNER</span>'
                 
-                with st.expander(expander_label):
-                    st.markdown(f"### 🏟️ {home_display} vs {away_display}")
-                    st.write(f"🗓️ **เวลาแข่งขัน:** {pd.to_datetime(row['match_time']).strftime('%d/%m/%Y %H:%M น.')}")
+                # รายชื่อผู้ยิงประตู
+                scorers_html = ""
+                if row['scorers'] and row['scorers'].strip() != "":
+                    scorers_list = [s.strip() for s in row['scorers'].split(',')]
+                    items = []
+                    for s in scorers_list:
+                        # แยกนาทีออกถ้ามี เช่น Florian Wirtz (15') เพื่อแต่งให้เป็นตัวอักษรสีทองโดดเด่น
+                        text = s
+                        time_badge = ""
+                        if "(" in s and ")" in s:
+                            start_idx = s.find("(")
+                            end_idx = s.find(")")
+                            name_part = s[:start_idx].strip()
+                            time_part = s[start_idx+1:end_idx].strip()
+                            text = name_part
+                            time_badge = f' <span class="scorer-time-gold">({time_part})</span>'
+                        
+                        items.append(f"""
+                        <li class="scorer-item-gold">
+                            <span class="scorer-icon-gold">⚽✨</span>
+                            <span>{text}{time_badge}</span>
+                        </li>
+                        """)
                     
-                    winner_name = home if h_score > a_score else (away if a_score > h_score else "เสมอ")
-                    winner_display = get_team_display(winner_name) if winner_name != "เสมอ" else "เสมอ"
-                    st.write(f"🏆 **ผลการแข่งขัน:** {winner_display}")
+                    scorers_html = f"""
+                    <div class="scorers-container-gold">
+                        <div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div>
+                        <ul class="scorers-list-gold">
+                            {"".join(items)}
+                        </ul>
+                    </div>
+                    """
+                else:
+                    scorers_html = f"""
+                    <div class="scorers-container-gold">
+                        <div class="scorers-title-gold">⚽ รายชื่อผู้ทำประตู</div>
+                        <div style="font-size: 0.85rem; color: #718096; font-style: italic;">ไม่มีรายงานผู้ทำประตู</div>
+                    </div>
+                    """
+                
+                match_time_str = pd.to_datetime(row['match_time']).strftime('%H:%M น.')
+                
+                # วาดการ์ดแชมป์เปี้ยนสีทองทั้งชิ้น
+                st.markdown(f"""
+                <div class="gold-match-card">
+                    <div class="match-card-grid">
+                        <!-- ฝั่งทีมเหย้า -->
+                        <div class="team-side">
+                            <span class="team-flag-gold">{h_flag}</span>
+                            <span class="team-name-gold">{h_name}</span>
+                            {h_winner_badge}
+                        </div>
+                        
+                        <!-- สกอร์กลางและการแข่งขัน -->
+                        <div>
+                            <div class="score-gold">{h_score} - {a_score}</div>
+                            <div class="match-time-gold">⏱️ {match_time_str}</div>
+                        </div>
+                        
+                        <!-- ฝั่งทีมเยือน -->
+                        <div class="team-side">
+                            <span class="team-flag-gold">{a_flag}</span>
+                            <span class="team-name-gold">{a_name}</span>
+                            {a_winner_badge}
+                        </div>
+                    </div>
                     
-                    st.markdown("---")
-                    st.markdown("⚽ **รายชื่อผู้ยิงประตู:**")
-                    if row['scorers'] and row['scorers'].strip() != "":
-                        scorers_list = [s.strip() for s in row['scorers'].split(',')]
-                        for s in scorers_list:
-                            st.write(f"- {s}")
-                    else:
-                        st.write("ไม่มีข้อมูลการยิงประตู")
+                    <!-- ส่วนผู้ยิงประตู -->
+                    {scorers_html}
+                </div>
+                """, unsafe_allow_html=True)
+                
             st.divider()
 
 elif menu == "ตารางคะแนนกลุ่ม (Standings)":
