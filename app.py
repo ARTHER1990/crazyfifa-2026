@@ -1,3 +1,4 @@
+# Last cache clear and score update: 2026-06-26 08:08 (Japan vs Sweden 1-1, Tunisia vs Netherlands 1-3)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
