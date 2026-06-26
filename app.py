@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-06-26 14:03 (Forced clean placeholders, Congo DR flag fix, and Gold Match Results Upgrade)
+# Last cache clear and score update: 2026-06-26 14:06 (Forced clean placeholders, Congo DR flag, Gold Match Results, and Audio player bugfix)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1392,7 +1392,7 @@ if st.session_state.authenticated:
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
         with music_placeholder.container():
-            st.iframe(src=get_audio_html(song_path), height=1)
+            st.markdown(get_audio_html(song_path), unsafe_allow_html=True)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
     else:
         # หากกดปิด: บังคับทำลายออบเจกต์ตัวเล่นเสียงและเคลียร์กล่องจองพื้นที่ให้ว่างเปล่าทันที ส่งผลให้เสียงเงียบสนิทใน 1 คลิก!
