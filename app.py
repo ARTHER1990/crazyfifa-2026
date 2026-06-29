@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-29 07:05:11 (Updated all finished matches to correct scores)
+# Last cache clear and match update: 2026-06-29 07:39:05 (Updated New Zealand vs Belgium ID 76 to 1-5)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
