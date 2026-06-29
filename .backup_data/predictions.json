@@ -2853,14 +2853,14 @@
     "match_id":"71",
     "pred_home":"1",
     "pred_away":"3",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
     "match_id":"71",
     "pred_home":"1",
     "pred_away":"2",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
@@ -2874,7 +2874,7 @@
     "match_id":"61",
     "pred_home":"0",
     "pred_away":"2",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
@@ -2888,7 +2888,7 @@
     "match_id":"63",
     "pred_home":"1",
     "pred_away":"1",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
@@ -2923,14 +2923,14 @@
     "match_id":"65",
     "pred_home":"1",
     "pred_away":"3",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
     "match_id":"76",
     "pred_home":"1",
     "pred_away":"3",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
@@ -2944,59 +2944,171 @@
     "match_id":"72",
     "pred_home":"2",
     "pred_away":"0",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"FAII",
     "match_id":"67",
     "pred_home":"1",
     "pred_away":"3",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"NOTE",
     "match_id":"76",
     "pred_home":"0",
-    "pred_away":"2",
-    "points_earned":"0"
+    "pred_away":"3",
+    "points_earned":"1"
   },
   {
     "username":"NOTE",
     "match_id":"61",
     "pred_home":"0",
-    "pred_away":"2",
-    "points_earned":"0"
+    "pred_away":"3",
+    "points_earned":"1"
   },
   {
     "username":"NOTE",
     "match_id":"72",
     "pred_home":"2",
     "pred_away":"0",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"NOTE",
     "match_id":"71",
     "pred_home":"1",
-    "pred_away":"1",
-    "points_earned":"0"
+    "pred_away":"2",
+    "points_earned":"1"
   },
   {
     "username":"NOTE",
     "match_id":"66",
-    "pred_home":"1",
-    "pred_away":"0",
-    "points_earned":"0"
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"3"
   },
   {
     "username":"NOTE",
     "match_id":"63",
     "pred_home":"1",
-    "pred_away":"1",
+    "pred_away":"2",
     "points_earned":"0"
   },
   {
     "username":"NOTE",
+    "match_id":"62",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"1"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"74",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"75",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"3"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"76",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"75",
+    "pred_home":"1",
+    "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"74",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"73",
+    "pred_home":"1",
+    "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"72",
+    "pred_home":"2",
+    "pred_away":"0",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"71",
+    "pred_home":"1",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"66",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"63",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"64",
+    "pred_home":"2",
+    "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"64",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
     "match_id":"62",
     "pred_home":"1",
     "pred_away":"2",
@@ -3004,16 +3116,457 @@
   },
   {
     "username":"NOTE",
-    "match_id":"74",
-    "pred_home":"0",
+    "match_id":"73",
+    "pred_home":"1",
     "pred_away":"1",
     "points_earned":"0"
   },
   {
     "username":"NOTE",
+    "match_id":"67",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"67",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"73",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"74",
+    "pred_home":"1",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"75",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"76",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"66",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"3"
+  },
+  {
+    "username":"Nong",
+    "match_id":"71",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Nong",
+    "match_id":"72",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"1"
+  },
+  {
+    "username":"Nong",
+    "match_id":"73",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"74",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Nong",
     "match_id":"75",
     "pred_home":"1",
     "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"76",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Nong",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"3"
+  },
+  {
+    "username":"Nong",
+    "match_id":"66",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"63",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"64",
+    "pred_home":"1",
+    "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"63",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"62",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"64",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"67",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"4",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"62",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"67",
+    "pred_home":"0",
+    "pred_away":"1",
+    "points_earned":"3"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"71",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"72",
+    "pred_home":"3",
+    "pred_away":"0",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"73",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"74",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"75",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"76",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"66",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"63",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"64",
+    "pred_home":"1",
+    "pred_away":"0",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"62",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"1"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"67",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"71",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"72",
+    "pred_home":"2",
+    "pred_away":"0",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"73",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"74",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"75",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"76",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"3"
+  },
+  {
+    "username":"Aim",
+    "match_id":"66",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"63",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"64",
+    "pred_home":"0",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"Aim",
+    "match_id":"62",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"67",
+    "pred_home":"1",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"71",
+    "pred_home":"2",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"72",
+    "pred_home":"1",
+    "pred_away":"0",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"73",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"74",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"75",
+    "pred_home":"2",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"76",
+    "pred_home":"0",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"65",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"66",
+    "pred_home":"3",
+    "pred_away":"2",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"63",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"64",
+    "pred_home":"1",
+    "pred_away":"1",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"61",
+    "pred_home":"0",
+    "pred_away":"3",
+    "points_earned":"1"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"62",
+    "pred_home":"0",
+    "pred_away":"2",
     "points_earned":"0"
   }
 ]

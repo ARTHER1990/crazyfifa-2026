@@ -604,29 +604,29 @@
     "home_team":"Jordan",
     "away_team":"Argentina",
     "match_time":"2026-06-28 09:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"1",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Al-Taamari55' | Lo Celso19'La. Martínez31' (pen.)Messi80'"
   },
   {
     "id":"62",
     "home_team":"Algeria",
     "away_team":"Austria",
     "match_time":"2026-06-28 09:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"3",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Rafik Belghali (45) | Marko Arnautovic (28), Marcel Sabitzer (55), Riyad Mahrez (60), Riyad Mahrez (90+2), Sasa Kalajdzic (90+5)"
   },
   {
     "id":"63",
     "home_team":"Colombia",
     "away_team":"Portugal",
     "match_time":"2026-06-28 06:30:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
     "scorers":""
   },
   {
@@ -634,99 +634,99 @@
     "home_team":"Congo DR",
     "away_team":"Uzbekistan",
     "match_time":"2026-06-28 06:30:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"3",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Congo DR 3 - 1 Uzbekistan"
   },
   {
     "id":"65",
     "home_team":"Panama",
     "away_team":"England",
     "match_time":"2026-06-28 04:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"0",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Bellingham62'Kane67'"
   },
   {
     "id":"66",
     "home_team":"Croatia",
     "away_team":"Ghana",
     "match_time":"2026-06-28 04:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"P. Sučić31'Vlašić83' | Luckassen73'"
   },
   {
     "id":"67",
     "home_team":"South Africa",
     "away_team":"Canada",
     "match_time":"2026-06-29 02:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Canada 1 - 0"
   },
   {
     "id":"71",
     "home_team":"Norway",
     "away_team":"France",
     "match_time":"2026-06-27 02:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"1",
+    "away_score":"4",
+    "status":"Finished",
+    "scorers":"Aasgaard21' | Dembélé7',20',32'Doué90+4'"
   },
   {
     "id":"72",
     "home_team":"Senegal",
     "away_team":"Iraq",
     "match_time":"2026-06-27 02:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"5",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Diarra4'I. Sarr56'P. Gueye59',71'I. Ndiaye82'"
   },
   {
     "id":"73",
     "home_team":"Cabo Verde",
     "away_team":"Saudi Arabia",
-    "match_time":"2026-06-27 07:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "match_time":"2026-06-28 07:00:00",
+    "home_score":"0",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"0 - 0"
   },
   {
     "id":"74",
     "home_team":"Uruguay",
     "away_team":"Spain",
     "match_time":"2026-06-27 07:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Baena42'"
   },
   {
     "id":"75",
     "home_team":"Egypt",
     "away_team":"IR Iran",
-    "match_time":"2026-06-27 10:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "match_time":"2026-06-28 10:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Mahmoud Saber 5' | Ramin Rezaeian 14'"
   },
   {
     "id":"76",
     "home_team":"New Zealand",
     "away_team":"Belgium",
     "match_time":"2026-06-27 10:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":""
+    "home_score":"1",
+    "away_score":"5",
+    "status":"Finished",
+    "scorers":"Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'"
   }
 ]
