@@ -3276,6 +3276,20 @@ elif menu == "ห้องควบคุมระบบ (Admin)":
                 st.info("ℹ️ ข้อมูลเป็นปัจจุบันอยู่แล้วครับ")
     
     st.divider()
+    st.subheader("⚡ ระบบเคลียร์แคชและบังคับอัปเดต (Force Flush)")
+    if st.button("ล้างแคชระบบและรีดึงข้อมูลใหม่ทันที (Clear Cache)"):
+        with st.spinner("กำลังทำการล้างแคช RAM ทั้งระบบ..."):
+            db.get_gspread_client.clear()
+            db.get_spreadsheet.clear()
+            db.get_users_df.clear()
+            db.get_matches.clear()
+            db.get_predictions_df.clear()
+            st.cache_data.clear()
+            st.cache_resource.clear()
+            st.success("✅ ล้างแคช RAM และเชื่อมโยงข้อมูลสดใหม่เรียบร้อย!")
+            st.rerun()
+
+    st.divider()
     st.subheader("✍️ กรอกผลคะแนนด้วยตนเอง")
     matches = db.get_matches()
     upcoming = matches[matches['status'] != 'Finished']
