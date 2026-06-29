@@ -1439,7 +1439,23 @@ if st.session_state.authenticated:
     menu_options = ["ศึกชิงแชมป์โลก 2026 (World Cup)", "ผลการแข่งขันย้อนหลัง (Match Results)", "ตารางคะแนนกลุ่ม (Standings)", "ประวัติการทายผล (My Predictions)", "ทำเนียบแชมป์ (Leaderboard)"]
     if st.session_state.username == "Art":
         menu_options.append("ห้องควบคุมระบบ (Admin)")
-    menu = st.sidebar.radio("เมนูหลัก", menu_options)
+
+    # เพื่อแก้ปัญหาการกดยื่นเปลี่ยนเมนูแล้วหน้าเว็บค้างหรือไม่ไปตามหน้าที่เลือก (Navigation Desynchronization Bug)
+    # เราผูกระบบเข้ากับ Session State (main_navigation_menu) เพื่อล็อกสถานะการเลือกของหน้านั้นๆ ให้คงอยู่และทำงานได้แม่นยำ 100% ปลอดภัยสูง
+    if "main_navigation_menu" not in st.session_state or st.session_state.main_navigation_menu not in menu_options:
+        st.session_state.main_navigation_menu = menu_options[0]
+        
+    try:
+        menu_default_idx = menu_options.index(st.session_state.main_navigation_menu)
+    except ValueError:
+        menu_default_idx = 0
+        
+    menu = st.sidebar.radio(
+        "เมนูหลัก", 
+        menu_options, 
+        index=menu_default_idx, 
+        key="main_navigation_menu"
+    )
     
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
