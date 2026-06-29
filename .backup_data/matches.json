@@ -728,5 +728,65 @@
     "away_score":"5",
     "status":"Finished",
     "scorers":"Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'"
+  },
+  {
+    "id":"78",
+    "home_team":"Ivory Coast",
+    "away_team":"Norway",
+    "match_time":"2026-07-01 01:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"77",
+    "home_team":"France",
+    "away_team":"Sweden",
+    "match_time":"2026-07-01 04:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"79",
+    "home_team":"Mexico",
+    "away_team":"Ecuador",
+    "match_time":"2026-07-01 08:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"80",
+    "home_team":"England",
+    "away_team":"DR Congo",
+    "match_time":"2026-07-02 01:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"82",
+    "home_team":"Belgium",
+    "away_team":"Senegal",
+    "match_time":"2026-07-02 04:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
+  },
+  {
+    "id":"81",
+    "home_team":"United States",
+    "away_team":"Bosnia and Herzegovina",
+    "match_time":"2026-07-02 08:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":""
   }
 ]
