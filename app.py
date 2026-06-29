@@ -1,4 +1,4 @@
-# Last cache clear and match reopen: 2026-06-29 07:03:50 (Reopened South Africa vs Canada ID 67 for Tongjai)
+# Last cache clear and match update: 2026-06-29 07:05:11 (Updated all finished matches to correct scores)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
