@@ -169,18 +169,32 @@ def verify_user(username, pin):
     user_row = df[df['username'] == name]
     return not user_row.empty and str(user_row.iloc[0]['pin']) == str(pin)
 
+def safe_int(val, default=0):
+    try:
+        if val is None:
+            return default
+        s_val = str(val).strip()
+        if s_val == "":
+            return default
+        return int(float(s_val))
+    except Exception:
+        return default
+
 def save_prediction(username, match_id, pred_home, pred_away, pred_qualify=""):
     name = normalize_name(username)
     ws = get_worksheet('predictions')
     df = get_predictions_df()
     
+    val_home = safe_int(pred_home, 0)
+    val_away = safe_int(pred_away, 0)
+    
     mask = (df['username'] == name) & (df['match_id'].astype(str) == str(match_id))
     if mask.any():
         idx = df.index[mask][0] + 2
         # ใช้ update แบบระบุ range เพื่อความปลอดภัยใน gspread 6.x ครอบคลุมถึงคอลัมน์ E (pred_qualify)
-        ws.update(f'C{idx}:E{idx}', [[int(pred_home), int(pred_away), str(pred_qualify)]])
+        ws.update(f'C{idx}:E{idx}', [[val_home, val_away, str(pred_qualify)]])
     else:
-        ws.append_row([name, match_id, int(pred_home), int(pred_away), str(pred_qualify), 0])
+        ws.append_row([name, match_id, val_home, val_away, str(pred_qualify), 0])
     get_predictions_df.clear()
 
 def get_user_predictions(username):

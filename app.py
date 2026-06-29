@@ -1911,10 +1911,16 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                         
                     # ใช้ปุ่ม st.form_submit_button แทน st.button สำหรับส่วนประกอบภายใน st.form
                     if st.form_submit_button(btn_label, use_container_width=True, type=btn_type):
-                        db.save_prediction(username, match_id, pred_h, pred_a, pred_q)
-                        st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
-                        # บังคับให้หน้าจอ Rerun ทันทีหลังกดส่ง เพื่อแสดงปุ่มติ๊กถูก
-                        st.rerun()
+                        try:
+                            db.save_prediction(username, match_id, pred_h, pred_a, pred_q)
+                            st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
+                            st.rerun()
+                        except Exception as e:
+                            err_str = str(e)
+                            if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
+                                st.warning("⚠️ **ระบบหนาแน่นชั่วคราว (Google Sheets Quota)** กรุณาเว้นระยะ 10-30 วินาที แล้วลองกดบันทึกใหม่อีกครั้งนะครับ 😊")
+                            else:
+                                st.error(f"❌ **เกิดข้อผิดพลาดในการบันทึกข้อมูล:** {err_str}")
                         
                     if has_pred:
                         st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
