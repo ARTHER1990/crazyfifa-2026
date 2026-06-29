@@ -169,7 +169,7 @@ TEAM_TRANSLATION_MAP = {
     'runner-up group f': 'รองแชมป์กลุ่ม F', '3rd group a/b/c/d/f': 'อันดับ 3 กลุ่ม A/B/C/D/F'
 }
 
-def get_team_display(team_name):
+def get_team_display(team_name, show_flag=True):
     clean_name = team_name.strip()
     alias_map = {
         'cabo verde': 'cape verde',
@@ -189,8 +189,10 @@ def get_team_display(team_name):
     flag = FLAG_MAP.get(lookup_name, '🏳️')
     thai_name = TEAM_TRANSLATION_MAP.get(lookup_name, clean_name)
     
-    # แสดงผลเป็น "ธงชาติ ชื่อภาษาไทย" (เช่น 🇩🇪 เยอรมนี) เพื่อความสมมาตร พรีเมี่ยม และเหมาะสมกับทุกพื้นที่แสดงผล
-    return f"{flag} {thai_name}"
+    if show_flag:
+        # แสดงผลเป็น "ธงชาติ ชื่อภาษาไทย" (เช่น 🇩🇪 เยอรมนี) เพื่อความสมมาตร พรีเมี่ยม และเหมาะสมกับทุกพื้นที่แสดงผล
+        return f"{flag} {thai_name}"
+    return thai_name
 
 def generate_gold_match_card(row):
     home = row['home_team']
@@ -431,8 +433,8 @@ st.markdown(f"""
         font-family: 'Kanit', sans-serif;
     }}
 
-    /* 🌟 จัดวาง stMarkdownContainer ให้อยู่ถัดจากวงกลมตัวเลือกวิทยุตามธรรมชาติ และเว้นระยะห่างด้านซ้ายไว้สำหรับวางไอคอนทอง */
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] {{
+    /* 🌟 จัดวาง stMarkdownContainer ให้อยู่ถัดจากวงกลมตัวเลือกวิทยุตามธรรมชาติ และเว้นระยะห่างด้านซ้ายไว้สำหรับวางไอคอนทอง (เฉพาะใน Sidebar) */
+    [data-testid="stSidebar"] div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] {{
         position: relative !important;
         padding-left: 28px !important; /* เว้นที่ว่าง 28px ถัดจากวงกลมสำหรับวางไอคอนทอง */
         display: flex !important;
@@ -441,8 +443,8 @@ st.markdown(f"""
         box-sizing: border-box !important;
     }}
 
-    /* 🌟 ยกเลิกการเยื้องติดลบและเปิด overflow ให้แสดงตัวหนังสือทั้งหมดได้ครบถ้วนโดยไม่มีการบดบัง */
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
+    /* 🌟 ยกเลิกการเยื้องติดลบและเปิด overflow ให้แสดงตัวหนังสือทั้งหมดได้ครบถ้วนโดยไม่มีการบดบัง (เฉพาะใน Sidebar) */
+    [data-testid="stSidebar"] div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] p {{
         text-indent: 0 !important; /* คืนค่าปกติเพื่อไม่ให้ตัวหนังสือแรกโดนดึงไปบังหรือตัดหาย */
         padding-left: 0.15rem !important; /* เว้นช่องไฟนิดหน่อยให้ตัวหนังสือข้อความถัดออกมาอย่างพรีเมี่ยม */
         margin: 0 !important;
@@ -458,8 +460,8 @@ st.markdown(f"""
         box-sizing: border-box !important;
     }}
 
-    /* 🌟 เคลียร์สไตล์ในแท็ก span ที่อยู่ข้างใน เพื่อยกเลิกการดันเยื้องซ้ำซ้อน ช่วยให้ข้อความดั้งเดิมแสดงผลปกติ 100% */
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] span {{
+    /* 🌟 เคลียร์สไตล์ในแท็ก span ที่อยู่ข้างใน เพื่อยกเลิกการดันเยื้องซ้ำซ้อน ช่วยให้ข้อความดั้งเดิมแสดงผลปกติ 100% (เฉพาะใน Sidebar) */
+    [data-testid="stSidebar"] div[role="radiogroup"] > label [data-testid="stMarkdownContainer"] span {{
         text-indent: 0 !important; /* ยกเลิกการเยื้องซ้ำซ้อนเด็ดขาด ช่วยแก้ปัญหาคำด้านหน้าโดนบัง */
         padding-left: 0 !important;
         margin: 0 !important;
@@ -469,8 +471,8 @@ st.markdown(f"""
         white-space: normal !important;
     }}
 
-    /* วางไอคอนสีทองพิกัดคงที่ สวยงาม คมชัด ไม่มีฟุ้ง โดยอิงกับ stMarkdownContainer::before เพื่อให้อยู่หลังวงกลมเสมอ */
-    div[role="radiogroup"] > label [data-testid="stMarkdownContainer"]::before {{
+    /* วางไอคอนสีทองพิกัดคงที่ สวยงาม คมชัด ไม่มีฟุ้ง โดยอิงกับ stMarkdownContainer::before เพื่อให้อยู่หลังวงกลมเสมอ (เฉพาะใน Sidebar) */
+    [data-testid="stSidebar"] div[role="radiogroup"] > label [data-testid="stMarkdownContainer"]::before {{
         content: "" !important;
         position: absolute !important;
         left: 2px !important; /* วางพิกัดถัดจากวงกลมวิทยุพอดีเป๊ะ */
@@ -484,22 +486,22 @@ st.markdown(f"""
         z-index: 5 !important;
     }}
 
-    div[role="radiogroup"] > label:nth-of-type(1) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(1) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(2) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(2) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(3) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(3) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M16 11V3H8v6H2v12h20V11h-6zM10 5h4v14h-4V5zM4 11h4v8H4v-8zm16 8h-4v-8h4v8z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(4) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(4) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(5) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(5) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M2 4l3 12h14l3-12-6 7-4-7-6 7-4-7z'/%3E%3Ccircle fill='%23F1C40F' cx='12' cy='17' r='2'/%3E%3C/svg%3E") !important;
     }}
-    div[role="radiogroup"] > label:nth-of-type(6) [data-testid="stMarkdownContainer"]::before {{
+    [data-testid="stSidebar"] div[role="radiogroup"] > label:nth-of-type(6) [data-testid="stMarkdownContainer"]::before {{
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23F1C40F' d='M12.19 2.02c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/%3E%3C/svg%3E") !important;
     }}
 
@@ -1831,7 +1833,10 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
         is_locked = now_th > m_time or status == 'Finished'
 
         has_pred = match_id in user_preds_cached
-        default_h, default_a = user_preds_cached.get(match_id, (0, 0))
+        preds_tuple = user_preds_cached.get(match_id, (0, 0, ""))
+        default_h = preds_tuple[0]
+        default_a = preds_tuple[1]
+        default_q = preds_tuple[2] if len(preds_tuple) > 2 else ""
         
         # กำหนดคะแนนที่จะแสดงในช่องกรอก (ถ้าเกมจบแล้ว ให้แสดงสกอร์จริงในช่องที่ปิดการแก้ไข)
         if status == 'Finished':
@@ -1840,6 +1845,9 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
         else:
             val_h = safe_int(default_h)
             val_a = safe_int(default_a)
+
+        # ตรวจสอบว่าเป็นรอบน็อกเอาต์หรือไม่จาก Match ID >= 68
+        is_knockout = match_id >= 68
 
         # ใช้ Hybrid Form-Container: 
         # หากไม่โดนล็อก (สามารถทายผลได้) ให้ครอบด้วย st.form เพื่อป้องกันหน้าจอ Rerun ทันทีขณะเปลี่ยนค่าตัวเลข
@@ -1867,6 +1875,31 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                         value=val_a,
                         key=f"a_{match_id}"
                     )
+                
+                pred_q = ""
+                if is_knockout:
+                    st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; border-top: 1px dashed rgba(212, 175, 55, 0.3); padding-top: 8px;'></div>", unsafe_allow_html=True)
+                    # หาอินเดกซ์เริ่มต้นของทีมเข้ารอบจากคำทายเก่า หรือคำนวณจากสกอร์เบื้องต้น
+                    default_index = 0
+                    if default_q == away:
+                        default_index = 1
+                    elif default_q == home:
+                        default_index = 0
+                    else:
+                        if pred_h > pred_a:
+                            default_index = 0
+                        elif pred_a > pred_h:
+                            default_index = 1
+                    
+                    pred_q = st.radio(
+                        "🏆 **GOLDEN BONUS: ทายทีมที่ได้เข้ารอบต่อไป (รวมต่อเวลา/จุดโทษ) ได้สะสม +1 แต้ม**",
+                        options=[home, away],
+                        format_func=get_team_display,
+                        index=default_index,
+                        horizontal=True,
+                        key=f"q_{match_id}"
+                    )
+                
                 with col3:
                     st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
                     if has_pred:
@@ -1878,7 +1911,7 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                         
                     # ใช้ปุ่ม st.form_submit_button แทน st.button สำหรับส่วนประกอบภายใน st.form
                     if st.form_submit_button(btn_label, use_container_width=True, type=btn_type):
-                        db.save_prediction(username, match_id, pred_h, pred_a)
+                        db.save_prediction(username, match_id, pred_h, pred_a, pred_q)
                         st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
                         # บังคับให้หน้าจอ Rerun ทันทีหลังกดส่ง เพื่อแสดงปุ่มติ๊กถูก
                         st.rerun()
@@ -1926,6 +1959,24 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                             st.info("🎯 **คุณไม่ได้ทายคู่นี้ไว้**")
                     else:
                         st.warning("🔒 ปิดรับผลทาย")
+                        if has_pred:
+                            st.info(f"🎯 **คุณทายผลไว้:** {safe_int(default_h)} - {safe_int(default_a)}")
+                
+                # แสดงผลการทายโบนัสและการเข้ารอบจริง
+                if is_knockout:
+                    st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; border-top: 1px dashed rgba(212, 175, 55, 0.25); padding-top: 8px;'></div>", unsafe_allow_html=True)
+                    cb1, cb2 = st.columns(2)
+                    with cb1:
+                        if has_pred and default_q != "":
+                            st.info(f"🏆 **คุณทายผู้เข้ารอบ:** {get_team_display(default_q)}")
+                        else:
+                            st.info("🏆 **ไม่ได้รับบันทึกทายโบนัส**")
+                    with cb2:
+                        w_qualify = str(row.get('winner_qualify', '')).strip()
+                        if status == 'Finished' and w_qualify != "" and w_qualify.lower() != 'nan':
+                            st.success(f"👑 **ผู้เข้ารอบจริง:** {get_team_display(w_qualify)}")
+                        else:
+                            st.info("⏳ รอผลทีมเข้ารอบถัดไป")
         st.divider()
 
     finished = all_matches[all_matches['status'] == 'Finished'].sort_values('match_time', ascending=False)
@@ -3310,20 +3361,67 @@ elif menu == "ห้องควบคุมระบบ (Admin)":
     matches = db.get_matches()
     upcoming = matches[matches['status'] != 'Finished']
     if not upcoming.empty:
+        # สร้างแมปของชื่อเพื่อใช้เก็ตรวมข้อมูลแมตช์จริง
+        match_map = {int(r['id']): r for i, r in upcoming.iterrows()}
         selected = st.selectbox("เลือกแมตช์:", [f"{r['id']}: {r['home_team']} vs {r['away_team']}" for i, r in upcoming.iterrows()])
         m_id = int(selected.split(":")[0])
+        
+        match_row = match_map[m_id]
+        home_t = match_row['home_team']
+        away_t = match_row['away_team']
+        
         c1, c2 = st.columns(2)
-        real_h = c1.number_input("สกอร์ Home", min_value=0, step=1)
-        real_a = c2.number_input("สกอร์ Away", min_value=0, step=1)
-        if st.button("ยืนยันผล"):
-            import sqlite3
-            conn = sqlite3.connect('worldcup.db')
-            conn.execute("UPDATE matches SET home_score=?, away_score=?, status='Finished' WHERE id=?", (real_h, real_a, m_id))
-            conn.commit()
-            conn.close()
-            db.update_scores_logic()
-            st.success("อัปเดตเรียบร้อย!")
-            st.balloons()
+        real_h = c1.number_input(f"สกอร์ {home_t}", min_value=0, step=1, key=f"admin_h_{m_id}")
+        real_a = c2.number_input(f"สกอร์ {away_t}", min_value=0, step=1, key=f"admin_a_{m_id}")
+        
+        is_ko = m_id >= 68
+        admin_winner = ""
+        if is_ko:
+            st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; border-top: 1px dashed rgba(212, 175, 55, 0.3); padding-top: 8px;'></div>", unsafe_allow_html=True)
+            # ตั้งทีมเข้ารอบเริ่มต้นเผื่อสกอร์ปกติมีคนชนะ
+            def_winner_idx = 0
+            if real_a > real_h:
+                def_winner_idx = 1
+            admin_winner = st.selectbox(
+                "👑 ทีมผ่านเข้ารอบถัดไป (สำหรับนัดน็อกเอาต์ รวมต่อเวลา/จุดโทษ):",
+                options=[home_t, away_t],
+                index=def_winner_idx,
+                key=f"admin_w_{m_id}"
+            )
+            
+        if st.button("ยืนยันผล", key="admin_submit_btn"):
+            with st.spinner("กำลังอัปเดตคะแนนลงระบบ..."):
+                import sqlite3
+                conn = sqlite3.connect('worldcup.db')
+                if is_ko:
+                    conn.execute("UPDATE matches SET home_score=?, away_score=?, status='Finished', winner_qualify=? WHERE id=?", (real_h, real_a, admin_winner, m_id))
+                else:
+                    conn.execute("UPDATE matches SET home_score=?, away_score=?, status='Finished' WHERE id=?", (real_h, real_a, m_id))
+                conn.commit()
+                conn.close()
+                
+                # ซิงค์ข้อมูลลง Google Sheets ด้วยตนเองเพื่อให้ข้อมูลเชื่อมโยงสมบูรณ์แบบ
+                try:
+                    ws = db.get_worksheet('matches')
+                    data = ws.get_all_values()
+                    df_sheets = pd.DataFrame(data[1:], columns=data[0])
+                    mask = df_sheets['id'].astype(str) == str(m_id)
+                    if mask.any():
+                        idx = df_sheets.index[mask][0]
+                        df_sheets.at[idx, 'home_score'] = str(real_h)
+                        df_sheets.at[idx, 'away_score'] = str(real_a)
+                        df_sheets.at[idx, 'status'] = 'Finished'
+                        if is_ko:
+                            df_sheets.at[idx, 'winner_qualify'] = str(admin_winner)
+                        
+                        ws.clear()
+                        ws.update([df_sheets.columns.values.tolist()] + df_sheets.astype(str).values.tolist())
+                except Exception as e_sheet:
+                    st.error(f"⚠️ เกิดข้อผิดพลาดในการบันทึก Google Sheets: {e_sheet}")
+                
+                db.update_scores_logic()
+                st.success("อัปเดตผลการแข่งขันและคะแนนสะสมของผู้เล่นเรียบร้อย!")
+                st.balloons()
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Power by Gemini 3.1 Pro & Streamlit")

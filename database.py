@@ -101,7 +101,7 @@ def get_users_df():
 
 @st.cache_data(ttl=300)
 def get_matches():
-    cols = ['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers']
+    cols = ['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers', 'winner_qualify']
     try:
         ws = get_worksheet('matches')
         data = ws.get_all_values()
@@ -117,7 +117,7 @@ def get_matches():
 
 @st.cache_data(ttl=300)
 def get_predictions_df():
-    cols = ['username', 'match_id', 'pred_home', 'pred_away', 'points_earned']
+    cols = ['username', 'match_id', 'pred_home', 'pred_away', 'pred_qualify', 'points_earned']
     try:
         ws = get_worksheet('predictions')
         data = ws.get_all_values()
@@ -169,7 +169,7 @@ def verify_user(username, pin):
     user_row = df[df['username'] == name]
     return not user_row.empty and str(user_row.iloc[0]['pin']) == str(pin)
 
-def save_prediction(username, match_id, pred_home, pred_away):
+def save_prediction(username, match_id, pred_home, pred_away, pred_qualify=""):
     name = normalize_name(username)
     ws = get_worksheet('predictions')
     df = get_predictions_df()
@@ -177,10 +177,10 @@ def save_prediction(username, match_id, pred_home, pred_away):
     mask = (df['username'] == name) & (df['match_id'].astype(str) == str(match_id))
     if mask.any():
         idx = df.index[mask][0] + 2
-        # ใช้ update แบบระบุ range เพื่อความปลอดภัยใน gspread 6.x
-        ws.update(f'C{idx}:D{idx}', [[int(pred_home), int(pred_away)]])
+        # ใช้ update แบบระบุ range เพื่อความปลอดภัยใน gspread 6.x ครอบคลุมถึงคอลัมน์ E (pred_qualify)
+        ws.update(f'C{idx}:E{idx}', [[int(pred_home), int(pred_away), str(pred_qualify)]])
     else:
-        ws.append_row([name, match_id, int(pred_home), int(pred_away), 0])
+        ws.append_row([name, match_id, int(pred_home), int(pred_away), str(pred_qualify), 0])
     get_predictions_df.clear()
 
 def get_user_predictions(username):
@@ -194,7 +194,8 @@ def get_user_predictions(username):
             m_id = int(row['match_id'])
             p_h = int(row['pred_home']) if row['pred_home'] != "" else 0
             p_a = int(row['pred_away']) if row['pred_away'] != "" else 0
-            preds[m_id] = (p_h, p_a)
+            p_q = str(row['pred_qualify']).strip() if 'pred_qualify' in row and str(row['pred_qualify']).strip() != "" else ""
+            preds[m_id] = (p_h, p_a, p_q)
         except:
             continue
     return preds
@@ -277,7 +278,18 @@ def update_scores_logic():
                 real_win = (r_h > r_a) - (r_h < r_a)
                 if pred_win == real_win:
                     points = 1
-            df_p.at[idx, 'points_earned'] = str(points)
+            
+            # คำนวณคะแนนโบนัสพิเศษ (โกลเดนโบนัส: ทีมเข้ารอบถัดไป) เฉพาะนัดน็อกเอาต์ที่มีผลผู้เข้ารอบจริง
+            bonus = 0
+            w_qualify = str(m.get('winner_qualify', '')).strip()
+            p_qualify = str(p.get('pred_qualify', '')).strip()
+            
+            if w_qualify != "" and w_qualify.lower() != "nan" and p_qualify != "":
+                if p_qualify.lower() == w_qualify.lower():
+                    bonus = 1
+                    
+            total_points = points + bonus
+            df_p.at[idx, 'points_earned'] = str(total_points)
             
     df_p_save = df_p.drop(columns=['match_id_int'])
     # ล้างชีตก่อนอัปเดตเพื่อป้องกันข้อมูลเก่าค้าง
