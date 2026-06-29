@@ -3303,7 +3303,7 @@ elif menu == "ประวัติการทายผล (My Predictions)":
                     is_locked = now_th > m_time or row_m['status'] == 'Finished'
                     
                     if has_pred:
-                        pred_h, pred_a = user_preds[safe_int(m_id)]
+                        pred_h, pred_a, *extra = user_preds[safe_int(m_id)]
                         pred_text = f"🔥 ผลทายของคุณ: &nbsp;<b>{pred_h} - {pred_a}</b>"
                         card_class = "upcoming-card has-prediction"
                     else:
