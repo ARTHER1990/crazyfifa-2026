@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-29 07:39:05 (Updated New Zealand vs Belgium ID 76 to 1-5)
+# Last cache clear and match update: 2026-06-29 07:43:34 (Updated Uruguay vs Spain ID 74 to 0-1 and forced redeploy)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
