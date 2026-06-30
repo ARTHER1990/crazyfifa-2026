@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 บอร์ดทายผลบอลโลก 2026 - ระบบทายผู้เข้ารอบโบนัสทุกคน (ระบบจำลอง)</title>
+    <!-- นำเข้าฟอนต์ Kanit และ Outfit ตามหน้าเว็บจริง -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* ชุดสีและตัวแปรสไตล์ถอดแบบจากบอร์ดจริงของคุณอาร์ต */
+            --bg-sidebar-dark: #1a241e;
+            --bg-sidebar-light: #2d3a31;
+            --bg-main: #0c120e;
+            --card-bg: rgba(15, 28, 19, 0.88);
+            --gold-primary: #ffd700;
+            --gold-border: #d4af37;
+            --gold-hover: #f1c40f;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --text-main: #e2e8f0;
+            --text-white: #ffffff;
+            --text-sub: #92a498;
+            --border-light: rgba(212, 175, 55, 0.25);
+            --red-alert: #ff4b4b;
+            --red-bg: rgba(255, 75, 75, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: radial-gradient(circle at 50% 0%, #1c2b1e 0%, var(--bg-main) 80%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* --- 1. แผงข้างบอร์ดจริง (Sidebar Mock) --- */
+        .sidebar-mock {
+            width: 290px;
+            background: linear-gradient(180deg, var(--bg-sidebar-light) 0%, var(--bg-sidebar-dark) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.4);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        /* เส้นแสงสะท้อนวิ่งวิบวับพาดมุม (Premium Soft Light Sweep) ของจริง */
+        .sidebar-mock::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: 0;
+            width: 400px;
+            height: 200%;
+            background: linear-gradient(
+                to right, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0.12) 50%, 
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: translateX(-150%) rotate(-45deg);
+            filter: blur(40px);
+            animation: light-sweep 6s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes light-sweep {
+            0% { transform: translateX(-200%) rotate(-45deg); }
+            30% { transform: translateX(300%) rotate(-45deg); }
+            100% { transform: translateX(300%) rotate(-45deg); }
+        }
+
+        .sidebar-user-welcome {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+        }
+
+        .sidebar-username {
+            color: var(--gold-primary);
+            font-weight: 700;
+            font-size: 1.05rem;
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+
+        .sidebar-menu-title {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0.5rem;
+            padding-left: 5px;
+            z-index: 2;
+        }
+
+        .sidebar-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        .sidebar-menu-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(192, 192, 192, 0.2);
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .sidebar-menu-item.active {
+            background: linear-gradient(90deg, #5c7a67 0%, #3d5244 100%);
+            border: 1.5px solid #ffffff;
+            color: var(--text-white);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            font-weight: 700;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.07);
+            margin: 0.5rem 0;
+            z-index: 2;
+        }
+
+        /* --- 2. คอนเทนต์หลักตรงกลาง --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: calc(100% - 290px);
+            overflow-y: auto;
+        }
+
+        .board-container {
+            max-width: 820px;
+            width: 100%;
+        }
+
+        /* ป้ายแบรนด์หลัก CrazyFIFA 2026 */
+        .brand-banner {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .brand-logo-text {
+            font-size: 2.3rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff 40%, #87a797 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .brand-sub {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* 🚨 ระบบแจ้งเตือนกันลืมสีแดงจำลอง (Smart Prediction Reminder) ของจริง */
+        .reminder-box {
+            background: var(--red-bg);
+            border: 1px solid var(--red-alert);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px rgba(255, 75, 75, 0.15);
+        }
+
+        .reminder-title {
+            color: var(--red-alert);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reminder-item {
+            color: #f0f4f8;
+            font-size: 0.88rem;
+            margin-bottom: 4px;
+            padding-left: 5px;
+        }
+
+        /* 🥇 กล่องแสดงผู้นำ 3 อันดับแรก (Top 3 Leaders Bar) ของจริง */
+        .leaders-bar {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .leaders-title {
+            color: var(--gold-primary);
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .leaders-text {
+            color: var(--text-main);
+        }
+
+        /* 🤖 กล่องความเห็น ปีเตอร์ AI (AI Analyst Board) ของจริง */
+        .ai-analyst-box {
+            background: linear-gradient(135deg, rgba(45, 58, 49, 0.3) 0%, rgba(26, 36, 30, 0.4) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 18px 22px;
+            border-radius: 14px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: relative;
+        }
+
+        .ai-badge {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold-border);
+            color: var(--gold-primary);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .ai-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-content {
+            font-size: 0.85rem;
+            color: #c4d4cc;
+            line-height: 1.5;
+            border-left: 2px solid #5c7a67;
+            padding-left: 10px;
+        }
+
+        /* --- 3. การ์ดแมตช์พรีเมี่ยมสีทอง (Gold Match Card) ของจริง --- */
+        .section-divider-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-white);
+            border-bottom: 1.5px solid rgba(255,255,255,0.08);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .gold-match-card {
+            background: var(--card-bg);
+            border: 1.5px solid var(--gold-border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.08);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 5;
+            width: 100%;
+        }
+
+        .gold-match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25);
+            border-color: var(--gold-hover);
+        }
+
+        /* แสงวิบวิ่งผ่าน */
+        .gold-match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,215,0,0.15) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: 0.75s;
+            pointer-events: none;
+        }
+
+        .gold-match-card:hover::before {
+            left: 150%;
+            transition: 0.75s;
+        }
+
+        .card-time-badge {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gold-primary);
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        /* ตารางกริดหลัก (Match Card Grid) ของจริง */
+        .match-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 150px 1fr;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .team-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-flag-gold {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 2px rgba(212, 175, 55, 0.4));
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .team-name-gold {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .team-subtext {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        /* แผงควบคุมสกอร์ (Score Controller) */
+        .score-control-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .score-input-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .score-arrow-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            color: var(--gold-primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .score-arrow-btn:hover {
+            background: var(--gold-primary);
+            color: #000;
+            border-color: var(--gold-primary);
+        }
+
+        /* ช่องคะแนนสีทอง (Score Gold) จากระบบจริง */
+        .score-gold {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--gold-border);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 900;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #fff3a1 0%, #ffd700 30%, #cca01d 70%, #997300 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.3));
+        }
+
+        .score-gold:focus {
+            outline: none;
+            border-color: var(--gold-hover);
+        }
+
+        .vs-text {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-sub);
+        }
+
+        /* 👑 แผงทายโบนัสกรณีทายผลเสมอ (GOLDEN BONUS SECTION) จิ๋วแต่พรีเมี่ยม */
+        .bonus-section {
+            margin-top: 1rem;
+            border-top: 1px dashed rgba(212, 175, 55, 0.2);
+            padding-top: 0.8rem;
+            transition: all 0.3s ease;
+            background: rgba(212, 175, 55, 0.02);
+            border-radius: 10px;
+            padding: 10px 15px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .bonus-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 0.4rem;
+        }
+
+        .bonus-icon {
+            font-size: 1.1rem;
+            color: var(--gold-primary);
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+
+        .bonus-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .bonus-desc {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin-bottom: 0.6rem;
+            line-height: 1.4;
+        }
+
+        /* ปุ่มเลือกผู้เข้ารอบพรีเมียมจิ๋ว (Qualify Selector Box) ประหยัดพื้นที่ */
+        .qualify-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .qualify-btn {
+            flex: 1;
+            max-width: 180px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 10px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .qualify-btn:hover {
+            border-color: rgba(212, 175, 55, 0.45);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .qualify-btn.selected {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(15, 28, 19, 0.95) 100%);
+            border: 1.5px solid var(--gold-primary);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+        }
+
+        .qualify-btn .mini-flag {
+            font-size: 1.4rem;
+            line-height: 1;
+        }
+
+        .qualify-btn .btn-text-container {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .qualify-btn .btn-label {
+            font-size: 0.62rem;
+            color: var(--text-sub);
+        }
+
+        .qualify-btn.selected .btn-label {
+            color: var(--gold-primary);
+        }
+
+        .qualify-btn .team-qual-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .badge-checked {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--gold-primary);
+            color: #000;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--gold-glow);
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s ease;
+        }
+
+        .qualify-btn.selected .badge-checked {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* กล่องคัลคูเลเตอร์แต้มแนวตั้งแคบจิ๋ว */
+        .live-score-status-box {
+            margin-top: 1rem;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.78rem;
+            text-align: center;
+            color: var(--text-sub);
+        }
+
+        .live-score-status-box span {
+            color: var(--gold-primary);
+            font-weight: 700;
+        }
+
+        /* ปุ่มเซฟสกอร์ */
+        .btn-submit-container {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #ffd700 0%, #cca01d 100%);
+            color: #0c101b;
+            border: 1px solid var(--gold-border);
+            padding: 0.5rem 2rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(212, 175, 55, 0.12);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.25);
+            background: linear-gradient(135deg, #ffffff 0%, #ffd700 100%);
+        }
+
+        /* Toast ข้อความสำเร็จ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #111a14;
+            border: 1.5px solid var(--gold-border);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            z-index: 999;
+            font-size: 0.9rem;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* การทำสกรอลล์บาร์แบบพรีเมียม */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #253328;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-border);
+        }
+
+        @media (max-width: 900px) {
+            .sidebar-mock {
+                display: none;
+            }
+            .main-content {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. แผงเมนูด้านข้างตัวจริงจำลอง (Sidebar) -->
+    <div class="sidebar-mock">
+        <div class="sidebar-user-welcome">
+            ยินดีต้อนรับคุณ <span class="sidebar-username">Art</span>
+        </div>
+        
+        <div class="sidebar-menu-title">เมนูหลัก</div>
+        <div class="sidebar-menu-list">
+            <div class="sidebar-menu-item active">
+                <span>🏆</span> ศึกชิงแชมป์โลก 2026 (World Cup)
+            </div>
+            <div class="sidebar-menu-item">
+                <span>📊</span> ผลการแข่งขันย้อนหลัง
+            </div>
+            <div class="sidebar-menu-item">
+                <span>📈</span> ตารางคะแนนกลุ่ม
+            </div>
+            <div class="sidebar-menu-item">
+                <span>📝</span> ประวัติการทายผล (My Predictions)
+            </div>
+            <div class="sidebar-menu-item">
+                <span>👑</span> ทำเนียบแชมป์ (Leaderboard)
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-menu-title">🎵 บรรยากาศสนาม</div>
+        <div style="font-size: 0.72rem; color: #5c7a67; padding-left: 5px;">
+            📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai (Remix)
+        </div>
+
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-menu-title">📅 สรุปผลแข่งวันนี้</div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; font-size: 0.75rem;">
+            🟢 คู่ล่าสุดจบแล้ว:<br>
+            <b>เยอรมนี 2 - 1 สเปน</b>
+        </div>
+        
+        <div style="margin-top: auto; font-size: 0.7rem; color: #5c7a67; text-align: center;">
+            Power by Gemini 3.5 & Streamlit
+        </div>
+    </div>
+
+    <!-- 2. พื้นคอนเทนต์บอร์ดจำลองหลัก (Main Board Content) -->
+    <div class="main-content">
+        <div class="board-container">
+            
+            <!-- โลโก้เว็บบอร์ด CrazyFIFA 2026 -->
+            <div class="brand-banner">
+                <div class="brand-logo-text">CRAZYFIFA 2026</div>
+                <div class="brand-sub">เว็บบอร์ดทายผลการแข่งขันฟุตบอลโลกอย่างเป็นทางการแบบพรีเมี่ยม</div>
+            </div>
+
+            <!-- 🚨 กล่องเตือนกันลืมสีแดงจำลอง (Smart Prediction Reminder) -->
+            <div class="reminder-box">
+                <div class="reminder-title">
+                    <span>🚨</span> คุณ Art ครับ! ยังมีคู่แข่งขันที่ยังไม่ได้ทายผลอีก 2 คู่:
+                </div>
+                <div class="reminder-item">⚽ <b>สวิตเซอร์แลนด์ vs อิตาลี</b> (⏰ เริ่มเตะ 21:00 น.)</div>
+                <div class="reminder-item">⚽ <b>ฝรั่งเศส vs อาร์เจนตินา</b> (⏰ เริ่มเตะ 01:00 น.)</div>
+            </div>
+
+            <!-- 🥇 แผงอันดับผู้นำ (Top 3 Leaders Bar) -->
+            <div class="leaders-bar">
+                <span class="leaders-title">🔥 3 อันดับผู้นำท็อปฟอร์ม:</span>
+                <span class="leaders-text">🥇 <b>Art</b> (48 แต้ม) &nbsp;&nbsp;|&nbsp;&nbsp; 🥈 <b>Jacky</b> (45 แต้ม) &nbsp;&nbsp;|&nbsp;&nbsp; 🥉 <b>Benz</b> (42 แต้ม)</span>
+            </div>
+
+            <!-- 🤖 กล่องความเห็น ปีเตอร์ AI (AI Analyst Board) -->
+            <div class="ai-analyst-box">
+                <div class="ai-badge">🤖 ปีเตอร์ AI วิเคราะห์ล่าสุด</div>
+                <div class="ai-title">🎙️ มุมมองจาก ปีเตอร์ AI ประจำวันนี้:</div>
+                <div class="ai-content">
+                    "สวัสดีครับคุณอาร์ต! กติกาใหม่มาแล้วครับผม! คืนนี้เป็นรอบ Knockout <b>ไม่ว่าคุณอาร์ตจะทายผลสกอร์แพ้หรือชนะเท่าไหร่ก็ตาม</b> ทุกคนจะมีช่อง <b>'GOLDEN BONUS'</b> โผล่ขึ้นมาใต้ทุกคู่เลยครับ เพื่อทายผลว่า 'สุดท้ายใครจะได้เข้ารอบถัดไป' (ได้ลุ้นแต้มโบนัส +1 ปลอบใจทุกคน แม้ว่าสกอร์ 90 นาทีหลักจะทายผิดก็ตามครับ!) ลองกดทดสอบจิ้มปรับสกอร์และเลือกผู้เข้ารอบได้เลยครับ!"
+                </div>
+            </div>
+
+            <!-- หัวข้อกลุ่มตารางคู่ทายผล -->
+            <div class="section-divider-title">
+                <span>📅</span> ตารางแข่งขันและการทายผลของคุณ (นัดน็อกเอาต์วันนี้)
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ⚽ คู่แข่งขันที่ 1: ทายผลแพ้ชนะ (1 - 2) แต่ก็มีช่องให้ทายผู้เข้ารอบโผล่แสดงอยู่ด้วย! -->
+            <!-- ========================================== -->
+            <div class="gold-match-card">
+                <div class="card-time-badge">คู่ที่ 1 • เตะเวลา 21:00 น.</div>
+                
+                <div class="match-card-grid">
+                    <!-- เจ้าบ้าน -->
+                    <div class="team-side">
+                        <span class="team-flag-gold">🇨🇭</span>
+                        <span class="team-name-gold">สวิตเซอร์แลนด์</span>
+                        <span class="team-subtext">FIFA #19</span>
+                    </div>
+
+                    <!-- แผงทายสกอร์ (ระบุสกอร์ฝั่งชนะ เช่น 1 - 2) -->
+                    <div class="score-control-panel">
+                        <div class="score-input-box">
+                            <button class="score-arrow-btn" onclick="adjustScore1('home', 1)">▲</button>
+                            <input type="number" id="m1_home" class="score-gold" value="1" min="0" oninput="checkDraw1()">
+                            <button class="score-arrow-btn" onclick="adjustScore1('home', -1)">▼</button>
+                        </div>
+                        <span class="vs-text">VS</span>
+                        <div class="score-input-box">
+                            <button class="score-arrow-btn" onclick="adjustScore1('away', 1)">▲</button>
+                            <input type="number" id="m1_away" class="score-gold" value="2" min="0" oninput="checkDraw1()">
+                            <button class="score-arrow-btn" onclick="adjustScore1('away', -1)">▼</button>
+                        </div>
+                    </div>
+
+                    <!-- ทีมเยือน -->
+                    <div class="team-side">
+                        <span class="team-flag-gold">🇮🇹</span>
+                        <span class="team-name-gold">อิตาลี</span>
+                        <span class="team-subtext">FIFA #10</span>
+                    </div>
+                </div>
+
+                <!-- แผงโบนัสของคู่ที่ 1 (แสดงถาวรเพื่อให้ผู้เล่นที่ทายแพ้ชนะได้ลุ้นผู้เข้ารอบถัดไปด้วย) -->
+                <div class="bonus-section" id="m1_bonus">
+                    <div class="bonus-header">
+                        <span class="bonus-icon">🏆</span>
+                        <span class="bonus-title">GOLDEN BONUS: WHO WILL QUALIFY?</span>
+                    </div>
+                    <p class="bonus-desc">ทายทีมที่คิดว่าจะได้ผ่านเข้ารอบต่อไป (รวมต่อเวลา/จุดโทษ) รับโบนัสสะสม <span>+1 แต้ม</span>:</p>
+                    <div class="qualify-selector">
+                        <button class="qualify-btn" id="m1_qual_home" onclick="selectQual1('Swiss')">
+                            <div class="badge-checked">✓</div>
+                            <span class="mini-flag">🇨🇭</span>
+                            <div class="btn-text-container">
+                                <span class="btn-label">ทายเข้ารอบ</span>
+                                <span class="team-qual-name">สวิตฯ</span>
+                            </div>
+                        </button>
+                        <button class="qualify-btn selected" id="m1_qual_away" onclick="selectQual1('Italy')">
+                            <div class="badge-checked">✓</div>
+                            <span class="mini-flag">🇮🇹</span>
+                            <div class="btn-text-container">
+                                <span class="btn-label">ทายเข้ารอบ</span>
+                                <span class="team-qual-name">อิตาลี</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="live-score-status-box" id="m1_status">
+                    💡 กรณีทาย 1-2 และเลือก อิตาลี เข้ารอบ: หากจบ 90 นาที อิตาลี ชนะ 1-2 จริง จะได้สกอร์เป๊ะ <span>3 แต้ม</span> + อิตาลีเข้ารอบสำเร็จ <span>+1 แต้ม</span> = **รวม 4 แต้มเต็ม**
+                </div>
+
+                <div class="btn-submit-container">
+                    <button class="btn-submit" onclick="savePredictionMock('สวิตเซอร์แลนด์ vs อิตาลี', 'm1_home', 'm1_away', 'm1_bonus', selectedM1Qual)">บันทึกคำทำนาย</button>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ⚽ คู่แข่งขันที่ 2: ทายผลเสมอ (1 - 1)  -->
+            <!-- ========================================== -->
+            <div class="gold-match-card">
+                <div class="card-time-badge">คู่ที่ 2 • เตะเวลา 01:00 น. (บิ๊กแมตช์)</div>
+                
+                <div class="match-card-grid">
+                    <!-- เจ้าบ้าน -->
+                    <div class="team-side">
+                        <span class="team-flag-gold">🇫🇷</span>
+                        <span class="team-name-gold">ฝรั่งเศส</span>
+                        <span class="team-subtext">FIFA #2</span>
+                    </div>
+
+                    <!-- แผงทายสกอร์ (ระบุสกอร์ผลเสมอ เช่น 1 - 1) -->
+                    <div class="score-control-panel">
+                        <div class="score-input-box">
+                            <button class="score-arrow-btn" onclick="adjustScore2('home', 1)">▲</button>
+                            <input type="number" id="m2_home" class="score-gold" value="1" min="0" oninput="checkDraw2()">
+                            <button class="score-arrow-btn" onclick="adjustScore2('home', -1)">▼</button>
+                        </div>
+                        <span class="vs-text">VS</span>
+                        <div class="score-input-box">
+                            <button class="score-arrow-btn" onclick="adjustScore2('away', 1)">▲</button>
+                            <input type="number" id="m2_away" class="score-gold" value="1" min="0" oninput="checkDraw2()">
+                            <button class="score-arrow-btn" onclick="adjustScore2('away', -1)">▼</button>
+                        </div>
+                    </div>
+
+                    <!-- ทีมเยือน -->
+                    <div class="team-side">
+                        <span class="team-flag-gold">🇦🇷</span>
+                        <span class="team-name-gold">อาร์เจนตินา</span>
+                        <span class="team-subtext">FIFA #1</span>
+                    </div>
+                </div>
+
+                <!-- แผงโบนัสของคู่ที่ 2 (กางแสดงอยู่ด้วยแม้จะกรอกเป็นเสมอ เพื่อความเป็นระบบเดียวกันของทุกคน) -->
+                <div class="bonus-section" id="m2_bonus">
+                    <div class="bonus-header">
+                        <span class="bonus-icon">🏆✨</span>
+                        <span class="bonus-title">GOLDEN BONUS: WHO WILL QUALIFY?</span>
+                    </div>
+                    <p class="bonus-desc">
+                        ทายทีมที่คิดว่าจะได้ผ่านเข้ารอบต่อไป (รวมต่อเวลา/จุดโทษ) รับโบนัสสะสม <span>+1 แต้ม</span>:
+                    </p>
+                    <div class="qualify-selector">
+                        <button class="qualify-btn" id="m2_qual_home" onclick="selectQual2('France')">
+                            <div class="badge-checked">✓</div>
+                            <span class="mini-flag">🇫🇷</span>
+                            <div class="btn-text-container">
+                                <span class="btn-label">ทายเข้ารอบ</span>
+                                <span class="team-qual-name">ฝรั่งเศส</span>
+                            </div>
+                        </button>
+                        <button class="qualify-btn selected" id="m2_qual_away" onclick="selectQual2('Argentina')">
+                            <div class="badge-checked">✓</div>
+                            <span class="mini-flag">🇦🇷</span>
+                            <div class="btn-text-container">
+                                <span class="btn-label">ทายเข้ารอบ</span>
+                                <span class="team-qual-name">อาร์เจนตินา</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="live-score-status-box" id="m2_status">
+                    💡 กรณีทายเสมอ 1-1 และเลือก อาร์เจนตินา เข้ารอบ: หากจบ 90 นาทีเสมอ 1-1 จริง จะได้ <span>3 แต้ม</span> และหาก อาร์เจนตินา ชนะจุดโทษเข้ารอบ จะบวกเพิ่ม <span>+1 แต้ม</span> = **รวม 4 แต้มเต็ม**
+                </div>
+
+                <div class="btn-submit-container">
+                    <button class="btn-submit" onclick="savePredictionMock('ฝรั่งเศส vs อาร์เจนตินา', 'm2_home', 'm2_away', 'm2_bonus', selectedM2Qual)">บันทึกคำทำนาย</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast แจ้งผลสำเร็จ -->
+    <div class="toast" id="toast_msg">
+        🎉 บันทึกข้อมูลการทายผลสำเร็จ!
+    </div>
+
+    <script {is_skill_file="false"}>
+        let selectedM1Qual = "Italy";
+        let selectedM2Qual = "Argentina";
+
+        // --- ควบคุมคู่ที่ 1 ---
+        function adjustScore1(team, amount) {
+            const input = document.getElementById('m1_' + team);
+            let val = parseInt(input.value) || 0;
+            val += amount;
+            if (val < 0) val = 0;
+            input.value = val;
+            checkDraw1();
+        }
+
+        function checkDraw1() {
+            const h = parseInt(document.getElementById('m1_home').value) || 0;
+            const a = parseInt(document.getElementById('m1_away').value) || 0;
+            const status = document.getElementById('m1_status');
+            const teamThaiQual = selectedM1Qual === 'Swiss' ? 'สวิตเซอร์แลนด์' : 'อิตาลี';
+
+            if (h === a) {
+                status.innerHTML = `💡 กรณีทายเสมอ ${h}-${a} และเลือก ${teamThaiQual} เข้ารอบ: หากจบ 90 นาทีด้วยสกอร์เสมอ ${h}-${a} จริง จะได้ <span>3 แต้ม</span> และหาก ${teamThaiQual} เข้ารอบสำเร็จจะได้รับโบนัส <span>+1 แต้ม</span> (รวม 4 แต้ม)`;
+            } else {
+                const winner = h > a ? 'สวิตเซอร์แลนด์' : 'อิตาลี';
+                const scoreDiff = Math.abs(h - a);
+                status.innerHTML = `💡 กรณีทาย ${h}-${a} และเลือก ${teamThaiQual} เข้ารอบ: หากจบ 90 นาทีจริง ${h}-${a} จะได้สกอร์เป๊ะ <span>3 แต้ม</span> + ${teamThaiQual} เข้ารอบสำเร็จ <span>+1 แต้ม</span> = **รวม 4 แต้มเต็ม** <br><span style="font-size:0.72rem; color: #718096; font-style:italic;">*(หาก 90 นาทีจบเสมอ แต่ ${teamThaiQual} เข้ารอบจริงช่วงจุดโทษ คุณจะยังได้โบนัสปลอบใจ <span>1 แต้ม</span> แม้จะทายสกอร์หลักผิด)*</span>`;
+            }
+        }
+
+        function selectQual1(team) {
+            selectedM1Qual = team;
+            document.getElementById('m1_qual_home').classList.remove('selected');
+            document.getElementById('m1_qual_away').classList.remove('selected');
+
+            if (team === 'Swiss') {
+                document.getElementById('m1_qual_home').classList.add('selected');
+            } else {
+                document.getElementById('m1_qual_away').classList.add('selected');
+            }
+            checkDraw1();
+        }
+
+        // --- ควบคุมคู่ที่ 2 ---
+        function adjustScore2(team, amount) {
+            const input = document.getElementById('m2_' + team);
+            let val = parseInt(input.value) || 0;
+            val += amount;
+            if (val < 0) val = 0;
+            input.value = val;
+            checkDraw2();
+        }
+
+        function checkDraw2() {
+            const h = parseInt(document.getElementById('m2_home').value) || 0;
+            const a = parseInt(document.getElementById('m2_away').value) || 0;
+            const status = document.getElementById('m2_status');
+            const teamThaiQual = selectedM2Qual === 'France' ? 'ฝรั่งเศส' : 'อาร์เจนตินา';
+
+            if (h === a) {
+                status.innerHTML = `💡 กรณีทายเสมอ ${h}-${a} และเลือก ${teamThaiQual} เข้ารอบ: หากจบ 90 นาทีด้วยสกอร์เสมอ ${h}-${a} จริง จะได้ <span>3 แต้ม</span> และหาก ${teamThaiQual} เข้ารอบสำเร็จจะได้รับโบนัส <span>+1 แต้ม</span> (รวม 4 แต้ม)`;
+            } else {
+                status.innerHTML = `💡 กรณีทาย ${h}-${a} และเลือก ${teamThaiQual} เข้ารอบ: หากจบ 90 นาทีจริงด้วยสกอร์นี้ จะได้สกอร์เป๊ะ <span>3 แต้ม</span> + ${teamThaiQual} เข้ารอบสำเร็จ <span>+1 แต้ม</span> = **รวม 4 แต้มเต็ม** <br><span style="font-size:0.72rem; color: #718096; font-style:italic;">*(หาก 90 นาทีจบเสมอ แต่ ${teamThaiQual} เข้ารอบจริงช่วงจุดโทษ คุณจะยังได้โบนัสปลอบใจ <span>1 แต้ม</span> แม้จะทายสกอร์หลักผิด)*</span>`;
+            }
+        }
+
+        function selectQual2(team) {
+            selectedM2Qual = team;
+            document.getElementById('m2_qual_home').classList.remove('selected');
+            document.getElementById('m2_qual_away').classList.remove('selected');
+
+            if (team === 'France') {
+                document.getElementById('m2_qual_home').classList.add('selected');
+            } else {
+                document.getElementById('m2_qual_away').classList.add('selected');
+            }
+            checkDraw2();
+        }
+
+        // --- บันทึกผลจำลอง ---
+        function savePredictionMock(matchName, homeId, awayId, bonusId, qualTeam) {
+            const toast = document.getElementById('toast_msg');
+            const h = document.getElementById(homeId).value;
+            const a = document.getElementById(awayId).value;
+            
+            const teamThai = qualTeam === 'France' || qualTeam === 'Swiss' ? (qualTeam === 'France' ? 'ฝรั่งเศส' : 'สวิตเซอร์แลนด์') : (qualTeam === 'Italy' ? 'อิตาลี' : 'อาร์เจนตินา');
+            let summary = `คู่ ${matchName} => ทายสกอร์: ${h}-${a} | ทายเข้ารอบ: ${teamThai}`;
+
+            toast.innerHTML = `🎉 บันทึกผลสำเร็จสำหรับคุณ Art!<br><span style='font-size:0.75rem; color: #a0aec0;'>(${summary})</span>`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // เริ่มต้นคำนวณแต้มเมื่อเปิดหน้าครั้งแรก
+        checkDraw1();
+        checkDraw2();
+    </script>
+</body>
+</html>

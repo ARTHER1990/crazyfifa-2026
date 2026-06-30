@@ -99,6 +99,16 @@ banner_base64 = get_base64_image(banner_path)
 ball_path = os.path.join(current_dir, "ball2026.png")
 ball_base64 = get_base64_image(ball_path)
 
+# โหลดภาพ บอลโลก_optimized.webp สำหรับเป็นแบคกราวด์บางๆ ด้านหลังเนื้อหาทำนายผลแชมป์โลกแบบเบาหวิวปานสายฟ้าแลบ
+worldcup_bg_path = os.path.join(current_dir, "บอลโลก_optimized.webp")
+worldcup_bg_base64 = get_base64_image(worldcup_bg_path)
+
+def safe_markdown(content):
+    # ล้างบรรทัดว่าง (Blank lines) ออกทั้งหมดเพื่อป้องกัน Streamlit markdown parser ตีความผิดเป็นข้อความดิบ
+    lines = [line for line in content.splitlines() if line.strip() != ""]
+    cleaned_content = "\n".join(lines)
+    st.markdown(cleaned_content, unsafe_allow_html=True)
+
 
 # --- ตั้งค่าหน้าเว็บ ---
 st.set_page_config(page_title="🏆 CRAZYFIFA WORLD CUP 2026", layout="wide", page_icon="⚽")
@@ -986,6 +996,11 @@ if 'username' not in st.session_state:
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
+# ตรวจสอบการเปิดป๊อปอัปครั้งแรกในเซสชันปัจจุบัน เพื่อให้เด้งอัตโนมัติเมื่อเข้ามาดูเว็บครั้งแรกสุด
+if 'popup_shown_in_session' not in st.session_state:
+    st.session_state.popup_shown_in_session = True
+    st.session_state.show_congrats_popup = True
+
 st.sidebar.header("👤 เข้าสู่ระบบ")
 try:
     leaderboard_df = db.get_leaderboard()
@@ -1012,10 +1027,18 @@ if selected_user == "➕ เพิ่มผู้เล่นใหม่...":
             st.session_state.username = formatted_name
             st.session_state.authenticated = True
             st.session_state.show_congrats_popup = True
+            # ล้างสถานะป๊อปอัปทับซ้อน เพื่อเริ่มกระบวนการป๊อปอัปใหม่อย่างเสถียร
+            for k in ['congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
+                if k in st.session_state:
+                    del st.session_state[k]
             st.rerun()
 elif selected_user != "เลือกชื่อของคุณ...":
     if st.session_state.username != selected_user:
         st.session_state.authenticated = False
+        # ล้างสถานะป๊อปอัปทั้งหมดเพื่อเริ่มต้นใหม่อย่างสดใสสำหรับผู้เล่นคนใหม่
+        for k in ['show_congrats_popup', 'congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
+            if k in st.session_state:
+                del st.session_state[k]
     if not st.session_state.authenticated:
         if not db.has_pin(selected_user):
             st.sidebar.warning(f"⚠️ ยังไม่ได้ตั้งรหัส PIN สำหรับ {selected_user}")
@@ -1027,6 +1050,10 @@ elif selected_user != "เลือกชื่อของคุณ...":
                     st.session_state.authenticated = True
                     st.session_state.toast_shown = False
                     st.session_state.show_congrats_popup = True
+                    # ล้างสถานะป๊อปอัปทับซ้อน เพื่อเริ่มกระบวนการป๊อปอัปใหม่อย่างเสถียร
+                    for k in ['congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
+                        if k in st.session_state:
+                            del st.session_state[k]
                     st.rerun()
         else:
             pin_input = st.sidebar.text_input(f"ใส่รหัส PIN ({selected_user}):", type="password", max_chars=4)
@@ -1036,17 +1063,212 @@ elif selected_user != "เลือกชื่อของคุณ...":
                     st.session_state.authenticated = True
                     st.session_state.toast_shown = False
                     st.session_state.show_congrats_popup = True
+                    # ล้างสถานะป๊อปอัปทับซ้อน เพื่อเริ่มกระบวนการป๊อปอัปใหม่อย่างเสถียร
+                    for k in ['congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
+                        if k in st.session_state:
+                            del st.session_state[k]
                     st.rerun()
                 else:
                     st.sidebar.error("❌ PIN ไม่ถูกต้อง")
     else:
         st.session_state.username = selected_user
-        st.sidebar.success(f"ยินดีต้อนรับคุณ **{st.session_state.username}**")
+        
+        # --- ระบบดึงธีมต้อนรับตามประเทศแชมป์โลกที่คุณอาร์ตทาย ---
+        predicted_team = db.get_user_champion_prediction(st.session_state.username)
+        TEAM_THEMES = {
+            "Argentina": {
+                "background": "rgba(117, 170, 219, 0.22)",
+                "border": "1px solid rgba(117, 170, 219, 0.45)",
+                "emoji": "🇦🇷",
+                "text_color": "#FFFFFF"
+            },
+            "Brazil": {
+                "background": "rgba(0, 155, 58, 0.18)",
+                "border": "1px solid rgba(254, 223, 0, 0.4)",
+                "emoji": "🇧🇷",
+                "text_color": "#FFFFFF"
+            },
+            "Germany": {
+                "background": "rgba(221, 0, 0, 0.15)",
+                "border": "1px solid rgba(255, 204, 0, 0.35)",
+                "emoji": "🇩🇪",
+                "text_color": "#FFFFFF"
+            },
+            "France": {
+                "background": "rgba(0, 35, 149, 0.2)",
+                "border": "1px solid rgba(237, 41, 57, 0.4)",
+                "emoji": "🇫🇷",
+                "text_color": "#FFFFFF"
+            },
+            "Spain": {
+                "background": "rgba(198, 11, 30, 0.18)",
+                "border": "1px solid rgba(255, 196, 0, 0.4)",
+                "emoji": "🇪🇸",
+                "text_color": "#FFFFFF"
+            },
+            "England": {
+                "background": "rgba(206, 17, 38, 0.15)",
+                "border": "1px solid rgba(206, 17, 38, 0.35)",
+                "emoji": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                "text_color": "#FFFFFF"
+            },
+            "Netherlands": {
+                "background": "rgba(255, 155, 0, 0.18)",
+                "border": "1px solid rgba(255, 155, 0, 0.35)",
+                "emoji": "🇳🇱",
+                "text_color": "#FFFFFF"
+            },
+            "Portugal": {
+                "background": "rgba(4, 106, 56, 0.18)",
+                "border": "1px solid rgba(218, 41, 28, 0.35)",
+                "emoji": "🇵🇹",
+                "text_color": "#FFFFFF"
+            },
+            "Belgium": {
+                "background": "rgba(227, 6, 19, 0.15)",
+                "border": "1px solid rgba(255, 230, 0, 0.3)",
+                "emoji": "🇧🇪",
+                "text_color": "#FFFFFF"
+            },
+            "Uruguay": {
+                "background": "rgba(91, 194, 231, 0.2)",
+                "border": "1px solid rgba(91, 194, 231, 0.4)",
+                "emoji": "🇺🇾",
+                "text_color": "#FFFFFF"
+            },
+            "Mexico": {
+                "background": "rgba(0, 104, 71, 0.18)",
+                "border": "1px solid rgba(0, 104, 71, 0.35)",
+                "emoji": "🇲🇽",
+                "text_color": "#FFFFFF"
+            },
+            "Japan": {
+                "background": "rgba(188, 0, 45, 0.15)",
+                "border": "1px solid rgba(188, 0, 45, 0.35)",
+                "emoji": "🇯🇵",
+                "text_color": "#FFFFFF"
+            },
+            "Senegal": {
+                "background": "rgba(0, 133, 63, 0.18)",
+                "border": "1px solid rgba(253, 239, 66, 0.35)",
+                "emoji": "🇸🇳",
+                "text_color": "#FFFFFF"
+            },
+            "Morocco": {
+                "background": "rgba(193, 39, 45, 0.18)",
+                "border": "1px solid rgba(0, 98, 51, 0.35)",
+                "emoji": "🇲🇦",
+                "text_color": "#FFFFFF"
+            },
+            "Colombia": {
+                "background": "rgba(252, 209, 22, 0.15)",
+                "border": "1px solid rgba(252, 209, 22, 0.3)",
+                "emoji": "🇨🇴",
+                "text_color": "#FFFFFF"
+            },
+            "Norway": {
+                "background": "rgba(0, 32, 91, 0.18)",
+                "border": "1px solid rgba(239, 43, 45, 0.35)",
+                "emoji": "🇳🇴",
+                "text_color": "#FFFFFF"
+            }
+        }
+        
+        # สีเขียวพาสเทลพรีเมียมคลาสสิก (กรณีที่ยังไม่ได้เริ่มทายผลแชมป์โลก) - ตรงตามสกรีนช็อต 100%
+        default_theme = {
+            "background": "rgba(46, 125, 50, 0.22)",
+            "border": "1px solid rgba(76, 175, 80, 0.38)",
+            "emoji": "",
+            "text_color": "#FFFFFF"
+        }
+        
+        theme = TEAM_THEMES.get(predicted_team, default_theme)
+        emoji_span = f" <span>{theme['emoji']}</span>" if theme['emoji'] else ""
+        
+        st.sidebar.markdown(f"""
+            <style>
+            .custom-welcome-card {{
+                background: {theme['background']} !important;
+                border: {theme['border']} !important;
+                border-radius: 8px !important;
+                padding: 12px 16px !important;
+                color: {theme['text_color']} !important;
+                font-family: 'Kanit', sans-serif !important;
+                font-size: 15px !important;
+                font-weight: 500 !important;
+                line-height: 1.4 !important;
+                margin-top: 10px !important;
+                margin-bottom: 15px !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+            }}
+            .custom-welcome-card strong {{
+                font-weight: 700 !important;
+                color: #FFFFFF !important;
+            }}
+            </style>
+            <div class="custom-welcome-card">
+                ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>{emoji_span}
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # ปุ่มเปิดหน้าต่างทำนายผลแชมป์โลก 2026 แบบพรีเมียมสีทองสว่าง
+        st.sidebar.markdown("""
+            <style>
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"] {
+                background: linear-gradient(135deg, #FFE9A2 0%, #F5B82E 40%, #C48200 80%, #FFE9A2 100%) !important;
+                background-size: 200% auto !important;
+                border: none !important;
+                color: #0E0A01 !important;
+                font-family: 'Kanit', sans-serif !important;
+                font-weight: 700 !important;
+                box-shadow: 0 4px 15px rgba(196, 130, 0, 0.2) !important;
+                transition: all 0.3s ease !important;
+                margin-top: 5px !important;
+                margin-bottom: 5px !important;
+            }
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"]:hover {
+                transform: translateY(-1.5px) !important;
+                box-shadow: 0 6px 20px rgba(196, 130, 0, 0.35), 0 0 15px rgba(245, 184, 46, 0.3) !important;
+                color: #000000 !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026", use_container_width=True):
+            st.session_state.show_champion_popup = True
+            st.rerun()
+            
         if st.sidebar.button("ออกจากระบบ"):
             st.session_state.username = ""
             st.session_state.authenticated = False
             st.session_state.toast_shown = False
+            # ล้างค่าเซสชันของป๊อปอัปและตัวกระตุ้นทั้งหมดเพื่อให้สลับบัญชีแล้วเด้งใหม่ได้ 100%
+            for key in ['show_congrats_popup', 'congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'hidden_champ_team', 'hidden_champ_submit', 'popup_shown_in_session']:
+                if key in st.session_state:
+                    del st.session_state[key]
             st.rerun()
+
+        # ปุ่มดีบัคสำหรับทดสอบการเด้งป๊อปอัปโดยเฉพาะสำหรับคุณ Art เพื่อให้กดทดสอบได้กี่รอบก็ได้แบบลื่นๆ ไร้ขีดจำกัด
+        if st.session_state.username == "Art":
+            st.sidebar.markdown("""
+                <div style="margin-top: 15px; margin-bottom: 5px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 10px;">
+                    <span style="font-size: 13px; color: #FFF1C5; font-family: Kanit, sans-serif; font-weight: bold; letter-spacing: 0.5px;">🛠️ โหมดทดสอบป๊อปอัป (Art Only)</span>
+                </div>
+            """, unsafe_allow_html=True)
+            if st.sidebar.button("🔔 รีเซ็ตและเปิด Congrats Popup", key="test_congrats_btn", use_container_width=True):
+                st.session_state.show_congrats_popup = True
+                for k in ['congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
+                    if k in st.session_state:
+                        del st.session_state[k]
+                st.rerun()
+            if st.sidebar.button("🏆 เปิด Champion Prediction Popup", key="test_champ_btn", use_container_width=True):
+                st.session_state.show_champion_popup = True
+                st.session_state.show_congrats_popup = False
+                for k in ['congrats_start_time', 'auto_champion_check_done']:
+                    if k in st.session_state:
+                        del st.session_state[k]
+                st.rerun()
 else:
     st.info("👈 กรุณาเลือกชื่อเพื่อเริ่มเล่นครับ")
     st.stop()
@@ -1059,117 +1281,126 @@ username = st.session_state.username
 # --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองผู้ได้คะแนนสูงสุดตรงกลางจอใหญ่เมื่อล็อกอินใหม่ ---
 if st.session_state.get('show_congrats_popup', False):
     try:
-        import time
-        # เก็บบันทึกเวลาเริ่มต้นแสดงผลของป๊อปอัป
-        if 'congrats_start_time' not in st.session_state:
-            st.session_state.congrats_start_time = time.time()
-            
-        # หากเวลาผ่านไปมากกว่า 5.5 วินาที ให้ปิดป๊อปอัปนี้อัตโนมัติทางหลังบ้านในการรีรันรอบถัดไป
-        if time.time() - st.session_state.congrats_start_time > 5.5:
-            st.session_state.show_congrats_popup = False
-            st.rerun()
-            
         leaderboard_df = db.get_leaderboard()
+        show_congrats_rendered = False
+        
         if not leaderboard_df.empty:
             max_score = leaderboard_df['total_score'].max()
             if max_score > 0:
                 leaders_at_top = leaderboard_df[leaderboard_df['total_score'] == max_score]['username'].tolist()
                 leaders_str = " & ".join(leaders_at_top)
+                show_congrats_rendered = True
                 
                 with st.container():
                     # 1. พ่นกล่อง Backdrop, Modal, ปุ่มปิด HTML สำรอง และ JavaScript ดักคลิกกับ Auto-dismiss
-                    st.markdown(
-                        f"""<div class='congrats-modal-backdrop'>
+                    # 1. พ่นกล่อง Backdrop, Modal, ปุ่มปิด HTML สำรอง และ JavaScript ดักคลิกกับ Auto-dismiss (ใช้สตริงธรรมดาแล้ว .replace() เพื่อตัดบั๊ก f-string)
+                    congrats_html = """<div class='congrats-modal-backdrop'>
 <div class='congrats-modal'>
 <!-- ปุ่มปิดตัว X กากบาทสีทองพรีเมียมที่หาง่ายและใช้สัมผัสปิดได้เร็วบนมือถือ -->
 <div class='congrats-close-x' onclick='dismissCongratsPopup()'>&times;</div>
-
+ 
 <!-- เอฟเฟกต์ประกายดวงดาวลอยละล่อง -->
 <div class='congrats-sparkle sp1'>✨</div>
 <div class='congrats-sparkle sp2'>⭐</div>
 <div class='congrats-sparkle sp3'>✨</div>
 <div class='congrats-sparkle sp4'>⭐</div>
 <div class='congrats-sparkle sp5'>✨</div>
-
+ 
 <!-- พลุกระจายตัวฉลองชัย -->
 <div class='firework-particle p1'></div>
 <div class='firework-particle p2'></div>
 <div class='firework-particle p3'></div>
 <div class='firework-particle p4'></div>
 <div class='firework-particle p5'></div>
-
+ 
 <div class='congrats-title'>🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
 <div style='font-size: 1.05rem; color: #a0aec0; margin-bottom: 5px; font-family: Kanit, sans-serif;'>ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
-<div class='congrats-leader'>🎉 {leaders_str} 🎉</div>
-<div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
+<div class='congrats-leader'>🎉 __LEADERS_STR__ 🎉</div>
+<div class='congrats-score'>👑 นำอันดับหนึ่งด้วยคะแนนสะสม: __MAX_SCORE__ แต้ม 👑</div>
 <div style='color: #FFD700; font-size: 0.95rem; font-family: Kanit, sans-serif; font-weight: bold; margin-bottom: 30px; animation: heartbeat 1.5s infinite;'>🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
-
+ 
 <!-- เว้นพื้นที่ว่างสำหรับวางปุ่มปิด Streamlit ที่ถูกดึงขึ้นมาทับพอดี -->
 <div class='congrats-btn-placeholder'></div>
 </div>
 </div>
 <div class='congrats-trigger-marker'></div>
-
+ 
 <script>
-function dismissCongratsPopup() {{
+function dismissCongratsPopup() {
     // 1. ค้นหาและทำลายฉากหลังและกล่องป๊อปอัปฝั่งเบราว์เซอร์ทันทีเพื่อปลดล็อกหน้าจอ
     var backdrop = document.querySelector('.congrats-modal-backdrop');
-    if (backdrop) {{
+    if (backdrop) {
         backdrop.style.display = 'none';
         backdrop.remove();
-    }}
+    }
     
-    // 2. ค้นหามาร์กเกอร์และทำการสกัดปุ่มกดปิดของ Streamlit เพื่อทำการกระตุ้นคลิกหลังบ้าน
-    var marker = document.querySelector('.congrats-trigger-marker');
-    if (marker) {{
-        var parentContainer = marker.parentElement;
-        if (parentContainer) {{
-            // หา container ของปุ่มสตรีมลิตที่อยู่ถัดไป
-            var nextEl = parentContainer.nextElementSibling;
-            if (nextEl) {{
-                var btn = nextEl.querySelector('button');
-                if (btn) {{
-                    btn.click();
-                }}
-            }}
-        }}
-    }}
-}}
-
-// ปิดอัตโนมัติเมื่อครบ 5 วินาที
-setTimeout(function() {{
+    // 2. สแกนหาปุ่ม Streamlit ที่มีข้อความ "ลุยต่อกันเลย!" โดยตรงเพื่อความเสถียรสูงสุด ไร้บั๊กพิกัดกล่องทับซ้อน
+    var buttons = [];
+    try {
+        if (window.parent && window.parent.document) {
+            buttons = window.parent.document.querySelectorAll('button');
+        }
+    } catch(e) {}
+    if (!buttons || buttons.length === 0) {
+        buttons = document.querySelectorAll('button');
+    }
+    for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].textContent.includes('ลุยต่อกันเลย!')) {
+            buttons[i].click();
+            break;
+        }
+    }
+}
+ 
+// ปิดอัตโนมัติเมื่อครบ 3 วินาที เพื่อให้เด้งทำงานต่อเนื่องลื่นไหลสุดยอด
+setTimeout(function() {
     dismissCongratsPopup();
-}}, 5000);
-</script>""",
-                        unsafe_allow_html=True
-                    )
+}, 3000);
+</script>"""
+                    congrats_html = congrats_html.replace("__LEADERS_STR__", leaders_str).replace("__MAX_SCORE__", str(int(max_score)))
+                    st.markdown(congrats_html, unsafe_allow_html=True)
                     
                     # 2. ปุ่ม Streamlit ที่จัดวางพิกัดให้อยู่เหนือกำแพง backdrop เสมอ
                     if st.button("ลุยต่อกันเลย! ⚽🔥", key="close_popup_btn", use_container_width=True):
                         st.session_state.show_congrats_popup = False
+                        
+                        # หากผู้ใช้ยังไม่ได้ทายผลแชมป์โลก ให้กระตุ้นหน้าต่างทำนายแชมป์ขึ้นมาต่อทันที
+                        existing_pred = db.get_user_champion_prediction(username)
+                        if not existing_pred:
+                            st.session_state.show_champion_popup = True
+                            
                         st.rerun()
                         
                     # 3. พ่น CSS ควบคุมการเลือนหายไปเอง และยอมให้นิ้วสไลด์เลื่อนผ่าน (Pointer Events PASS-THROUGH)
                     st.markdown(
                         """<style>
-/* สำหรับอุปกรณ์โทรศัพท์มือถือและหน้าจอขนาดเล็ก: ปิดการทำงานและการครอบสัมผัสของระบบ Congrats ทั้งหมดโดยสมบูรณ์ เพื่อป้องกันไม่ให้โทรศัพท์ค้างแข็งและเปิดให้เลื่อนหน้าจอโฮมกรอกคะแนนได้ฉลุยทันที! */
+/* สำหรับอุปกรณ์โทรศัพท์มือถือและหน้าจอขนาดเล็ก: ปรับขนาดกล่องและฟอนต์ให้กะทัดรัดพรีเมียม สามารถอ่านและสัมผัสกดปิดได้รวดเร็วปานสายฟ้าแลบ ไม่หน่วงค้างแข็ง! */
 @media (max-width: 768px) {
-    .congrats-modal-backdrop {
-        display: none !important;
-        pointer-events: none !important;
-    }
     .congrats-modal {
-        display: none !important;
-        pointer-events: none !important;
+        padding: 25px 20px !important;
+        width: 88% !important;
+        max-width: 330px !important;
     }
-    div[data-testid="element-container"]:has(.congrats-trigger-marker),
+    .congrats-title {
+        font-size: 1.3rem !important;
+    }
+    .congrats-leader {
+        font-size: 1.15rem !important;
+    }
+    .congrats-score {
+        font-size: 0.95rem !important;
+    }
+    .congrats-btn-placeholder {
+        height: 48px !important;
+    }
     div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] {
-        display: none !important;
-        pointer-events: none !important;
-        position: static !important;
-        height: 0 !important;
-        width: 0 !important;
-        overflow: hidden !important;
+        top: calc(50vh + 105px) !important;
+        min-width: 180px !important;
+        max-width: 260px !important;
+    }
+    div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-testid="element-container"] button {
+        font-size: 0.95rem !important;
+        padding: 10px 25px !important;
     }
 }
 
@@ -1190,8 +1421,8 @@ setTimeout(function() {{
     /* กุญแจสำคัญ: ปรับเป็น none เพื่อยอมให้เลื่อนหน้าจอ/รูดจอหลักด้านหลังบนมือถือได้ทันที ไม่ค้างแข็ง! */
     pointer-events: none !important;
     
-    /* แอนิเมชันเฟดหายไปเองใน 5 วินาที */
-    animation: fade-out-disappear 5s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
+    /* แอนิเมชันเฟดหายไปเองใน 3 วินาที เพื่อความลื่นไหลต่อเนื่องสูงสุด */
+    animation: fade-out-disappear 3s forwards cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 /* ตัวการ์ดป๊อปอัปเฉลิมฉลองแชมป์ */
@@ -1211,7 +1442,7 @@ setTimeout(function() {{
     
     /* สเกลเด้ง และเฟดหายพร้อมฉากหลัง */
     animation: popup-scale 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both,
-               popup-fade-out 5s forwards ease-in-out !important;
+               popup-fade-out 3s forwards ease-in-out !important;
 }
 
 /* ปุ่มกากบาทปิดสำรองที่มุมขวาบนของการ์ดเพื่อใช้งานง่ายบนโทรศัพท์ */
@@ -1252,7 +1483,7 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
     pointer-events: auto !important;
     
     /* เลือนหายไปพร้อมกล่อง */
-    animation: button-fade-out 5s forwards ease-in-out !important;
+    animation: button-fade-out 3s forwards ease-in-out !important;
 }
 
 /* สไตล์ปุ่มกดปิดสีทองพรีเมียมตระการตา */
@@ -1391,8 +1622,602 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
                     )
                     
                     st.balloons()
+                    
+        # ป้องกันอาการล็อกค้าง: หากเงื่อนไขทำเนียบผู้นำไม่สมบูรณ์ (คะแนนนำเป็น 0 หรือว่าง) ให้สลับไปทำนายผลแชมป์โลกทันที
+        if not show_congrats_rendered:
+            st.session_state.show_congrats_popup = False
+            existing_pred = db.get_user_champion_prediction(username)
+            if not existing_pred:
+                st.session_state.show_champion_popup = True
+            st.rerun()
     except Exception as e:
-        pass
+        # พิมพ์ Error ออกมาให้เห็นจะๆ บนหน้าจอเพื่อช่วยดีบัค
+        st.sidebar.error(f"🚨 ดีบัคป๊อปอัปทำงานล้มเหลว: {e}")
+        st.session_state.show_congrats_popup = False
+
+
+# --- ระบบป๊อบอัพทำนายผลแชมป์โลก 2026 ---
+if 'show_champion_popup' not in st.session_state:
+    st.session_state.show_champion_popup = False
+
+# ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน
+if not st.session_state.get('show_congrats_popup', False):
+    if 'auto_champion_check_done' not in st.session_state:
+        st.session_state.auto_champion_check_done = True
+        existing_pred = db.get_user_champion_prediction(username)
+        if not existing_pred:
+            st.session_state.show_champion_popup = True
+
+if st.session_state.get('show_champion_popup', False):
+    existing_pred = db.get_user_champion_prediction(username)
+    
+    # 1. กล่อง Input และปุ่มส่งข้อมูล Streamlit แบบล่องหนแต่อยู่ใน DOM (ป้องกันไม่ให้เบราว์เซอร์หรือสตรีมลิตบล็อกอีเวนต์ส่งค่า)
+    st.markdown("<div style='opacity:0; position:absolute; width:0; height:0; pointer-events:none; overflow:hidden;' class='hidden-streamlit-inputs'>", unsafe_allow_html=True)
+    selected_team_input = st.text_input("hidden_champ_input", key="hidden_champ_team", label_visibility="collapsed")
+    submit_trigger = st.button("hidden_submit_btn", key="hidden_champ_submit")
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    # เมื่อปุ่มเบื้องหลังสตรีมลิตถูกคลิกผ่าน JavaScript สะพานเชื่อม
+    if submit_trigger or st.session_state.get("hidden_champ_submit", False):
+        val = st.session_state.get("hidden_champ_team", "").strip()
+        if val:
+            db.save_champion_prediction(username, val)
+            st.session_state.show_champion_popup = False
+            st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {val} สำเร็จแล้ว! ตัดสินใจให้ดี!", icon="✅")
+            st.rerun()
+            
+    # ดึงค่า Base64 สำหรับ ภาพ บอลโลก.png แบ็กกราวด์พรีเมียม
+    worldcup_bg_b64 = worldcup_bg_base64 # ดึงจากที่โหลดไว้ตอนต้นไฟล์
+    
+    # รายชื่อทีมที่เข้ารอบ 16 ทีมสุดท้าย
+    TEAMS_LIST = [
+        ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
+        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
+        ("Germany", "🇩🇪 เยอรมนี (Germany)"),
+        ("France", "🇫🇷 ฝรั่งเศส (France)"),
+        ("Spain", "🇪🇸 สเปน (Spain)"),
+        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
+        ("Netherlands", "🇳🇱 เนเธอร์แลนด์ (Netherlands)"),
+        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
+        ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
+        ("Uruguay", "🇺🇾 อุรุกวัย (Uruguay)"),
+        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
+        ("Japan", "🇯🇵 ญี่ปุ่น (Japan)"),
+        ("Senegal", "🇸🇳 เซเนกัล (Senegal)"),
+        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
+        ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
+        ("Norway", "🇳🇴 นอร์เวย์ (Norway)")
+    ]
+    
+    # แปลงชื่อทีมภาษาอังกฤษเป็นคำอ่านภาษาไทยเพื่อแสดงผลในหน้าล็อก
+    TEAM_TH_NAMES = {t[0]: t[1] for t in TEAMS_LIST}
+    
+    # สร้างมาร์กเกอร์และแผงควบคุมสไลเดอร์และปุ่ม HTML ด้วยสไตล์คัสตอมพรีเมียมเวิลด์คลาส
+    if not existing_pred:
+        # --- Status 1: Form Selection Form ---
+        options_html = "".join([f'<option value="{code}">{label}</option>' for code, label in TEAMS_LIST])
+        
+        safe_markdown(f"""<div class="champ-modal-backdrop">
+<div class="champ-modal">
+<!-- ปุ่มกากบาทปิดตัว x สีทองพรีเมียมเพื่อปิดใช้งาน -->
+<div class="champ-close-x" onclick="closeChampModal()">&times;</div>
+
+<!-- ออร่าแสงหนุนหลังกล่องบางๆ -->
+<div class="champ-ambient-glow"></div>
+
+<!-- Countdown สิทธิ์จำกัดรอบ 16 ทีมพรีเมียม -->
+<div class="champ-countdown-badge">
+<span>🔴 สิทธิ์จำกัดรอบ 16 ทีม! นับถอยหลังปิดรับทายผล:</span>
+<span class="champ-countdown-timer" id="champ-timer">23:59:59</span>
+</div>
+
+<div class="champ-trophy">🏆</div>
+<h2 class="champ-h2">ทำนายผลแชมป์โลก 2026</h2>
+<p class="champ-p">โอกาสแก้ตัวสำหรับผู้ร่วมสนุกที่ไม่ทันรอบแรก! เลือกทายผลประเทศที่จะพิชิตถ้วยฟุตบอลโลก 1 ทีมเท่านั้น และจะถูกเก็บข้อมูลไว้เป็นความลับจนกว่าจะถึงวันชิงชนะเลิศ ตัดสินใจให้ดี!</p>
+
+<div class="champ-form-group">
+<label class="champ-label">เลือกประเทศแชมป์โลกในใจคุณ</label>
+<div class="champ-select-wrapper">
+<select id="teamSelect" class="champ-select">
+<option value="" disabled selected>-- เลือกประเทศที่คุณมั่นใจ --</option>
+{options_html}
+</select>
+</div>
+</div>
+
+<button class="champ-btn-submit" onclick="submitChampPrediction()">
+<span>บันทึกคำทำนายแชมป์โลก</span>
+<span>🏆</span>
+</button>
+</div>
+</div>
+
+<div class="champ-trigger-marker"></div>
+
+<script>
+// นับถอยหลัง 24 ชม. ปรับเป็นตัวเลขเรียลไทม์จำลอง
+var totalSecs = 24 * 60 * 60;
+var timerEl = document.getElementById("champ-timer");
+function updateChampTimer() {{
+    var h = Math.floor(totalSecs / 3600);
+    var m = Math.floor((totalSecs % 3600) / 60);
+    var s = totalSecs % 60;
+    h = h < 10 ? '0' + h : h;
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    if (timerEl) {{
+        timerEl.textContent = h + ":" + m + ":" + s;
+    }}
+    if (totalSecs > 0) {{
+        totalSecs--;
+    }} else {{
+        if (timerEl) timerEl.textContent = "ปิดรับทายผล";
+    }}
+}}
+setInterval(updateChampTimer, 1000);
+updateChampTimer();
+
+function closeChampModal() {{
+    var backdrop = document.querySelector('.champ-modal-backdrop');
+    if (backdrop) backdrop.remove();
+    
+    // ค้นหาแบบเปรียบเทียบจากข้อความเพื่อความชัวร์แบบไร้ที่ติ ทะลุ iframe ทั้งหมด
+    var buttons = [];
+    try {{
+        if (window.parent && window.parent.document) {{
+            buttons = window.parent.document.querySelectorAll('button');
+        }}
+    }} catch(e) {{}}
+    if (!buttons || buttons.length === 0) {{
+        buttons = document.querySelectorAll('button');
+    }}
+    for (var i = 0; i < buttons.length; i++) {{
+        if (buttons[i].textContent.includes('❌ ปิดหน้าต่างนี้')) {{
+            buttons[i].click();
+            break;
+        }}
+    }}
+}}
+
+function submitChampPrediction() {{
+    var selectEl = document.getElementById('teamSelect');
+    if (!selectEl) return;
+    var val = selectEl.value;
+    if (!val) {{
+        alert("กรุณาเลือกประเทศในใจคุณก่อนกดส่งคำทำนายนะครับ! 😉");
+        return;
+    }}
+    
+    // ค้นหาแบบสแกนเจาะจงและปลอดภัย 100% ครอบคลุมถึง Parent Iframe ของ Streamlit
+    var docList = [document];
+    try {{
+        if (window.parent && window.parent.document) {{
+            docList.push(window.parent.document);
+        }}
+    }} catch(e) {{}}
+    
+    var stInput = null;
+    var stBtn = null;
+    
+    for (var d = 0; d < docList.length; d++) {{
+        var currDoc = docList[d];
+        
+        var inputs = currDoc.querySelectorAll('input');
+        for (var i = 0; i < inputs.length; i++) {{
+            if (inputs[i].getAttribute('aria-label') === 'hidden_champ_input' || 
+                (inputs[i].id && inputs[i].id.includes('hidden_champ_input')) ||
+                inputs[i].placeholder === 'hidden_champ_input' ||
+                (inputs[i].closest && inputs[i].closest('.hidden-streamlit-inputs'))) {{
+                stInput = inputs[i];
+                break;
+            }}
+        }}
+        if (stInput) {{
+            var buttons = currDoc.querySelectorAll('button');
+            for (var k = 0; k < buttons.length; k++) {{
+                if (buttons[k].textContent.includes('hidden_submit_btn') || 
+                    buttons[k].getAttribute('aria-label') === 'hidden_submit_btn') {{
+                    stBtn = buttons[k];
+                    break;
+                }}
+            }}
+        }}
+        if (stInput && stBtn) break;
+    }}
+    
+    if (stInput && stBtn) {{
+        var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        nativeSetter.call(stInput, val);
+        stInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+        stInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+        
+        setTimeout(function() {{
+            stBtn.click();
+        }}, 150);
+    }} else {{
+        // Fallback หาปุ่มหรืออินพุตอันแรกที่เป็นของกลุ่มซ่อน
+        var hiddenDiv = document.querySelector('.hidden-streamlit-inputs');
+        if (!hiddenDiv && window.parent && window.parent.document) {{
+            hiddenDiv = window.parent.document.querySelector('.hidden-streamlit-inputs');
+        }}
+        if (hiddenDiv) {{
+            var fbInput = hiddenDiv.querySelector('input');
+            var fbBtn = hiddenDiv.querySelector('button');
+            if (fbInput && fbBtn) {{
+                var nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                nativeSetter.call(fbInput, val);
+                fbInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                fbInput.dispatchEvent(new Event('change', {{ bubbles: true }}));
+                setTimeout(function() {{
+                    fbBtn.click();
+                }}, 150);
+                return;
+            }}
+        }}
+        alert("ระบบบันทึกติดขัด กรุณาลองเลือกทีมและกดบันทึกใหม่อีกครั้งนะครับ! 😉");
+    }}
+}}
+</script>""")
+    else:
+        # --- Status 2: Locked State ---
+        user_choice_th = TEAM_TH_NAMES.get(existing_pred, existing_pred)
+        safe_markdown(f"""<div class="champ-modal-backdrop">
+<div class="champ-modal">
+<!-- ปุ่มกากบาทปิดตัว x สีทองพรีเมียมเพื่อปิดใช้งาน -->
+<div class="champ-close-x" onclick="closeChampModal()">&times;</div>
+
+<div class="champ-stamp-badge">🔒</div>
+<h2 class="champ-h2">ทำนายผลแชมป์โลกสำเร็จแล้ว</h2>
+<p class="champ-p">ระบบได้ทำการบันทึกและล็อกคำทำนายของคุณไว้เป็นความลับสูงสุดของฐานข้อมูลเรียบร้อยแล้ว ไม่สามารถแก้ไขได้ รอลุ้นผลพร้อมกันในวันนัดชิงชนะเลิศ!</p>
+
+<div class="champ-predicted-info">
+<div class="champ-predicted-label">ทีมที่คุณมั่นใจว่าจะได้แชมป์</div>
+<div class="champ-predicted-team">{user_choice_th}</div>
+</div>
+
+<div class="champ-lock-notice">
+<span>🔐</span>
+<span class="champ-shimmer">SECRET KEY ENCRYPTED IN DATABASE</span>
+</div>
+</div>
+</div>
+
+<div class="champ-trigger-marker"></div>
+
+<script>
+function closeChampModal() {{
+    var backdrop = document.querySelector('.champ-modal-backdrop');
+    if (backdrop) backdrop.remove();
+    
+    // ค้นหาแบบเปรียบเทียบจากข้อความเพื่อความชัวร์แบบไร้ที่ติ ทะลุ iframe ทั้งหมด
+    var buttons = [];
+    try {{
+        if (window.parent && window.parent.document) {{
+            buttons = window.parent.document.querySelectorAll('button');
+        }}
+    }} catch(e) {{}}
+    if (!buttons || buttons.length === 0) {{
+        buttons = document.querySelectorAll('button');
+    }}
+    for (var i = 0; i < buttons.length; i++) {{
+        if (buttons[i].textContent.includes('❌ ปิดหน้าต่างนี้')) {{
+            buttons[i].click();
+            break;
+        }}
+    }}
+}}
+</script>""")
+        
+    # พ่น CSS ของแผงควบคุม Champion Prediction ครอบคลุมการแสดงผลเบลอกลางจอและเด้งตอบสนองสวยงาม
+    safe_markdown(f"""
+        <style>
+        .champ-modal-backdrop {{
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(6, 9, 19, 0.9) !important;
+            backdrop-filter: blur(25px) !important;
+            -webkit-backdrop-filter: blur(25px) !important;
+            z-index: 999990 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            pointer-events: none !important;
+            animation: champ-fade-in 0.4s forwards ease !important;
+            padding: 20px !important;
+        }}
+        .champ-modal {{
+            background-image: 
+                linear-gradient(rgba(13, 20, 38, 0.91), rgba(13, 20, 38, 0.96)),
+                url('data:image/png;base64,{worldcup_bg_b64}') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            border-radius: 28px !important;
+            padding: 40px 30px !important;
+            box-shadow: 0 25px 55px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.15) !important;
+            max-width: 500px !important;
+            width: 100% !important;
+            position: relative !important;
+            text-align: center !important;
+            pointer-events: auto !important;
+            border: 1.5px solid rgba(255, 241, 197, 0.2) !important;
+            animation: champ-popup-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+        }}
+        .champ-close-x {{
+            position: absolute !important;
+            top: 15px !important;
+            right: 20px !important;
+            font-size: 2rem !important;
+            color: rgba(255, 255, 255, 0.4) !important;
+            cursor: pointer !important;
+            line-height: 1 !important;
+            transition: all 0.25s ease !important;
+            z-index: 1000005 !important;
+            font-family: Arial, sans-serif !important;
+        }}
+        .champ-close-x:hover {{
+            color: #E3A824 !important;
+            transform: scale(1.15) !important;
+        }}
+        .champ-ambient-glow {{
+            position: absolute !important;
+            width: 300px !important;
+            height: 300px !important;
+            background: radial-gradient(circle, rgba(227, 168, 36, 0.08) 0%, transparent 70%) !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            pointer-events: none !important;
+            z-index: 0 !important;
+        }}
+        .champ-countdown-badge {{
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
+            color: #FF6666 !important;
+            padding: 6px 14px !important;
+            border-radius: 50px !important;
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            margin-bottom: 20px !important;
+            letter-spacing: 0.5px !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1) !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-countdown-timer {{
+            font-weight: 900 !important;
+            font-size: 13px !important;
+            color: #FF4D4D !important;
+            letter-spacing: 1px !important;
+        }}
+        .champ-trophy {{
+            font-size: 64px !important;
+            line-height: 1 !important;
+            filter: drop-shadow(0 0 15px rgba(227, 168, 36, 0.5)) !important;
+            margin-bottom: 15px !important;
+            animation: champ-bounce 3.5s ease-in-out infinite !important;
+        }}
+        .champ-stamp-badge {{
+            width: 80px !important;
+            height: 80px !important;
+            background: rgba(227, 168, 36, 0.12) !important;
+            border: 2px dashed #E3A824 !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 auto 20px !important;
+            color: #FFF1C5 !important;
+            font-size: 32px !important;
+            box-shadow: 0 0 20px rgba(227, 168, 36, 0.15) !important;
+        }}
+        .champ-h2 {{
+            font-size: 26px !important;
+            font-weight: 900 !important;
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFDF80 30%, #E3A824 65%, #8C6200 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            margin-bottom: 12px !important;
+            line-height: 1.25 !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-p {{
+            color: #A4B2C5 !important;
+            font-size: 13.5px !important;
+            line-height: 1.5 !important;
+            margin-bottom: 25px !important;
+            font-weight: 400 !important;
+            padding: 0 10px !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-form-group {{
+            margin-bottom: 25px !important;
+            text-align: left !important;
+        }}
+        .champ-label {{
+            display: block !important;
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            color: #FFEAA5 !important;
+            margin-bottom: 8px !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-select-wrapper {{
+            position: relative !important;
+            width: 100% !important;
+        }}
+        .champ-select {{
+            width: 100% !important;
+            background: rgba(6, 9, 19, 0.9) !important;
+            border: 1.5px solid rgba(227, 168, 36, 0.25) !important;
+            border-radius: 12px !important;
+            padding: 14px 18px !important;
+            font-size: 15px !important;
+            color: #FFFFFF !important;
+            font-family: 'Kanit', sans-serif !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            outline: none !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+            transition: all 0.3s ease !important;
+        }}
+        .champ-select:focus {{
+            border-color: #E3A824 !important;
+            box-shadow: 0 0 12px rgba(227, 168, 36, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+        }}
+        .champ-select-wrapper::after {{
+            content: "▼" !important;
+            font-size: 10px !important;
+            color: #E3A824 !important;
+            position: absolute !important;
+            right: 18px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            pointer-events: none !important;
+        }}
+        .champ-btn-submit {{
+            width: 100% !important;
+            background: linear-gradient(135deg, #FFE9A2 0%, #F5B82E 40%, #C48200 80%, #FFE9A2 100%) !important;
+            background-size: 200% auto !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 15px 24px !important;
+            color: #0E0A01 !important;
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            cursor: pointer !important;
+            box-shadow: 0 10px 25px rgba(140, 98, 0, 0.3) !important;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            font-family: 'Kanit', sans-serif !important;
+            letter-spacing: 0.5px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 10px !important;
+            position: relative !important;
+            overflow: hidden !important;
+            animation: champ-flow-shimmer 4s linear infinite !important;
+        }}
+        .champ-btn-submit:hover {{
+            transform: translateY(-1.5px) !important;
+            box-shadow: 0 12px 25px rgba(140, 98, 0, 0.5), 0 0 15px rgba(245, 184, 46, 0.3) !important;
+            color: #000000 !important;
+        }}
+        .champ-predicted-info {{
+            background: linear-gradient(180deg, rgba(8, 12, 23, 0.8) 0%, rgba(4, 6, 13, 0.95) 100%) !important;
+            border: 1.5px solid rgba(227, 168, 36, 0.2) !important;
+            border-radius: 14px !important;
+            padding: 18px !important;
+            margin-bottom: 22px !important;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5) !important;
+            text-align: center !important;
+        }}
+        .champ-predicted-label {{
+            font-size: 11px !important;
+            font-weight: 700 !important;
+            color: #8B9BB4 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 6px !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-predicted-team {{
+            font-size: 20px !important;
+            font-weight: 800 !important;
+            color: #FFEAA5 !important;
+            text-shadow: 0 0 12px rgba(255, 224, 114, 0.3) !important;
+            font-family: 'Kanit', sans-serif !important;
+        }}
+        .champ-lock-notice {{
+            color: #A0AEC0 !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            padding: 6px 14px !important;
+            border-radius: 30px !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            font-family: 'Segoe UI', Arial, sans-serif !important;
+        }}
+        .champ-shimmer {{
+            background: linear-gradient(90deg, #E3A824 20%, #FFFFFF 50%, #E3A824 80%) !important;
+            background-size: 200% auto !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            animation: champ-shimmer-anim 4s linear infinite !important;
+        }}
+        
+        /* สตรีมลิตปิดทับกริบ */
+        div[data-testid="element-container"]:has(.champ-trigger-marker) + div[data-testid="element-container"] {{
+            position: fixed !important;
+            top: calc(50vh + 175px) !important;
+            left: 50vw !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 1000000 !important;
+            width: auto !important;
+            min-width: 180px !important;
+            max-width: 400px !important;
+            display: block !important;
+            pointer-events: auto !important;
+        }}
+        div[data-testid="element-container"]:has(.champ-trigger-marker) + div[data-testid="element-container"] button {{
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+            color: #FF6666 !important;
+            font-weight: 700 !important;
+            border: 1.5px solid rgba(239, 68, 68, 0.3) !important;
+            padding: 8px 30px !important;
+            border-radius: 50px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+            font-family: 'Kanit', sans-serif !important;
+            font-size: 0.9rem !important;
+            transition: all 0.3s ease !important;
+            width: 100% !important;
+            cursor: pointer !important;
+        }}
+        div[data-testid="element-container"]:has(.champ-trigger-marker) + div[data-testid="element-container"] button:hover {{
+            transform: scale(1.04) !important;
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.15) !important;
+            border-color: #FF4D4D !important;
+        }}
+        
+        @keyframes champ-flow-shimmer {{
+            0% {{ background-position: 0% center; }}
+            100% {{ background-position: -200% center; }}
+        }}
+        @keyframes champ-shimmer-anim {{
+            to {{ background-position: -200% center; }}
+        }}
+        @keyframes champ-bounce {{
+            0%, 100% {{ transform: translateY(0) scale(1); }}
+            50% {{ transform: translateY(-6px) scale(1.02); }}
+        }}
+        @keyframes champ-fade-in {{
+            0% {{ opacity: 0; pointer-events: none; }}
+            100% {{ opacity: 1; pointer-events: auto; }}
+        }}
+        @keyframes champ-popup-scale {{
+            0% {{ transform: scale(0.9); opacity: 0; }}
+            100% {{ transform: scale(1); opacity: 1; }}
+        }}
+        </style>
+    """)
+    
+    # ปุ่มยกเลิก/ปิดพรีเมียมของสตรีมลิตสำหรับควบคุม liveness state หลังบ้าน
+    if st.button("❌ ปิดหน้าต่างนี้", key="close_champ_popup_btn", use_container_width=True):
+        st.session_state.show_champion_popup = False
+        st.rerun()
+
 
 # --- ตรวจสอบอัปเดตผลสกอร์แบบเรียลไทม์อัตโนมัติ (แคชไว้ 30 นาที) ---
 check_and_sync_scores()

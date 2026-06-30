@@ -4085,13 +4085,13 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"Morocco",
-    "points_earned":"0"
+    "points_earned":"3"
   },
   {
     "username":"Robert B",
     "match_id":"78",
-    "pred_home":"1",
-    "pred_away":"1",
+    "pred_home":"0",
+    "pred_away":"2",
     "pred_qualify":"Norway",
     "points_earned":"0"
   },
@@ -4229,7 +4229,7 @@
     "pred_home":"2",
     "pred_away":"1",
     "pred_qualify":"",
-    "points_earned":"3"
+    "points_earned":"4"
   },
   {
     "username":"Tayshi",
@@ -4252,7 +4252,7 @@
     "match_id":"78",
     "pred_home":"1",
     "pred_away":"2",
-    "pred_qualify":"",
+    "pred_qualify":"Ivory Coast",
     "points_earned":"0"
   },
   {
@@ -4260,7 +4260,7 @@
     "match_id":"77",
     "pred_home":"3",
     "pred_away":"1",
-    "pred_qualify":"",
+    "pred_qualify":"Sweden",
     "points_earned":"0"
   },
   {
@@ -4268,7 +4268,7 @@
     "match_id":"79",
     "pred_home":"1",
     "pred_away":"0",
-    "pred_qualify":"",
+    "pred_qualify":"Ecuador",
     "points_earned":"0"
   },
   {
@@ -4276,7 +4276,7 @@
     "match_id":"80",
     "pred_home":"2",
     "pred_away":"1",
-    "pred_qualify":"",
+    "pred_qualify":"England",
     "points_earned":"0"
   },
   {
@@ -4284,15 +4284,15 @@
     "match_id":"82",
     "pred_home":"2",
     "pred_away":"1",
-    "pred_qualify":"",
+    "pred_qualify":"Senegal",
     "points_earned":"0"
   },
   {
     "username":"Tayshi",
     "match_id":"81",
-    "pred_home":"3",
-    "pred_away":"1",
-    "pred_qualify":"",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Bosnia and Herzegovina",
     "points_earned":"0"
   },
   {
@@ -4309,7 +4309,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"",
-    "points_earned":"0"
+    "points_earned":"3"
   },
   {
     "username":"NOTE",
@@ -4421,7 +4421,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"Netherlands",
-    "points_earned":"0"
+    "points_earned":"3"
   },
   {
     "username":"Bow",
@@ -4538,7 +4538,7 @@
   {
     "username":"FAII",
     "match_id":"77",
-    "pred_home":"3",
+    "pred_home":"2",
     "pred_away":"0",
     "pred_qualify":"France",
     "points_earned":"0"
@@ -4635,7 +4635,7 @@
     "username":"Art",
     "match_id":"78",
     "pred_home":"1",
-    "pred_away":"2",
+    "pred_away":"3",
     "pred_qualify":"Norway",
     "points_earned":"0"
   },
@@ -4677,6 +4677,30 @@
     "pred_home":"2",
     "pred_away":"0",
     "pred_qualify":"United States",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"78",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Norway",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"77",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"France",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"79",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Mexico",
     "points_earned":"0"
   }
 ]

@@ -877,17 +877,17 @@
     "away_score":"1",
     "status":"Finished",
     "scorers":"Havertz54' | Enciso42'",
-    "winner_qualify":""
+    "winner_qualify":"Paraguay"
   },
   {
     "id":"69",
     "home_team":"Netherlands",
     "away_team":"Morocco",
     "match_time":"2026-06-30 07:50:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Gakpo72' | Diop90+1'",
     "winner_qualify":""
   },
   {
@@ -899,6 +899,6 @@
     "away_score":"1",
     "status":"Finished",
     "scorers":"Casemiro56'Martinelli90+5' | Sano29'",
-    "winner_qualify":""
+    "winner_qualify":"Brazil"
   }
 ]

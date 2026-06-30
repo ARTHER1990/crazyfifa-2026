@@ -81,7 +81,21 @@ def load_local_backup(name, columns):
     return pd.DataFrame(columns=columns)
 
 def init_db():
-    pass
+    try:
+        import sqlite3
+        conn = sqlite3.connect('worldcup.db')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS champion_predictions (
+                username TEXT PRIMARY KEY,
+                predicted_team TEXT,
+                timestamp TEXT
+            )
+        ''')
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error in init_db SQLite initialization: {e}")
+
 
 @st.cache_data(ttl=300)
 def get_users_df():
@@ -524,6 +538,113 @@ def get_world_cup_standings():
     except Exception as e:
         print("Scrape standings error:", e)
         return {}
+
+
+@st.cache_data(ttl=300)
+def get_champion_predictions_df():
+    cols = ['username', 'predicted_team', 'timestamp']
+    # 1. Try reading from SQLite first for speed and offline robustness
+    try:
+        import sqlite3
+        conn = sqlite3.connect('worldcup.db')
+        df_sql = pd.read_sql_query("SELECT * FROM champion_predictions", conn)
+        conn.close()
+        if not df_sql.empty:
+            save_local_backup('champion_predictions', df_sql)
+            return df_sql
+    except Exception as e:
+        print(f"SQLite reading error for champion_predictions: {e}")
+
+    # 2. If SQLite is empty or errors, pull from Google Sheets
+    try:
+        ws = get_worksheet('champion_predictions')
+        data = ws.get_all_values()
+        if not data:
+            df = pd.DataFrame(columns=cols)
+        else:
+            df = pd.DataFrame(data[1:], columns=data[0])
+        
+        # Save to SQLite immediately to sync both sides
+        try:
+            import sqlite3
+            conn = sqlite3.connect('worldcup.db')
+            df.to_sql('champion_predictions', conn, if_exists='replace', index=False)
+            conn.close()
+        except Exception as esql:
+            print(f"Error syncing Google Sheet to SQLite: {esql}")
+            
+        save_local_backup('champion_predictions', df)
+        return df
+    except Exception as e:
+        # If worksheet does not exist on Google Sheets, create it
+        try:
+            sh = get_spreadsheet()
+            ws = sh.add_worksheet(title='champion_predictions', rows="100", cols="3")
+            ws.append_row(cols)
+            df = pd.DataFrame(columns=cols)
+            save_local_backup('champion_predictions', df)
+            return df
+        except Exception as ex:
+            print(f"Error creating champion_predictions worksheet: {ex}")
+            return load_local_backup('champion_predictions', cols)
+
+def save_champion_prediction(username, predicted_team):
+    name = normalize_name(username)
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # 1. Save to SQLite immediately
+    try:
+        import sqlite3
+        conn = sqlite3.connect('worldcup.db')
+        conn.execute("""
+            INSERT OR REPLACE INTO champion_predictions (username, predicted_team, timestamp)
+            VALUES (?, ?, ?)
+        """, (name, str(predicted_team), timestamp))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Error saving to SQLite champion_predictions: {e}")
+
+    # 2. Save to Google Sheets
+    try:
+        ws = get_worksheet('champion_predictions')
+        df = get_champion_predictions_df()
+        
+        mask = df['username'] == name
+        if mask.any():
+            idx = df.index[mask][0] + 2
+            ws.update(f'B{idx}:C{idx}', [[str(predicted_team), timestamp]])
+        else:
+            ws.append_row([name, str(predicted_team), timestamp])
+    except Exception as e:
+        print(f"Error saving to Google Sheets champion_predictions: {e}")
+        
+    get_champion_predictions_df.clear()
+
+def get_user_champion_prediction(username):
+    name = normalize_name(username)
+    
+    # Query SQLite first for speed
+    try:
+        import sqlite3
+        conn = sqlite3.connect('worldcup.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT predicted_team FROM champion_predictions WHERE username = ?", (name,))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return str(row[0]).strip()
+    except Exception as e:
+        print(f"SQLite query error in get_user_champion_prediction: {e}")
+        
+    # Fallback to DataFrame if SQLite fails
+    df = get_champion_predictions_df()
+    if df.empty: return ""
+    user_pred = df[df['username'] == name]
+    if user_pred.empty:
+        return ""
+    return str(user_pred.iloc[0]['predicted_team']).strip()
+
 
 
 
