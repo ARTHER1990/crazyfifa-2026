@@ -187,16 +187,28 @@ def show_congrats_dialog(leaders_str, max_score):
             display: none !important;
         }
         /* ห้ามคลิกนอกกรอบเพื่อปิด (Disable Click Outside to Close) */
-        [data-baseweb="modal"] {
+        [data-testid="stModalBackdrop"], [data-baseweb="modal"] {
             pointer-events: none !important;
         }
         [data-testid="stDialog"], [data-testid="stModal"], [role="dialog"] {
+            pointer-events: auto !important;
+        }
+        /* ฟิลเตอร์ป้องกันคลิกนอกกล่องระบายคลิกทั้งหมด (Click Shield) */
+        .dialog-click-shield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.01);
+            z-index: -1;
             pointer-events: auto !important;
         }
         </style>
     """, unsafe_allow_html=True)
     
     st.markdown(f"""
+<div class="dialog-click-shield"></div>
 <div class="congrats-dialog-container">
 <div class="congrats-title-dl">🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
 <div style="font-size: 1.05rem; color: #a0aec0;">ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
@@ -274,16 +286,28 @@ def show_champion_dialog(username):
             display: none !important;
         }
         /* ห้ามคลิกนอกกรอบเพื่อปิด (Disable Click Outside to Close) */
-        [data-baseweb="modal"] {
+        [data-testid="stModalBackdrop"], [data-baseweb="modal"] {
             pointer-events: none !important;
         }
         [data-testid="stDialog"], [data-testid="stModal"], [role="dialog"] {
+            pointer-events: auto !important;
+        }
+        /* ฟิลเตอร์ป้องกันคลิกนอกกล่องระบายคลิกทั้งหมด (Click Shield) */
+        .dialog-click-shield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.01);
+            z-index: -1;
             pointer-events: auto !important;
         }
         </style>
     """, unsafe_allow_html=True)
     
     st.markdown("""
+        <div class="dialog-click-shield"></div>
         <div class="champ-dialog-container">
             <div class="champ-title-dl">🔮 ทำนายผลแชมป์โลก 2026 🔮</div>
             <div class="champ-desc-dl">
