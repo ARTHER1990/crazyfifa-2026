@@ -297,6 +297,14 @@ def update_scores_logic():
             bonus = 0
             w_qualify = str(m.get('winner_qualify', '')).strip()
             p_qualify = str(p.get('pred_qualify', '')).strip()
+            if p_qualify == "":
+                try:
+                    if int(p_h) > int(p_a):
+                        p_qualify = str(m.get('home_team', '')).strip()
+                    elif int(p_a) > int(p_h):
+                        p_qualify = str(m.get('away_team', '')).strip()
+                except Exception:
+                    pass
             
             if w_qualify != "" and w_qualify.lower() != "nan" and p_qualify != "":
                 if p_qualify.lower() == w_qualify.lower():

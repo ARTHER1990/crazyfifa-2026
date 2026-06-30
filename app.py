@@ -1554,13 +1554,21 @@ if st.session_state.authenticated:
                             m_id_int = safe_int(m_id)
                             if m_id_int >= 68:
                                 p_qualify = str(row_p.get('pred_qualify', '')).strip()
+                                if p_qualify == "":
+                                    try:
+                                        if p_h > p_a:
+                                            p_qualify = str(row_m.get('home_team', '')).strip()
+                                        elif p_a > p_h:
+                                            p_qualify = str(row_m.get('away_team', '')).strip()
+                                    except Exception:
+                                        pass
                                 w_qualify = str(row_m.get('winner_qualify', '')).strip()
                                 if p_qualify:
                                     # แสดงธง/ชื่อทีมที่เลือกเข้ารอบ
                                     pred_q_txt = f" <span style='opacity: 0.8;'>🗳️ เลือก {get_team_display(p_qualify)}</span>"
                                 if p_qualify != "" and w_qualify != "" and w_qualify.lower() != "nan":
                                     if p_qualify.lower() == w_qualify.lower():
-                                        bonus_txt = " <b style='color: #ffb703;'>+ 🌟 โบนัส 1 แต้ม</b>"
+                                        bonus_txt = " <b style='color: #ffffff;'>+ 🌟 โบนัส 1 แต้ม</b>"
                                         # ถ้าได้แต่โบนัสแต่ทายสกอร์ผิดหมดเลย ให้ปรับขอบและการ์ดให้น่าดึงดูดขึ้น
                                         if pt_txt == "❌ 0 แต้ม":
                                             hl_style = "background: rgba(255, 183, 3, 0.08); border: 1px solid rgba(255, 183, 3, 0.25); color: #ffb703;"
