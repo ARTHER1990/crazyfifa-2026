@@ -186,46 +186,40 @@ def show_congrats_dialog(leaders_str, max_score):
     """, unsafe_allow_html=True)
     
     st.markdown(f"""
-        <div class="congrats-dialog-container">
-            <div class="congrats-title-dl">🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
-            <div style="font-size: 1.05rem; color: #a0aec0;">ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
-            <div class="congrats-leader-dl">🎉 {leaders_str} 🎉</div>
-            <div class="congrats-score-dl">👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
-            <div style="color: #FFD700; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px;">🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
-            
-            <!-- ยิงพลุกระดาษเฉลิมฉลอง (Canvas Confetti) ตระการตาทั่วบานหน้าต่าง -->
-            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-            <script>
-                function runDialogFireworks() {{
-                    if (window.confetti) {{
-                        var duration = 4 * 1000;
-                        var animationEnd = Date.now() + duration;
-                        var defaults = {{ startVelocity: 28, spread: 360, ticks: 60, zIndex: 999999 }};
-
-                        function randomInRange(min, max) {{
-                            return Math.random() * (max - min) + min;
-                        }}
-
-                        var interval = setInterval(function() {{
-                            var timeLeft = animationEnd - Date.now();
-
-                            if (timeLeft <= 0) {{
-                                return clearInterval(interval);
-                            }}
-
-                            var particleCount = 50 * (timeLeft / duration);
-                            // ยิงสลับจากจุดพิกัดซ้ายและขวาเพื่อสร้างพลุโค้งเข้าตรงกลางอย่างสวยงาม
-                            confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.15, 0.35), y: Math.random() - 0.2 }} }}));
-                            confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.65, 0.85), y: Math.random() - 0.2 }} }}));
-                        }}, 200);
-                    }} else {{
-                        setTimeout(runDialogFireworks, 100);
-                    }}
-                }}
-                runDialogFireworks();
-            </script>
-        </div>
-    """, unsafe_allow_html=True)
+<div class="congrats-dialog-container">
+<div class="congrats-title-dl">🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
+<div style="font-size: 1.05rem; color: #a0aec0;">ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
+<div class="congrats-leader-dl">🎉 {leaders_str} 🎉</div>
+<div class="congrats-score-dl">👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
+<div style="color: #FFD700; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px;">🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
+<!-- ยิงพลุกระดาษเฉลิมฉลอง (Canvas Confetti) ตระการตาทั่วบานหน้าต่าง -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+function runDialogFireworks() {{
+if (window.confetti) {{
+var duration = 4 * 1000;
+var animationEnd = Date.now() + duration;
+var defaults = {{ startVelocity: 28, spread: 360, ticks: 60, zIndex: 999999 }};
+function randomInRange(min, max) {{
+return Math.random() * (max - min) + min;
+}}
+var interval = setInterval(function() {{
+var timeLeft = animationEnd - Date.now();
+if (timeLeft <= 0) {{
+return clearInterval(interval);
+}}
+var particleCount = 50 * (timeLeft / duration);
+confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.15, 0.35), y: Math.random() - 0.2 }} }}));
+confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.65, 0.85), y: Math.random() - 0.2 }} }}));
+}}, 200);
+}} else {{
+setTimeout(runDialogFireworks, 100);
+}}
+}}
+runDialogFireworks();
+</script>
+</div>
+""", unsafe_allow_html=True)
     
     st.write("")
     if st.button("ลุยต่อกันเลย! ⚽🔥", key="dlg_congrats_continue_btn", use_container_width=True):
