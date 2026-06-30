@@ -161,13 +161,22 @@ def build_analyst_prompt(leaderboard_df, matches_df, predictions_df):
     else:
         recent_matches = "ไม่มีข้อมูลการแข่งขัน\n"
                 
-    # 3. ตารางการแข่งขัน 6 นัดถัดไปล่วงหน้า
+    # 3. ตารางการแข่งขันนัดถัดไปล่วงหน้า (กรองเฉพาะวันพรุ่งนี้เป็นต้นไป)
     upcoming_matches = ""
     if not matches_df.empty:
         upcoming = matches_df[matches_df['status'] == 'Upcoming'].copy()
         if not upcoming.empty:
             upcoming['match_dt'] = pd.to_datetime(upcoming['match_time'])
-            upcoming_sorted = upcoming.sort_values('match_dt', ascending=True).head(6)
+            
+            # กรองเฉพาะแมตช์ที่แข่งขันตั้งแต่วันพรุ่งนี้ (วันถัดไป) เป็นต้นไป เพื่อเลี่ยงคู่วันนี้ที่เตะอยู่
+            tomorrow_start = pd.Timestamp.now().normalize() + pd.Timedelta(days=1)
+            upcoming_future = upcoming[upcoming['match_dt'] >= tomorrow_start]
+            
+            # ป้องกันกรณีที่ตารางแข่งวันถัดไปหมด ให้ยอมใช้คู่อนาคตที่เหลืออยู่มาแทน
+            if upcoming_future.empty:
+                upcoming_future = upcoming
+                
+            upcoming_sorted = upcoming_future.sort_values('match_dt', ascending=True).head(6)
             for _, row in upcoming_sorted.iterrows():
                 upcoming_matches += f"คู่ {row['home_team']} พบ {row['away_team']} วันที่ {pd.to_datetime(row['match_time']).strftime('%d/%m %H:%M น.')}\n"
         else:
