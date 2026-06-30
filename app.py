@@ -139,6 +139,154 @@ FLAG_MAP = {
     'runner-up group f': '⚡', '3rd group a/b/c/d/f': '🎖️',
 }
 
+@st.dialog("🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆", width="middle")
+def show_congrats_dialog(leaders_str, max_score):
+    st.markdown("""
+        <style>
+        .congrats-dialog-container {
+            text-align: center;
+            font-family: 'Kanit', sans-serif;
+            background: radial-gradient(circle, #1a150b 0%, #0d0901 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1.5px solid #F5B82E;
+            box-shadow: 0 0 25px rgba(245, 184, 46, 0.35);
+        }
+        .congrats-title-dl {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFE9A2;
+            text-shadow: 0 0 10px rgba(245,184,46,0.6);
+            margin-bottom: 10px;
+        }
+        .congrats-leader-dl {
+            font-size: 2.2rem;
+            color: #FFFFFF;
+            font-weight: bold;
+            margin: 15px 0;
+            text-shadow: 0 0 15px rgba(255,255,255,0.6);
+        }
+        .congrats-score-dl {
+            font-size: 1.25rem;
+            color: #FFD700;
+            font-weight: bold;
+            background: rgba(245, 184, 46, 0.15);
+            padding: 8px 18px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 15px;
+            border: 1px solid rgba(245,184,46,0.3);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div class="congrats-dialog-container">
+            <div class="congrats-title-dl">🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆</div>
+            <div style="font-size: 1.05rem; color: #a0aec0;">ขอแสดงความยินดีกับผู้ที่ได้คะแนนนำลิ่วสูงสุดขณะนี้!</div>
+            <div class="congrats-leader-dl">🎉 {leaders_str} 🎉</div>
+            <div class="congrats-score-dl">👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
+            <div style="color: #FFD700; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px;">🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.write("")
+    if st.button("ลุยต่อกันเลย! ⚽🔥", key="dlg_congrats_continue_btn", use_container_width=True):
+        st.session_state.show_congrats_popup = False
+        st.balloons()
+        # ตรวจสอบทันทีว่าทายแชมป์หรือยัง
+        existing_pred = db.get_user_champion_prediction(st.session_state.username)
+        if not existing_pred:
+            st.session_state.show_champion_popup = True
+        st.rerun()
+
+
+@st.dialog("🔮 ทำนายผลแชมป์โลก 2026 🔮", width="middle")
+def show_champion_dialog(username):
+    st.markdown("""
+        <style>
+        .champ-dialog-container {
+            font-family: 'Kanit', sans-serif;
+            text-align: center;
+            background: radial-gradient(circle, #152219 0%, #070d0a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1.5px solid #4CAF50;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.35);
+        }
+        .champ-title-dl {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFE9A2;
+            text-shadow: 0 0 10px rgba(245,184,46,0.6);
+            margin-bottom: 10px;
+        }
+        .champ-desc-dl {
+            font-size: 0.95rem;
+            color: #a0aec0;
+            margin-bottom: 20px;
+            line-height: 1.45;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+        <div class="champ-dialog-container">
+            <div class="champ-title-dl">🔮 ทำนายผลแชมป์โลก 2026 🔮</div>
+            <div class="champ-desc-dl">
+                โอกาสแก้ตัวสำหรับผู้ร่วมสนุกที่ไม่ทันรอบแรก! <br>
+                เลือกทายผลประเทศที่จะพิชิตถ้วยฟุตบอลโลก 1 ทีมเท่านั้น และจะถูกเก็บข้อมูลไว้เป็นความลับจนกว่าจะถึงวันชิงชนะเลิศ ตัดสินใจให้ดี!
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    TEAMS_LIST = [
+        ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
+        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
+        ("Germany", "🇩🇪 เยอรมนี (Germany)"),
+        ("France", "🇫🇷 ฝรั่งเศส (France)"),
+        ("Spain", "🇪🇸 สเปน (Spain)"),
+        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
+        ("Netherlands", "🇳🇱 เนเธอร์แลนด์ (Netherlands)"),
+        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
+        ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
+        ("Uruguay", "🇺🇾 อุรุกวัย (Uruguay)"),
+        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
+        ("Japan", "🇯🇵 ญี่ปุ่น (Japan)"),
+        ("Senegal", "🇸🇳 เซเนกัล (Senegal)"),
+        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
+        ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
+        ("Norway", "🇳🇴 นอร์เวย์ (Norway)")
+    ]
+    
+    existing_pred = db.get_user_champion_prediction(username)
+    default_idx = 0
+    if existing_pred:
+        for idx, (code, _) in enumerate(TEAMS_LIST):
+            if code == existing_pred:
+                default_idx = idx
+                break
+                
+    team_codes = [t[0] for t in TEAMS_LIST]
+    team_labels = [t[1] for t in TEAMS_LIST]
+    
+    selected_label = st.selectbox("เลือกประเทศแชมป์โลกในใจคุณ:", team_labels, index=default_idx)
+    selected_code = team_codes[team_labels.index(selected_label)]
+    
+    st.write("")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("❌ ปิดหน้าต่างนี้", use_container_width=True):
+            st.session_state.show_champion_popup = False
+            st.rerun()
+    with col2:
+        if st.button("💾 บันทึกคำทำนาย 🏆", use_container_width=True, type="primary"):
+            db.save_champion_prediction(username, selected_code)
+            st.session_state.show_champion_popup = False
+            st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว! ตัดสินใจให้ดี!", icon="✅")
+            st.rerun()
+
+
 @st.cache_data(ttl=1800)
 def check_and_sync_scores():
     try:
@@ -1073,102 +1221,102 @@ elif selected_user != "เลือกชื่อของคุณ...":
     else:
         st.session_state.username = selected_user
         
-        # --- ระบบดึงธีมต้อนรับตามประเทศแชมป์โลกที่คุณอาร์ตทาย ---
+        # --- ระบบดึงธีมต้อนรับตามประเทศแชมป์โลกที่คุณอาร์ตทาย (ใส่กิมมิกธงชาติและ Gradient ธงชาติหลังกล่องต้อนรับคุณ Art) ---
         predicted_team = db.get_user_champion_prediction(st.session_state.username)
         TEAM_THEMES = {
             "Argentina": {
-                "background": "rgba(117, 170, 219, 0.22)",
-                "border": "1px solid rgba(117, 170, 219, 0.45)",
+                "background": "linear-gradient(135deg, rgba(117, 170, 219, 0.3) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(117, 170, 219, 0.3) 100%)",
+                "border": "1px solid rgba(117, 170, 219, 0.6)",
                 "emoji": "🇦🇷",
                 "text_color": "#FFFFFF"
             },
             "Brazil": {
-                "background": "rgba(0, 155, 58, 0.18)",
-                "border": "1px solid rgba(254, 223, 0, 0.4)",
+                "background": "linear-gradient(135deg, rgba(0, 155, 58, 0.25) 0%, rgba(254, 223, 0, 0.2) 50%, rgba(0, 155, 58, 0.25) 100%)",
+                "border": "1px solid rgba(254, 223, 0, 0.5)",
                 "emoji": "🇧🇷",
                 "text_color": "#FFFFFF"
             },
             "Germany": {
-                "background": "rgba(221, 0, 0, 0.15)",
-                "border": "1px solid rgba(255, 204, 0, 0.35)",
+                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(221, 0, 0, 0.25) 50%, rgba(255, 204, 0, 0.2) 100%)",
+                "border": "1px solid rgba(221, 0, 0, 0.45)",
                 "emoji": "🇩🇪",
                 "text_color": "#FFFFFF"
             },
             "France": {
-                "background": "rgba(0, 35, 149, 0.2)",
-                "border": "1px solid rgba(237, 41, 57, 0.4)",
+                "background": "linear-gradient(135deg, rgba(0, 35, 149, 0.25) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(237, 41, 57, 0.25) 100%)",
+                "border": "1px solid rgba(237, 41, 57, 0.5)",
                 "emoji": "🇫🇷",
                 "text_color": "#FFFFFF"
             },
             "Spain": {
-                "background": "rgba(198, 11, 30, 0.18)",
-                "border": "1px solid rgba(255, 196, 0, 0.4)",
+                "background": "linear-gradient(135deg, rgba(198, 11, 30, 0.25) 0%, rgba(255, 196, 0, 0.25) 50%, rgba(198, 11, 30, 0.25) 100%)",
+                "border": "1px solid rgba(255, 196, 0, 0.5)",
                 "emoji": "🇪🇸",
                 "text_color": "#FFFFFF"
             },
             "England": {
-                "background": "rgba(206, 17, 38, 0.15)",
-                "border": "1px solid rgba(206, 17, 38, 0.35)",
+                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(206, 17, 38, 0.2) 100%)",
+                "border": "1px solid rgba(206, 17, 38, 0.45)",
                 "emoji": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
                 "text_color": "#FFFFFF"
             },
             "Netherlands": {
-                "background": "rgba(255, 155, 0, 0.18)",
-                "border": "1px solid rgba(255, 155, 0, 0.35)",
+                "background": "linear-gradient(135deg, rgba(255, 155, 0, 0.25) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 155, 0, 0.25) 100%)",
+                "border": "1px solid rgba(255, 155, 0, 0.5)",
                 "emoji": "🇳🇱",
                 "text_color": "#FFFFFF"
             },
             "Portugal": {
-                "background": "rgba(4, 106, 56, 0.18)",
-                "border": "1px solid rgba(218, 41, 28, 0.35)",
+                "background": "linear-gradient(135deg, rgba(4, 106, 56, 0.25) 0%, rgba(218, 41, 28, 0.25) 100%)",
+                "border": "1px solid rgba(218, 41, 28, 0.5)",
                 "emoji": "🇵🇹",
                 "text_color": "#FFFFFF"
             },
             "Belgium": {
-                "background": "rgba(227, 6, 19, 0.15)",
-                "border": "1px solid rgba(255, 230, 0, 0.3)",
+                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(255, 230, 0, 0.2) 50%, rgba(227, 6, 19, 0.2) 100%)",
+                "border": "1px solid rgba(255, 230, 0, 0.45)",
                 "emoji": "🇧🇪",
                 "text_color": "#FFFFFF"
             },
             "Uruguay": {
-                "background": "rgba(91, 194, 231, 0.2)",
-                "border": "1px solid rgba(91, 194, 231, 0.4)",
+                "background": "linear-gradient(135deg, rgba(91, 194, 231, 0.25) 0%, rgba(255, 255, 255, 0.2) 100%)",
+                "border": "1px solid rgba(91, 194, 231, 0.5)",
                 "emoji": "🇺🇾",
                 "text_color": "#FFFFFF"
             },
             "Mexico": {
-                "background": "rgba(0, 104, 71, 0.18)",
-                "border": "1px solid rgba(0, 104, 71, 0.35)",
+                "background": "linear-gradient(135deg, rgba(0, 104, 71, 0.25) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(206, 17, 38, 0.25) 100%)",
+                "border": "1px solid rgba(0, 104, 71, 0.5)",
                 "emoji": "🇲🇽",
                 "text_color": "#FFFFFF"
             },
             "Japan": {
-                "background": "rgba(188, 0, 45, 0.15)",
-                "border": "1px solid rgba(188, 0, 45, 0.35)",
+                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(188, 0, 45, 0.25) 100%)",
+                "border": "1px solid rgba(188, 0, 45, 0.5)",
                 "emoji": "🇯🇵",
                 "text_color": "#FFFFFF"
             },
             "Senegal": {
-                "background": "rgba(0, 133, 63, 0.18)",
-                "border": "1px solid rgba(253, 239, 66, 0.35)",
+                "background": "linear-gradient(135deg, rgba(0, 133, 63, 0.2) 0%, rgba(253, 239, 66, 0.2) 50%, rgba(227, 6, 19, 0.2) 100%)",
+                "border": "1px solid rgba(253, 239, 66, 0.5)",
                 "emoji": "🇸🇳",
                 "text_color": "#FFFFFF"
             },
             "Morocco": {
-                "background": "rgba(193, 39, 45, 0.18)",
-                "border": "1px solid rgba(0, 98, 51, 0.35)",
+                "background": "linear-gradient(135deg, rgba(193, 39, 45, 0.25) 0%, rgba(0, 98, 51, 0.2) 100%)",
+                "border": "1px solid rgba(0, 98, 51, 0.5)",
                 "emoji": "🇲🇦",
                 "text_color": "#FFFFFF"
             },
             "Colombia": {
-                "background": "rgba(252, 209, 22, 0.15)",
-                "border": "1px solid rgba(252, 209, 22, 0.3)",
+                "background": "linear-gradient(135deg, rgba(252, 209, 22, 0.25) 0%, rgba(0, 56, 147, 0.2) 50%, rgba(206, 17, 38, 0.2) 100%)",
+                "border": "1px solid rgba(252, 209, 22, 0.5)",
                 "emoji": "🇨🇴",
                 "text_color": "#FFFFFF"
             },
             "Norway": {
-                "background": "rgba(0, 32, 91, 0.18)",
-                "border": "1px solid rgba(239, 43, 45, 0.35)",
+                "background": "linear-gradient(135deg, rgba(239, 43, 45, 0.2) 0%, rgba(0, 32, 91, 0.25) 100%)",
+                "border": "1px solid rgba(239, 43, 45, 0.5)",
                 "emoji": "🇳🇴",
                 "text_color": "#FFFFFF"
             }
@@ -1178,12 +1326,11 @@ elif selected_user != "เลือกชื่อของคุณ...":
         default_theme = {
             "background": "rgba(46, 125, 50, 0.22)",
             "border": "1px solid rgba(76, 175, 80, 0.38)",
-            "emoji": "",
+            "emoji": "⚽",
             "text_color": "#FFFFFF"
         }
         
         theme = TEAM_THEMES.get(predicted_team, default_theme)
-        emoji_span = f" <span>{theme['emoji']}</span>" if theme['emoji'] else ""
         
         st.sidebar.markdown(f"""
             <style>
@@ -1199,17 +1346,39 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 line-height: 1.4 !important;
                 margin-top: 10px !important;
                 margin-bottom: 15px !important;
+                position: relative !important;
+                overflow: hidden !important;
                 display: flex !important;
-                align-items: center !important;
-                gap: 8px !important;
+                flex-direction: column !important;
+                justify-content: center !important;
             }}
             .custom-welcome-card strong {{
                 font-weight: 700 !important;
                 color: #FFFFFF !important;
+                font-size: 16px !important;
+            }}
+            .welcome-card-flag-bg {{
+                position: absolute !important;
+                right: 8px !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                font-size: 40px !important;
+                opacity: 0.22 !important;
+                pointer-events: none !important;
+                user-select: none !important;
+                z-index: 1 !important;
+            }}
+            .welcome-card-text {{
+                position: relative !important;
+                z-index: 2 !important;
             }}
             </style>
             <div class="custom-welcome-card">
-                ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>{emoji_span}
+                <div class="welcome-card-text">
+                    ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>
+                    {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.7; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก</div>'}
+                </div>
+                <div class="welcome-card-flag-bg">{theme['emoji']}</div>
             </div>
         """, unsafe_allow_html=True)
         
@@ -1278,8 +1447,29 @@ if not st.session_state.authenticated:
 
 username = st.session_state.username
 
-# --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองผู้ได้คะแนนสูงสุดตรงกลางจอใหญ่เมื่อล็อกอินใหม่ ---
-if st.session_state.get('show_congrats_popup', False):
+# --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองผู้ได้คะแนนสูงสุดตรงกลางจอใหญ่เมื่อล็อกอินใหม่ (ทำงานเฉพาะสำหรับคุณ Art เท่านั้น) ---
+if st.session_state.get('show_congrats_popup', False) and st.session_state.get('username') == "Art":
+    try:
+        leaderboard_df = db.get_leaderboard()
+        if not leaderboard_df.empty:
+            max_score = leaderboard_df['total_score'].max()
+            if max_score > 0:
+                leaders_at_top = leaderboard_df[leaderboard_df['total_score'] == max_score]['username'].tolist()
+                leaders_str = " & ".join(leaders_at_top)
+                show_congrats_dialog(leaders_str, max_score)
+            else:
+                st.session_state.show_congrats_popup = False
+        else:
+            st.session_state.show_congrats_popup = False
+    except Exception as e:
+        st.sidebar.error(f"🚨 ดีบัคป๊อปอัปทำงานล้มเหลว: {e}")
+        st.session_state.show_congrats_popup = False
+elif st.session_state.get('show_congrats_popup', False):
+    # ปิดเงื่อนไขสำหรับผู้ใช้คนอื่นเพื่อความปลอดภัย 100%
+    st.session_state.show_congrats_popup = False
+
+# --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองแบบเก่า (ปิดการใช้งานเพื่อความปลอดภัย) ---
+if False:
     try:
         leaderboard_df = db.get_leaderboard()
         show_congrats_rendered = False
@@ -1636,19 +1826,24 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
         st.session_state.show_congrats_popup = False
 
 
-# --- ระบบป๊อบอัพทำนายผลแชมป์โลก 2026 ---
+# --- ระบบป๊อบอัพทำนายผลแชมป์โลก 2026 (ระบบใหม่เสถียร 100% สำหรับคุณ Art เท่านั้น) ---
 if 'show_champion_popup' not in st.session_state:
     st.session_state.show_champion_popup = False
 
-# ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน
-if not st.session_state.get('show_congrats_popup', False):
-    if 'auto_champion_check_done' not in st.session_state:
-        st.session_state.auto_champion_check_done = True
-        existing_pred = db.get_user_champion_prediction(username)
-        if not existing_pred:
-            st.session_state.show_champion_popup = True
+# ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน (เฉพาะคุณ Art เท่านั้น)
+if st.session_state.get('username') == "Art":
+    if not st.session_state.get('show_congrats_popup', False):
+        if 'auto_champion_check_done' not in st.session_state:
+            st.session_state.auto_champion_check_done = True
+            existing_pred = db.get_user_champion_prediction(username)
+            if not existing_pred:
+                st.session_state.show_champion_popup = True
 
-if st.session_state.get('show_champion_popup', False):
+    if st.session_state.get('show_champion_popup', False):
+        show_champion_dialog(username)
+
+# --- ระบบป๊อบอัพทำนายผลแชมป์โลกแบบเก่า (ปิดการใช้งานเพื่อความปลอดภัย) ---
+if False:
     existing_pred = db.get_user_champion_prediction(username)
     
     # 1. กล่อง Input และปุ่มส่งข้อมูล Streamlit แบบล่องหนแต่อยู่ใน DOM (ป้องกันไม่ให้เบราว์เซอร์หรือสตรีมลิตบล็อกอีเวนต์ส่งค่า)
