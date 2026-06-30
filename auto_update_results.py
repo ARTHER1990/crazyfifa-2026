@@ -14,23 +14,34 @@ sys.path.append(BASE_DIR)
 import database as db
 import ai_analyst as ai
 
-def get_finished_match_info(home_team, away_team, match_time, api_key):
+def get_finished_match_info(home_team, away_team, match_time, api_key, m_id=None):
     """
     ใช้ Gemini API พร้อม Search Grounding ค้นหาผลการแข่งขันจากเว็บอย่างเป็นทางการ
     """
+    is_knockout = False
+    match_type_desc = "Group Stage match"
+    if m_id is not None:
+        try:
+            if int(m_id) >= 68:
+                is_knockout = True
+                match_type_desc = "KNOCKOUT match (Round of 16, Quarter-finals, Semi-finals, or Final)"
+        except ValueError:
+            pass
+
     prompt = f"""
     Please search the official web or reliable sources to find the final score and scorers for the 2026 FIFA World Cup match:
     Home Team: {home_team}
     Away Team: {away_team}
     Match Scheduled Time (UTC+7): {match_time}
+    Match Type: {match_type_desc} (Match ID: {m_id})
 
     If the match is finished, please return a JSON object with the following fields:
     - status: "Finished"
-    - home_score: (integer, number of goals scored by {home_team})
-    - away_score: (integer, number of goals scored by {away_team})
+    - home_score: (integer, number of goals scored by {home_team} at the end of normal/extra time)
+    - away_score: (integer, number of goals scored by {away_team} at the end of normal/extra time)
     - scorers: (string, list of goal scorers with minutes in format: "Scorer Home (minute) | Scorer Away (minute)". Example: "Daizen Maeda (56) | Anthony Elanga (62)". If no goal or no data, use empty string "" or draw line "|")
-    - winner: (string, the name of the winning team, or "Draw" if the score is tied, or null if not finished)
-    - winner_qualify: (string, the exact name of the team that qualified to the next round / won the match including extra time or penalty shootout, e.g., "Germany" or "Brazil". Must be one of the exact team names: "{home_team}" or "{away_team}". If the match is not finished, or it is a group stage match, use empty string "")
+    - winner: (string, the name of the winning team at 90/120 mins, or "Draw" if the score is tied, or null if not finished)
+    - winner_qualify: (string, the exact name of the team that qualified to the next round / won the match including extra time or penalty shootout, e.g., "Germany" or "Brazil". For KNOCKOUT matches, if the score is a draw (e.g., 1-1, 2-2), you MUST search carefully to find which team advanced to the next round via penalty shootout or extra time. Must be one of the exact team names: "{home_team}" or "{away_team}". If the match is not finished, or it is a group stage match, use empty string "")
 
     If the match is not finished yet, is still playing, or hasn't started, please return:
     - status: "Upcoming"
@@ -186,7 +197,7 @@ def main():
 
         print(f"\n📡 ตรวจสอบผล Match ID {m_id}: {home_team} vs {away_team} (เตะเมื่อ {match_time_str})...")
         
-        result, model_used = get_finished_match_info(home_team, away_team, match_time_str, api_key)
+        result, model_used = get_finished_match_info(home_team, away_team, match_time_str, api_key, m_id)
         if not result:
             print(f"❌ ไม่สามารถดึงผลคะแนนสำหรับคู่ {home_team} vs {away_team} ได้")
             continue
