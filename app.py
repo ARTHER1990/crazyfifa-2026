@@ -1566,12 +1566,11 @@ if st.session_state.authenticated:
                                 if p_qualify:
                                     # แสดงธง/ชื่อทีมที่เลือกเข้ารอบ
                                     pred_q_txt = f" <span style='opacity: 0.8;'>🗳️ เลือก {get_team_display(p_qualify)}</span>"
-                                if p_qualify != "" and w_qualify != "" and w_qualify.lower() != "nan":
-                                    if p_qualify.lower() == w_qualify.lower():
+                                if w_qualify != "" and w_qualify.lower() != "nan":
+                                    if p_qualify != "" and p_qualify.lower() == w_qualify.lower():
                                         bonus_txt = " <b style='color: #ffffff;'>+ 🌟 โบนัส 1 แต้ม</b>"
-                                        # ถ้าได้แต่โบนัสแต่ทายสกอร์ผิดหมดเลย ให้ปรับขอบและการ์ดให้น่าดึงดูดขึ้น
-                                        if pt_txt == "❌ 0 แต้ม":
-                                            hl_style = "background: rgba(255, 183, 3, 0.08); border: 1px solid rgba(255, 183, 3, 0.25); color: #ffb703;"
+                                    else:
+                                        bonus_txt = " <span style='color: #ffffff; opacity: 0.6;'>+ ❌ โบนัส 0 แต้ม</span>"
                             
                             preds_html_list.append(
                                 f"<div style='font-size:0.8rem; padding:6px 10px; border-radius:6px; margin-bottom:5px; {hl_style}'>"
