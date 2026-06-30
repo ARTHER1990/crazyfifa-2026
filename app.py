@@ -141,6 +141,9 @@ FLAG_MAP = {
 
 @st.dialog("🏆 ทำเนียบผู้นำคะแนนสูงสุด 🏆", width="middle")
 def show_congrats_dialog(leaders_str, max_score):
+    # ปล่อยลูกโป่งสีสันสดใสหรูหราลอยขึ้นมาทันทีที่เปิดป๊อปอัป
+    st.balloons()
+    
     st.markdown("""
         <style>
         .congrats-dialog-container {
@@ -151,6 +154,8 @@ def show_congrats_dialog(leaders_str, max_score):
             padding: 20px;
             border: 1.5px solid #F5B82E;
             box-shadow: 0 0 25px rgba(245, 184, 46, 0.35);
+            position: relative;
+            overflow: hidden;
         }
         .congrats-title-dl {
             font-size: 1.5rem;
@@ -187,6 +192,38 @@ def show_congrats_dialog(leaders_str, max_score):
             <div class="congrats-leader-dl">🎉 {leaders_str} 🎉</div>
             <div class="congrats-score-dl">👑 นำอันดับหนึ่งด้วยคะแนนสะสม: {int(max_score)} แต้ม 👑</div>
             <div style="color: #FFD700; font-size: 0.95rem; font-weight: bold; margin-bottom: 20px;">🔥 ใครจะเป็นผู้มาโค่นบัลลังก์นี้ได้สำเร็จ? 🔥</div>
+            
+            <!-- ยิงพลุกระดาษเฉลิมฉลอง (Canvas Confetti) ตระการตาทั่วบานหน้าต่าง -->
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+            <script>
+                function runDialogFireworks() {{
+                    if (window.confetti) {{
+                        var duration = 4 * 1000;
+                        var animationEnd = Date.now() + duration;
+                        var defaults = {{ startVelocity: 28, spread: 360, ticks: 60, zIndex: 999999 }};
+
+                        function randomInRange(min, max) {{
+                            return Math.random() * (max - min) + min;
+                        }}
+
+                        var interval = setInterval(function() {{
+                            var timeLeft = animationEnd - Date.now();
+
+                            if (timeLeft <= 0) {{
+                                return clearInterval(interval);
+                            }}
+
+                            var particleCount = 50 * (timeLeft / duration);
+                            // ยิงสลับจากจุดพิกัดซ้ายและขวาเพื่อสร้างพลุโค้งเข้าตรงกลางอย่างสวยงาม
+                            confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.15, 0.35), y: Math.random() - 0.2 }} }}));
+                            confetti(Object.assign({{}}, defaults, {{ particleCount, origin: {{ x: randomInRange(0.65, 0.85), y: Math.random() - 0.2 }} }}));
+                        }}, 200);
+                    }} else {{
+                        setTimeout(runDialogFireworks, 100);
+                    }}
+                }}
+                runDialogFireworks();
+            </script>
         </div>
     """, unsafe_allow_html=True)
     
@@ -241,6 +278,7 @@ def show_champion_dialog(username):
     """, unsafe_allow_html=True)
     
     TEAMS_LIST = [
+        ("", "🏳️ กรุณาเลือกประเทศที่ต้องการทำนาย..."),
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
         ("Brazil", "🇧🇷 บราซิล (Brazil)"),
         ("Germany", "🇩🇪 เยอรมนี (Germany)"),
@@ -281,10 +319,13 @@ def show_champion_dialog(username):
             st.rerun()
     with col2:
         if st.button("💾 บันทึกคำทำนาย 🏆", use_container_width=True, type="primary"):
-            db.save_champion_prediction(username, selected_code)
-            st.session_state.show_champion_popup = False
-            st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว! ตัดสินใจให้ดี!", icon="✅")
-            st.rerun()
+            if selected_code == "":
+                st.error("⚠️ กรุณาเลือกประเทศที่ต้องการทำนายก่อนกดบันทึกนะครับ!")
+            else:
+                db.save_champion_prediction(username, selected_code)
+                st.session_state.show_champion_popup = False
+                st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว! ตัดสินใจให้ดี!", icon="✅")
+                st.rerun()
 
 
 @st.cache_data(ttl=1800)
@@ -1418,26 +1459,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
                     del st.session_state[key]
             st.rerun()
 
-        # ปุ่มดีบัคสำหรับทดสอบการเด้งป๊อปอัปโดยเฉพาะสำหรับคุณ Art เพื่อให้กดทดสอบได้กี่รอบก็ได้แบบลื่นๆ ไร้ขีดจำกัด
-        if st.session_state.username == "Art":
-            st.sidebar.markdown("""
-                <div style="margin-top: 15px; margin-bottom: 5px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 10px;">
-                    <span style="font-size: 13px; color: #FFF1C5; font-family: Kanit, sans-serif; font-weight: bold; letter-spacing: 0.5px;">🛠️ โหมดทดสอบป๊อปอัป (Art Only)</span>
-                </div>
-            """, unsafe_allow_html=True)
-            if st.sidebar.button("🔔 รีเซ็ตและเปิด Congrats Popup", key="test_congrats_btn", use_container_width=True):
-                st.session_state.show_congrats_popup = True
-                for k in ['congrats_start_time', 'auto_champion_check_done', 'show_champion_popup', 'popup_shown_in_session']:
-                    if k in st.session_state:
-                        del st.session_state[k]
-                st.rerun()
-            if st.sidebar.button("🏆 เปิด Champion Prediction Popup", key="test_champ_btn", use_container_width=True):
-                st.session_state.show_champion_popup = True
-                st.session_state.show_congrats_popup = False
-                for k in ['congrats_start_time', 'auto_champion_check_done']:
-                    if k in st.session_state:
-                        del st.session_state[k]
-                st.rerun()
+        # ลบแถบทดสอบป๊อปอัป (Art Only) ออกตามความต้องการของคุณอาร์ต เพื่อให้แถบ Sidebar สวยงาม สะอาด และเป็นสากลสูงสุดครับ
 else:
     st.info("👈 กรุณาเลือกชื่อเพื่อเริ่มเล่นครับ")
     st.stop()
