@@ -7,7 +7,8 @@
     "home_score":"2",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Julián Quiñones (9), Raúl Jiménez (67)"
+    "scorers":"Julián Quiñones (9), Raúl Jiménez (67)",
+    "winner_qualify":""
   },
   {
     "id":"2",
@@ -17,7 +18,8 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Hwang In-beom (66), Oh Hyeon-gyu (80)"
+    "scorers":"Hwang In-beom (66), Oh Hyeon-gyu (80)",
+    "winner_qualify":""
   },
   {
     "id":"3",
@@ -27,7 +29,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Jovo Lukić (21), Cyle Larin (78)"
+    "scorers":"Jovo Lukić (21), Cyle Larin (78)",
+    "winner_qualify":""
   },
   {
     "id":"4",
@@ -37,7 +40,8 @@
     "home_score":"4",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Damián Bobadilla (7 OG), Folarin Balogun (31, 45+5), Mauricio (73), Gio Reyna (90+8)"
+    "scorers":"Damián Bobadilla (7 OG), Folarin Balogun (31, 45+5), Mauricio (73), Gio Reyna (90+8)",
+    "winner_qualify":""
   },
   {
     "id":"5",
@@ -47,7 +51,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Miro Muheim (90+4 OG) | Breel Embolo (17)"
+    "scorers":"Miro Muheim (90+4 OG) | Breel Embolo (17)",
+    "winner_qualify":""
   },
   {
     "id":"6",
@@ -57,7 +62,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Vinícius Júnior (32) | Ismael Saibari (21)"
+    "scorers":"Vinícius Júnior (32) | Ismael Saibari (21)",
+    "winner_qualify":""
   },
   {
     "id":"7",
@@ -67,7 +73,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"John McGinn (29)"
+    "scorers":"John McGinn (29)",
+    "winner_qualify":""
   },
   {
     "id":"8",
@@ -77,7 +84,8 @@
     "home_score":"2",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Nestory Irankunda (27) | Connor Metcalfe (75)"
+    "scorers":"Nestory Irankunda (27) | Connor Metcalfe (75)",
+    "winner_qualify":""
   },
   {
     "id":"9",
@@ -87,7 +95,8 @@
     "home_score":"7",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+5), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78), Kai Havertz (88) | Livano Comenencia (21)"
+    "scorers":"Felix Nmecha (6), Nico Schlotterbeck (38), Kai Havertz (45+5), Jamal Musiala (47), Nathaniel Brown (68), Deniz Undav (78), Kai Havertz (88) | Livano Comenencia (21)",
+    "winner_qualify":""
   },
   {
     "id":"10",
@@ -97,7 +106,8 @@
     "home_score":"2",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Virgil van Dijk (51) | Keito Nakamura (57) | Crysencio Summerville (64) | Daichi Kamada (89)"
+    "scorers":"Virgil van Dijk (51) | Keito Nakamura (57) | Crysencio Summerville (64) | Daichi Kamada (89)",
+    "winner_qualify":""
   },
   {
     "id":"11",
@@ -107,7 +117,8 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Amad Diallo (90)"
+    "scorers":"Amad Diallo (90)",
+    "winner_qualify":""
   },
   {
     "id":"12",
@@ -117,7 +128,8 @@
     "home_score":"5",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Yasin Ayari (7) | Omar Rekik (43), Alexander Isak (30), Viktor Gyokeres (59), Mattias Svanberg (84), Yasin Ayari (90+6)"
+    "scorers":"Yasin Ayari (7) | Omar Rekik (43), Alexander Isak (30), Viktor Gyokeres (59), Mattias Svanberg (84), Yasin Ayari (90+6)",
+    "winner_qualify":""
   },
   {
     "id":"13",
@@ -127,7 +139,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"14",
@@ -137,7 +150,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Mohamed Hany (66 OG) | Emam Ashour (19)"
+    "scorers":"Mohamed Hany (66 OG) | Emam Ashour (19)",
+    "winner_qualify":""
   },
   {
     "id":"15",
@@ -147,7 +161,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Abdulelah Al-Amri (41) | Maxi Araujo (80)"
+    "scorers":"Abdulelah Al-Amri (41) | Maxi Araujo (80)",
+    "winner_qualify":""
   },
   {
     "id":"16",
@@ -157,7 +172,8 @@
     "home_score":"2",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Ramin Rezaeian (32), Mohammad Mohebi (64) | Elijah Just (7), Elijah Just (54)"
+    "scorers":"Ramin Rezaeian (32), Mohammad Mohebi (64) | Elijah Just (7), Elijah Just (54)",
+    "winner_qualify":""
   },
   {
     "id":"17",
@@ -167,7 +183,8 @@
     "home_score":"3",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Kylian Mbappé (66, 90+6), Bradley Barcola (82) | Ibrahim Mbaye (90+5)"
+    "scorers":"Kylian Mbappé (66, 90+6), Bradley Barcola (82) | Ibrahim Mbaye (90+5)",
+    "winner_qualify":""
   },
   {
     "id":"18",
@@ -177,7 +194,8 @@
     "home_score":"1",
     "away_score":"4",
     "status":"Finished",
-    "scorers":"Aymen Hussein (39) | Erling Haaland (29, 43), Leo Østigård (76), Aymen Hussein (90+6 OG)"
+    "scorers":"Aymen Hussein (39) | Erling Haaland (29, 43), Leo Østigård (76), Aymen Hussein (90+6 OG)",
+    "winner_qualify":""
   },
   {
     "id":"19",
@@ -187,7 +205,8 @@
     "home_score":"3",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Lionel Messi (17, 60, 76)"
+    "scorers":"Lionel Messi (17, 60, 76)",
+    "winner_qualify":""
   },
   {
     "id":"20",
@@ -197,7 +216,8 @@
     "home_score":"3",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Romano Schmid (20), Yazan Al-Arab (77 OG), Marko Arnautović (90+11 pen) | Ali Olwan (50)"
+    "scorers":"Romano Schmid (20), Yazan Al-Arab (77 OG), Marko Arnautović (90+11 pen) | Ali Olwan (50)",
+    "winner_qualify":""
   },
   {
     "id":"21",
@@ -207,7 +227,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"João Neves (12) | Yoane Wissa (45+2)"
+    "scorers":"João Neves (12) | Yoane Wissa (45+2)",
+    "winner_qualify":""
   },
   {
     "id":"22",
@@ -217,7 +238,8 @@
     "home_score":"4",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Harry Kane (12 pen, 42), Jude Bellingham (47), Marcus Rashford (85) | Martin Baturina (36), Petar Musa (45+5)"
+    "scorers":"Harry Kane (12 pen, 42), Jude Bellingham (47), Marcus Rashford (85) | Martin Baturina (36), Petar Musa (45+5)",
+    "winner_qualify":""
   },
   {
     "id":"23",
@@ -227,7 +249,8 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Caleb Yirenkyi (90+5)"
+    "scorers":"Caleb Yirenkyi (90+5)",
+    "winner_qualify":""
   },
   {
     "id":"24",
@@ -237,7 +260,8 @@
     "home_score":"1",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Abbosbek Fayzullaev (60) | Daniel Muñoz (40), Luis Díaz (65), Jaminton Campaz (90+9)"
+    "scorers":"Abbosbek Fayzullaev (60) | Daniel Muñoz (40), Luis Díaz (65), Jaminton Campaz (90+9)",
+    "winner_qualify":""
   },
   {
     "id":"25",
@@ -247,7 +271,8 @@
     "home_score":"2",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Burgess11' (o.g.)Freeman43'"
+    "scorers":"Burgess11' (o.g.)Freeman43'",
+    "winner_qualify":""
   },
   {
     "id":"26",
@@ -257,7 +282,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Saibari2'"
+    "scorers":"Saibari2'",
+    "winner_qualify":""
   },
   {
     "id":"27",
@@ -267,7 +293,8 @@
     "home_score":"3",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Cunha23',36'Vinícius45+3'"
+    "scorers":"Cunha23',36'Vinícius45+3'",
+    "winner_qualify":""
   },
   {
     "id":"28",
@@ -277,7 +304,8 @@
     "home_score":"5",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Brobbey5',17'Gakpo47',54'Summerville89' | Elanga59'"
+    "scorers":"Brobbey5',17'Gakpo47',54'Summerville89' | Elanga59'",
+    "winner_qualify":""
   },
   {
     "id":"29",
@@ -287,7 +315,8 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Deniz Undav (68, 90+4) | Franck Kessié (30)"
+    "scorers":"Deniz Undav (68, 90+4) | Franck Kessié (30)",
+    "winner_qualify":""
   },
   {
     "id":"30",
@@ -297,7 +326,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"31",
@@ -307,7 +337,8 @@
     "home_score":"0",
     "away_score":"4",
     "status":"Finished",
-    "scorers":"Kamada4'Ueda31',83'J. Itō69'"
+    "scorers":"Kamada4'Ueda31',83'J. Itō69'",
+    "winner_qualify":""
   },
   {
     "id":"32",
@@ -317,7 +348,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Sadílek 6' | Mokoena 83' (pen.)"
+    "scorers":"Sadílek 6' | Mokoena 83' (pen.)",
+    "winner_qualify":""
   },
   {
     "id":"33",
@@ -327,7 +359,8 @@
     "home_score":"4",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Manzambi 74', 90', Vargas 84', Xhaka 90+7' (pen.) | Mahmić 90+3'"
+    "scorers":"Manzambi 74', 90', Vargas 84', Xhaka 90+7' (pen.) | Mahmić 90+3'",
+    "winner_qualify":""
   },
   {
     "id":"34",
@@ -337,7 +370,8 @@
     "home_score":"6",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Larin 16', J. David 29', 45+3', 90+2', Saliba 64', Manai 75' (o.g.) |"
+    "scorers":"Larin 16', J. David 29', 45+3', 90+2', Saliba 64', Manai 75' (o.g.) |",
+    "winner_qualify":""
   },
   {
     "id":"35",
@@ -347,7 +381,8 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Romo 50' |"
+    "scorers":"Romo 50' |",
+    "winner_qualify":""
   },
   {
     "id":"36",
@@ -357,7 +392,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Galarza2'"
+    "scorers":"Galarza2'",
+    "winner_qualify":""
   },
   {
     "id":"37",
@@ -367,7 +403,8 @@
     "home_score":"4",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Yamal10'Oyarzabal21',24'Al-Tambakti49' (o.g.)"
+    "scorers":"Yamal10'Oyarzabal21',24'Al-Tambakti49' (o.g.)",
+    "winner_qualify":""
   },
   {
     "id":"38",
@@ -377,7 +414,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"39",
@@ -387,7 +425,8 @@
     "home_score":"2",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"M. Araújo44'Canobbio45+6' | K. Pina21'Varela61'"
+    "scorers":"M. Araújo44'Canobbio45+6' | K. Pina21'Varela61'",
+    "winner_qualify":""
   },
   {
     "id":"40",
@@ -397,7 +436,8 @@
     "home_score":"1",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Surman15' | Ziko58'Salah67'Trézéguet82'"
+    "scorers":"Surman15' | Ziko58'Salah67'Trézéguet82'",
+    "winner_qualify":""
   },
   {
     "id":"41",
@@ -407,7 +447,8 @@
     "home_score":"2",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Messi38',90+5'"
+    "scorers":"Messi38',90+5'",
+    "winner_qualify":""
   },
   {
     "id":"42",
@@ -417,7 +458,8 @@
     "home_score":"3",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Mbappé14',54'Dembélé66'"
+    "scorers":"Mbappé14',54'Dembélé66'",
+    "winner_qualify":""
   },
   {
     "id":"43",
@@ -427,7 +469,8 @@
     "home_score":"3",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Holmgren Pedersen43'Haaland48',58' | I. Sarr53',90+3'"
+    "scorers":"Holmgren Pedersen43'Haaland48',58' | I. Sarr53',90+3'",
+    "winner_qualify":""
   },
   {
     "id":"44",
@@ -437,7 +480,8 @@
     "home_score":"1",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Al-Rashdan36' | Benbouali69'Gouiri82'"
+    "scorers":"Al-Rashdan36' | Benbouali69'Gouiri82'",
+    "winner_qualify":""
   },
   {
     "id":"45",
@@ -447,7 +491,8 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Rubén Vargas (46), Johan Manzambi (57) | Promise David (76)"
+    "scorers":"Rubén Vargas (46), Johan Manzambi (57) | Promise David (76)",
+    "winner_qualify":""
   },
   {
     "id":"46",
@@ -457,7 +502,8 @@
     "home_score":"3",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Kerim Alajbegović (29), Ermin Mahmić (80), Hassan Al-Haydos (42) | Salah Zakaria (34 og)"
+    "scorers":"Kerim Alajbegović (29), Ermin Mahmić (80), Hassan Al-Haydos (42) | Salah Zakaria (34 og)",
+    "winner_qualify":""
   },
   {
     "id":"47",
@@ -467,7 +513,8 @@
     "home_score":"0",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Gabriel Martinelli (12), Rodrygo (34), Raphinha (78)"
+    "scorers":"Gabriel Martinelli (12), Rodrygo (34), Raphinha (78)",
+    "winner_qualify":""
   },
   {
     "id":"48",
@@ -477,7 +524,8 @@
     "home_score":"4",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Youssef En-Nesyri (18, 45), Achraf Hakimi (32), Amine Harit (67) | Frantzdy Pierrot (10, 89)"
+    "scorers":"Youssef En-Nesyri (18, 45), Achraf Hakimi (32), Amine Harit (67) | Frantzdy Pierrot (10, 89)",
+    "winner_qualify":""
   },
   {
     "id":"49",
@@ -487,7 +535,8 @@
     "home_score":"0",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Mateo Chávez (55), Julián Quiñones (61), Álvaro Fidalgo (90+4)"
+    "scorers":"Mateo Chávez (55), Julián Quiñones (61), Álvaro Fidalgo (90+4)",
+    "winner_qualify":""
   },
   {
     "id":"50",
@@ -497,7 +546,8 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Thapelo Maseko (63)"
+    "scorers":"Thapelo Maseko (63)",
+    "winner_qualify":""
   },
   {
     "id":"51",
@@ -507,7 +557,8 @@
     "home_score":"0",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"| Nicolas Pépé (7, 64)"
+    "scorers":"| Nicolas Pépé (7, 64)",
+    "winner_qualify":""
   },
   {
     "id":"52",
@@ -517,7 +568,8 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Angulo (9), Plata (77) | Sané (2)"
+    "scorers":"Angulo (9), Plata (77) | Sané (2)",
+    "winner_qualify":""
   },
   {
     "id":"53",
@@ -527,7 +579,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Daizen (56) | Elanga (62)"
+    "scorers":"Daizen (56) | Elanga (62)",
+    "winner_qualify":""
   },
   {
     "id":"54",
@@ -537,7 +590,8 @@
     "home_score":"1",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Mastouri (54) | Skhiri (3 og), Brobbey (7), van Hecke (62)"
+    "scorers":"Mastouri (54) | Skhiri (3 og), Brobbey (7), van Hecke (62)",
+    "winner_qualify":""
   },
   {
     "id":"55",
@@ -547,7 +601,8 @@
     "home_score":"3",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Güler10'Yılmaz31'Ayhan90+8' | Trusty3'Berhalter49'"
+    "scorers":"Güler10'Yılmaz31'Ayhan90+8' | Trusty3'Berhalter49'",
+    "winner_qualify":""
   },
   {
     "id":"56",
@@ -557,7 +612,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"57",
@@ -567,7 +623,8 @@
     "home_score":"5",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Abduvohid Nematov (11 og), Cristiano Ronaldo (15, 65), Nuno Mendes (32), Rafael Leão (88)"
+    "scorers":"Abduvohid Nematov (11 og), Cristiano Ronaldo (15, 65), Nuno Mendes (32), Rafael Leão (88)",
+    "winner_qualify":""
   },
   {
     "id":"58",
@@ -577,7 +634,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"59",
@@ -587,7 +645,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Ante Budimir (74)"
+    "scorers":"Ante Budimir (74)",
+    "winner_qualify":""
   },
   {
     "id":"60",
@@ -597,7 +656,8 @@
     "home_score":"1",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Daniel Muñoz (76)"
+    "scorers":"Daniel Muñoz (76)",
+    "winner_qualify":""
   },
   {
     "id":"61",
@@ -607,7 +667,8 @@
     "home_score":"1",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Al-Taamari55' | Lo Celso19'La. Martínez31' (pen.)Messi80'"
+    "scorers":"Al-Taamari55' | Lo Celso19'La. Martínez31' (pen.)Messi80'",
+    "winner_qualify":""
   },
   {
     "id":"62",
@@ -617,7 +678,8 @@
     "home_score":"3",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Rafik Belghali (45) | Marko Arnautovic (28), Marcel Sabitzer (55), Riyad Mahrez (60), Riyad Mahrez (90+2), Sasa Kalajdzic (90+5)"
+    "scorers":"Rafik Belghali (45) | Marko Arnautovic (28), Marcel Sabitzer (55), Riyad Mahrez (60), Riyad Mahrez (90+2), Sasa Kalajdzic (90+5)",
+    "winner_qualify":""
   },
   {
     "id":"63",
@@ -627,7 +689,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"64",
@@ -637,7 +700,8 @@
     "home_score":"3",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Congo DR 3 - 1 Uzbekistan"
+    "scorers":"Congo DR 3 - 1 Uzbekistan",
+    "winner_qualify":""
   },
   {
     "id":"65",
@@ -647,7 +711,8 @@
     "home_score":"0",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Bellingham62'Kane67'"
+    "scorers":"Bellingham62'Kane67'",
+    "winner_qualify":""
   },
   {
     "id":"66",
@@ -657,7 +722,8 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"P. Sučić31'Vlašić83' | Luckassen73'"
+    "scorers":"P. Sučić31'Vlašić83' | Luckassen73'",
+    "winner_qualify":""
   },
   {
     "id":"67",
@@ -667,7 +733,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Canada 1 - 0"
+    "scorers":"Canada 1 - 0",
+    "winner_qualify":""
   },
   {
     "id":"71",
@@ -677,7 +744,8 @@
     "home_score":"1",
     "away_score":"4",
     "status":"Finished",
-    "scorers":"Aasgaard21' | Dembélé7',20',32'Doué90+4'"
+    "scorers":"Aasgaard21' | Dembélé7',20',32'Doué90+4'",
+    "winner_qualify":""
   },
   {
     "id":"72",
@@ -687,7 +755,8 @@
     "home_score":"5",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Diarra4'I. Sarr56'P. Gueye59',71'I. Ndiaye82'"
+    "scorers":"Diarra4'I. Sarr56'P. Gueye59',71'I. Ndiaye82'",
+    "winner_qualify":""
   },
   {
     "id":"73",
@@ -697,7 +766,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"0 - 0"
+    "scorers":"0 - 0",
+    "winner_qualify":""
   },
   {
     "id":"74",
@@ -707,7 +777,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Álex Baena 42'"
+    "scorers":"Álex Baena 42'",
+    "winner_qualify":""
   },
   {
     "id":"75",
@@ -717,7 +788,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Mahmoud Saber 5' | Ramin Rezaeian 14'"
+    "scorers":"Mahmoud Saber 5' | Ramin Rezaeian 14'",
+    "winner_qualify":""
   },
   {
     "id":"76",
@@ -727,7 +799,8 @@
     "home_score":"1",
     "away_score":"5",
     "status":"Finished",
-    "scorers":"Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'"
+    "scorers":"Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'",
+    "winner_qualify":""
   },
   {
     "id":"78",
@@ -737,7 +810,8 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"77",
@@ -747,7 +821,8 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"79",
@@ -757,7 +832,8 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"80",
@@ -767,7 +843,8 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"82",
@@ -777,7 +854,8 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
   },
   {
     "id":"81",
@@ -787,6 +865,40 @@
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
-    "scorers":""
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"68",
+    "home_team":"Germany",
+    "away_team":"Paraguay",
+    "match_time":"2026-06-30 03:30:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Havertz54' | Enciso42'",
+    "winner_qualify":""
+  },
+  {
+    "id":"69",
+    "home_team":"Netherlands",
+    "away_team":"Morocco",
+    "match_time":"2026-06-30 07:50:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"70",
+    "home_team":"Brazil",
+    "away_team":"Japan",
+    "match_time":"2026-06-30 00:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Casemiro56'Martinelli90+5' | Sano29'",
+    "winner_qualify":""
   }
 ]

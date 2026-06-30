@@ -1757,6 +1757,16 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                     font-size: 0.95rem;
                     line-height: 1.6;
                 }}
+                .big-match {{
+                    background: rgba(255, 94, 54, 0.12) !important;
+                    color: #FF5E36 !important;
+                    border: 1px solid rgba(255, 94, 54, 0.25) !important;
+                    padding: 2px 8px !important;
+                    border-radius: 6px !important;
+                    font-weight: bold !important;
+                    display: inline-block !important;
+                    margin: 2px 0 !important;
+                }}
                 </style>
                 <div class="peter-ai-box">
                     <div class="peter-ai-header">
@@ -1800,23 +1810,42 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             ).replace(
                 "Perfect Prediction (เพอร์เฟกต์ พรีดิกชัน: การทายผลสกอร์ได้อย่างถูกต้องแม่นยำร้อยเปอร์เซ็นต์)",
                 "<span style='color: #FFD700; font-weight: bold;'>Perfect Prediction (เพอร์เฟกต์ พรีดิกชัน: การทายผลสกอร์ได้อย่างถูกต้องแม่นยำร้อยเปอร์เซ็นต์)</span>"
+            ).replace(
+                "โหมโรงศึกเดือดสะท้านตารางคืนนี้",
+                "โหมโรงศึกเดือดสะท้านตารางวันถัดไป"
+            ).replace(
+                "โหมโรงศึกเดือดสะท้านตารางล่วงหน้า",
+                "โหมโรงศึกเดือดสะท้านตารางวันถัดไป"
+            ).replace(
+                "ศึกเปลี่ยนชีวิตประจำค่ำคืน",
+                "ศึกเปลี่ยนชีวิตล่วงหน้า"
             )
 
             # แทรกขีดคั่นสวยงามแบบอัตโนมัติหากพบหัวข้อย่อยแบบเดิมเพื่อแบ่งสัดส่วนบอร์ดไม่ให้อ่านยาก
-            for old_section in ["ตำแหน่ง Daily MVP", "สถานการณ์บน Leaderboard", "คืนนี้เตรียมตัวรับแรงกระแทก", "แมตช์ต่อไปที่กำลังจะมาถึง"]:
+            for old_section in ["ตำแหน่ง Daily MVP", "สถานการณ์บน Leaderboard", "คืนนี้เตรียมตัวรับแรงกระแทก", "แมตช์ต่อไปที่กำลังจะมาถึง", "โหมโรงศึกเดือดสะท้านตารางคืนนี้", "โหมโรงศึกเดือดสะท้านตารางวันถัดไป", "โหมโรงศึกเดือดสะท้านตารางล่วงหน้า"]:
                 if old_section in personalized_report:
                     personalized_report = personalized_report.replace(
                         old_section,
                         f"<hr style='border: 0; border-top: 1px solid rgba(255, 215, 0, 0.08); margin: 12px 0;'>{old_section}"
                     )
 
-            # ตกแต่งรายชื่อคู่แข่งขันเปลี่ยนชีวิตของคืนนี้ให้เรืองแสงส้มสะดุดตาโดดเด่น
-            for tonight_match in ["Portugal พบ Uzbekistan", "England ดวลเดือด Ghana"]:
+            # ตกแต่งรายชื่อคู่แข่งขันเปลี่ยนชีวิตของคืนนี้ให้เรืองแสงส้มสะดุดตาโดดเด่น (Dynamic Upcoming Match Highlighting)
+            upcoming_matches_list = []
+            if not current_matches_for_ai.empty:
+                upcoming = current_matches_for_ai[current_matches_for_ai['status'] == 'Upcoming']
+                for _, row in upcoming.iterrows():
+                    upcoming_matches_list.extend([
+                        f"{row['home_team']} พบ {row['away_team']}",
+                        f"{row['home_team']} vs {row['away_team']}"
+                    ])
+
+            for tonight_match in upcoming_matches_list + ["Portugal พบ Uzbekistan", "England ดวลเดือด Ghana"]:
                 if tonight_match in personalized_report:
-                    personalized_report = personalized_report.replace(
-                        tonight_match,
-                        f"<span style='background: rgba(255, 94, 54, 0.12); color: #FF5E36; border: 1px solid rgba(255, 94, 54, 0.25); padding: 2px 8px; border-radius: 6px; font-weight: bold;'>🔥 {tonight_match}</span>"
-                    )
+                    if f"class='big-match'>{tonight_match}" not in personalized_report and f'class="big-match">{tonight_match}' not in personalized_report:
+                        personalized_report = personalized_report.replace(
+                            tonight_match,
+                            f"<span class='big-match'>🔥 {tonight_match}</span>"
+                        )
 
             # ดำเนินการคลีนแบ็กทิก (Backticks Strip) ที่อาจครอบรอบแท็ก HTML ทั้งหมดออกไปเพื่อป้องกัน Markdown เอสเคปคีย์
             # เช่น `📊 <span ...>...</span>` -> 📊 <span ...>...</span>
