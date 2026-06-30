@@ -30,6 +30,7 @@ def get_finished_match_info(home_team, away_team, match_time, api_key):
     - away_score: (integer, number of goals scored by {away_team})
     - scorers: (string, list of goal scorers with minutes in format: "Scorer Home (minute) | Scorer Away (minute)". Example: "Daizen Maeda (56) | Anthony Elanga (62)". If no goal or no data, use empty string "" or draw line "|")
     - winner: (string, the name of the winning team, or "Draw" if the score is tied, or null if not finished)
+    - winner_qualify: (string, the exact name of the team that qualified to the next round / won the match including extra time or penalty shootout, e.g., "Germany" or "Brazil". Must be one of the exact team names: "{home_team}" or "{away_team}". If the match is not finished, or it is a group stage match, use empty string "")
 
     If the match is not finished yet, is still playing, or hasn't started, please return:
     - status: "Upcoming"
@@ -37,6 +38,7 @@ def get_finished_match_info(home_team, away_team, match_time, api_key):
     - away_score: null
     - scorers: ""
     - winner: null
+    - winner_qualify: ""
 
     Respond ONLY with a valid JSON block. Do not add markdown fencing like ```json or any explanation text.
     """
@@ -196,19 +198,33 @@ def main():
             a_score = result.get("away_score")
             scorers = result.get("scorers", "")
             
+            winner_qualify = result.get("winner_qualify", "")
+            if winner_qualify is None or str(winner_qualify).strip() == "" or str(winner_qualify).lower() == "null":
+                winner_qualify = ""
+                # Fallback: หากเป็นรอบน็อกเอาต์และสกอร์ไม่เสมอ ให้เดาผู้ชนะเป็นผู้เข้ารอบอัตโนมัติ
+                try:
+                    m_id_int = int(m_id)
+                    if m_id_int >= 68:
+                        if int(h_score) > int(a_score):
+                            winner_qualify = home_team
+                        elif int(a_score) > int(h_score):
+                            winner_qualify = away_team
+                except Exception:
+                    pass
+            
             if h_score is None or a_score is None:
                 print(f"⚠️ ผลสกอร์ไม่สมบูรณ์ ข้ามการเขียนลงฐานข้อมูล")
                 continue
 
-            print(f"🔥 ค้นพบผลอย่างเป็นทางการ! {home_team} {h_score} - {a_score} {away_team}")
+            print(f"🔥 ค้นพบผลอย่างเป็นทางการ! {home_team} {h_score} - {a_score} {away_team} | ผู้เข้ารอบ: {winner_qualify}")
             
             # --- อัปเดตใน SQLite ---
             try:
                 conn = sqlite3.connect(db_path)
                 cursor = conn.cursor()
                 cursor.execute(
-                    "UPDATE matches SET home_score=?, away_score=?, status='Finished', scorers=? WHERE id=?",
-                    (int(h_score), int(a_score), scorers, int(m_id))
+                    "UPDATE matches SET home_score=?, away_score=?, status='Finished', scorers=?, winner_qualify=? WHERE id=?",
+                    (int(h_score), int(a_score), scorers, winner_qualify, int(m_id))
                 )
                 conn.commit()
                 conn.close()
@@ -230,6 +246,8 @@ def main():
                     df_sheets.at[idx, 'away_score'] = str(a_score)
                     df_sheets.at[idx, 'status'] = 'Finished'
                     df_sheets.at[idx, 'scorers'] = str(scorers)
+                    if 'winner_qualify' in df_sheets.columns:
+                        df_sheets.at[idx, 'winner_qualify'] = str(winner_qualify)
                     
                     ws.clear()
                     ws.update([df_sheets.columns.values.tolist()] + df_sheets.astype(str).values.tolist())
