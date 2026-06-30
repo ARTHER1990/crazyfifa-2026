@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-29 08:37:00 (Updated ID 68, 69, 70 match times and forced redeploy)
+# Last cache clear and match update: 2026-06-30 14:38:00 (Updated ID 69 winner as Morocco and forced redeploy for correct bonus rendering)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
