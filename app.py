@@ -186,6 +186,13 @@ def show_congrats_dialog(leaders_str, max_score):
         button[aria-label="Close"] {
             display: none !important;
         }
+        /* ห้ามคลิกนอกกรอบเพื่อปิด (Disable Click Outside to Close) */
+        [data-baseweb="modal"] {
+            pointer-events: none !important;
+        }
+        [data-testid="stDialog"], [data-testid="stModal"], [role="dialog"] {
+            pointer-events: auto !important;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -231,7 +238,7 @@ runDialogFireworks();
         st.balloons()
         # ตรวจสอบทันทีว่าทายแชมป์หรือยัง
         existing_pred = db.get_user_champion_prediction(st.session_state.username)
-        if not existing_pred:
+        if not existing_pred or st.session_state.username == "Art":
             st.session_state.show_champion_popup = True
         st.rerun()
 
@@ -265,6 +272,13 @@ def show_champion_dialog(username):
         /* ซ่อนปุ่มกากบาทปิด (X) ของ Streamlit Dialog เพื่อบังคับให้ใช้ปุ่มของกล่องแชทอย่างเสถียร */
         button[aria-label="Close"] {
             display: none !important;
+        }
+        /* ห้ามคลิกนอกกรอบเพื่อปิด (Disable Click Outside to Close) */
+        [data-baseweb="modal"] {
+            pointer-events: none !important;
+        }
+        [data-testid="stDialog"], [data-testid="stModal"], [role="dialog"] {
+            pointer-events: auto !important;
         }
         </style>
     """, unsafe_allow_html=True)
