@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 15:25:00 (Fixed Third-placed spelling parse bug & Added congrats popup button)
+# Last cache clear and match update: 2026-06-30 15:31:00 (Removed congrats popup button from sidebar to maintain clean UI)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1488,10 +1488,6 @@ elif selected_user != "เลือกชื่อของคุณ...":
         """, unsafe_allow_html=True)
         if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)", use_container_width=True):
             st.session_state.show_champion_popup = True
-            st.rerun()
-            
-        if st.sidebar.button("🎉 เปิดป๊อปอัปฉลองอันดับ 1", use_container_width=True):
-            st.session_state.show_congrats_popup = True
             st.rerun()
             
         if st.sidebar.button("ออกจากระบบ"):
