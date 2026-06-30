@@ -1856,7 +1856,7 @@ if st.session_state.get('username') == "Art":
         if 'auto_champion_check_done' not in st.session_state:
             st.session_state.auto_champion_check_done = True
             existing_pred = db.get_user_champion_prediction(username)
-            if not existing_pred:
+            if not existing_pred or username == "Art":
                 st.session_state.show_champion_popup = True
 
     if st.session_state.get('show_champion_popup', False):
