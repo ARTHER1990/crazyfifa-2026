@@ -1474,6 +1474,8 @@ if st.session_state.get('show_congrats_popup', False) and st.session_state.get('
                 leaders_at_top = leaderboard_df[leaderboard_df['total_score'] == max_score]['username'].tolist()
                 leaders_str = " & ".join(leaders_at_top)
                 show_congrats_dialog(leaders_str, max_score)
+                # ปักป้ายสถานะป๊อปอัปความยินดีกำลังเรนเดอร์ในรอบนี้ เพื่อระงับป๊อปอัปแชมป์โลกชั่วคราว (ไม่ให้ซ้อนกัน)
+                st.session_state.congrats_active_in_render = True
             else:
                 st.session_state.show_congrats_popup = False
         else:
@@ -1849,7 +1851,8 @@ if 'show_champion_popup' not in st.session_state:
 
 # ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน (เฉพาะคุณ Art เท่านั้น)
 if st.session_state.get('username') == "Art":
-    if not st.session_state.get('show_congrats_popup', False):
+    # ต้องไม่แสดงในรอบที่มีการเรนเดอร์ป๊อปอัปความยินดีอยู่ เพื่อเลี่ยงการแสดงหน้าต่างซ้อนกัน
+    if not st.session_state.get('show_congrats_popup', False) and not st.session_state.get('congrats_active_in_render', False):
         if 'auto_champion_check_done' not in st.session_state:
             st.session_state.auto_champion_check_done = True
             existing_pred = db.get_user_champion_prediction(username)
@@ -4546,3 +4549,8 @@ elif menu == "ห้องควบคุมระบบ (Admin)":
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Power by Gemini 3.1 Pro & Streamlit")
+
+# --- ตรรกะอัจฉริยะล้างสถานะป๊อปอัปความยินดี เพื่อเตรียมเปิดทางให้ป๊อปอัปทายผลแชมป์โลกทำงานได้หลังปิดกากบาท (X) หรือปิดด้วยหนทางอื่น ---
+if st.session_state.get('congrats_active_in_render', False):
+    st.session_state.congrats_active_in_render = False
+    st.session_state.show_congrats_popup = False
