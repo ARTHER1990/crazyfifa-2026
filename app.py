@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 15:07:00 (Added Coming Soon label to champion prediction)
+# Last cache clear and match update: 2026-06-30 15:25:00 (Fixed Third-placed spelling parse bug & Added congrats popup button)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1490,6 +1490,10 @@ elif selected_user != "เลือกชื่อของคุณ...":
             st.session_state.show_champion_popup = True
             st.rerun()
             
+        if st.sidebar.button("🎉 เปิดป๊อปอัปฉลองอันดับ 1", use_container_width=True):
+            st.session_state.show_congrats_popup = True
+            st.rerun()
+            
         if st.sidebar.button("ออกจากระบบ"):
             st.session_state.username = ""
             st.session_state.authenticated = False
@@ -1510,8 +1514,8 @@ if not st.session_state.authenticated:
 
 username = st.session_state.username
 
-# --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองผู้ได้คะแนนสูงสุดตรงกลางจอใหญ่เมื่อล็อกอินใหม่ (ทำงานเฉพาะสำหรับคุณ Art เท่านั้น) ---
-if st.session_state.get('show_congrats_popup', False) and st.session_state.get('username') == "Art":
+# --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองผู้ได้คะแนนสูงสุดตรงกลางจอใหญ่เมื่อล็อกอินใหม่ (ทำงานสำหรับผู้ใช้ทุกคนเพื่อเฉลิมฉลองร่วมกัน) ---
+if st.session_state.get('show_congrats_popup', False):
     try:
         leaderboard_df = db.get_leaderboard()
         if not leaderboard_df.empty:
@@ -1529,9 +1533,6 @@ if st.session_state.get('show_congrats_popup', False) and st.session_state.get('
     except Exception as e:
         st.sidebar.error(f"🚨 ดีบัคป๊อปอัปทำงานล้มเหลว: {e}")
         st.session_state.show_congrats_popup = False
-elif st.session_state.get('show_congrats_popup', False):
-    # ปิดเงื่อนไขสำหรับผู้ใช้คนอื่นเพื่อความปลอดภัย 100%
-    st.session_state.show_congrats_popup = False
 
 # --- ระบบป๊อบอัพเด้งพลุแตกเฉลิมฉลองแบบเก่า (ปิดการใช้งานเพื่อความปลอดภัย) ---
 if False:
@@ -3880,8 +3881,11 @@ elif menu == "ตารางคะแนนกลุ่ม (Standings)":
         with t5:
             st.markdown("""
                 <div style='background: linear-gradient(135deg, rgba(46, 204, 113, 0.05) 0%, rgba(15, 23, 18, 0.65) 100%); padding: 20px; border-radius: 16px; border: 2.2px solid #2ecc71; box-shadow: 0 8px 32px rgba(46, 204, 113, 0.15), inset 0 0 15px rgba(46, 204, 113, 0.08); margin-bottom: 25px;'>
-                    <h3 style='color: #2ecc71; margin-top: 0; margin-bottom: 5px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 ทำเนียบสโมสรชาติผ่านเข้ารอบ 32 ทีมสุดท้าย</h3>
-                    <p style='color: #e0e6ed; font-size: 0.88rem; margin-bottom: 20px;'>รายชื่อทีมชาติที่สามารถการันตีสิทธิ์ผ่านเข้าสู่รอบน็อกเอาต์ (Round of 32) อย่างเป็นทางการแล้วตามกติกาเรียลไทม์</p>
+                    <h3 style='color: #2ecc71; margin-top: 0; margin-bottom: 5px; font-family: "Kanit", sans-serif; display: flex; align-items: center; gap: 8px;'>🏆 ทำเนียบทีมชาติผ่านเข้ารอบ 32 ทีมสุดท้าย</h3>
+                    <p style='color: #e0e6ed; font-size: 0.88rem; margin-bottom: 12px;'>รายชื่อทีมชาติที่อยู่ในเกณฑ์ผ่านเข้าสู่รอบน็อกเอาต์ (Round of 32) ตามสถิติตารางคะแนนกลุ่มปัจจุบัน</p>
+                    <div style='background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f1c40f; padding: 10px 15px; border-radius: 4px; font-size: 0.8rem; line-height: 1.45; color: #ffd700;'>
+                        <b>💡 หมายเหตุเรียลไทม์:</b> รายชื่อทีมชาติที่ปรากฏในทำเนียบนี้ เป็นการประมวลผลดึงจาก <b>ทีมชาติอันดับ 1 และอันดับ 2 ของแต่ละกลุ่ม ณ ปัจจุบัน</b> เพื่อจำลองสถานะชั่วคราวเท่านั้น (เนื่องจากรอบแบ่งกลุ่มยังแข่งขันไม่เสร็จสิ้นครบถ้วนทุกนัด บางทีมอาจสลับลำดับขึ้นมาแม้สถิติคณิตศาสตร์อาจตกรอบหรือยังไม่เข้ารอบอย่างเป็นทางการจริง) ข้อมูลทีมที่การันตีเข้ารอบ 100% ชัวร์ๆ จะสมบูรณ์แบบสูงสุดเมื่อทุกแมตช์ในรอบแบ่งกลุ่มแข่งจบและบันทึกคะแนนเสร็จสิ้นครบทุกกลุ่มแล้วครับ
+                    </div>
                 </div>
             """, unsafe_allow_html=True)
             

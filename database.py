@@ -487,7 +487,7 @@ def get_world_cup_standings():
                     if f"Group {g}" in sibling_text:
                         label = f"Group {g}"
                         break
-                if not label and "third-placed" in sibling_text.lower():
+                if not label and ("third-placed" in sibling_text.lower() or "third-place" in sibling_text.lower()):
                     label = "Third-placed"
                 
                 if label:
