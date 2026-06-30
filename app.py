@@ -3271,33 +3271,56 @@ elif menu == "ประวัติการทายผล (My Predictions)":
                                 p_a = safe_int(row_p['pred_away'])
                                 pred_win = (p_h > p_a) - (p_h < p_a)
                                 
+                                # จัดการแสดงผลระบบโบนัสรอบน็อกเอาต์ (Golden Bonus: Match ID >= 68)
+                                bonus_txt = ""
+                                pred_q_txt = ""
+                                m_id_int = safe_int(m_id)
+                                if m_id_int >= 68:
+                                    p_qualify = str(row_p.get('pred_qualify', '')).strip()
+                                    if p_qualify == "":
+                                        try:
+                                            if p_h > p_a:
+                                                p_qualify = str(row_m.get('home_team', '')).strip()
+                                            elif p_a > p_h:
+                                                p_qualify = str(row_m.get('away_team', '')).strip()
+                                        except Exception:
+                                            pass
+                                    w_qualify = str(row_m.get('winner_qualify', '')).strip()
+                                    if p_qualify:
+                                        pred_q_txt = f" | 🗳️ เลือก {get_team_display(p_qualify)}"
+                                    if w_qualify != "" and w_qualify.lower() != "nan":
+                                        if p_qualify != "" and p_qualify.lower() == w_qualify.lower():
+                                            bonus_txt = " <b style='color: #ffffff;'>+ 🌟 โบนัส 1 แต้ม</b>"
+                                        else:
+                                            bonus_txt = " <span style='color: #ffffff; opacity: 0.7;'>+ ❌ โบนัส 0 แต้ม</span>"
+                                
                                 # ตรวจแต้มทายผล
                                 if p_h == h_real and p_a == a_real:
                                     pt_label = "🏆 ทายถูกตรงเป๊ะ! ได้ 3 คะแนน"
                                     card_style = """
-                                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(153, 101, 21, 0.1) 100%);
-                                    border: 1px solid #FFD700;
+                                    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(153, 101, 21, 0.08) 100%);
+                                    border: 1px solid rgba(255, 215, 0, 0.4);
                                     color: #FFD700;
                                     """
                                 elif pred_win == real_win:
                                     pt_label = "🟢 ทายถูกฝั่ง! ได้ 1 คะแนน"
                                     card_style = """
-                                    background: linear-gradient(135deg, rgba(46, 125, 50, 0.2) 0%, rgba(27, 94, 32, 0.1) 100%);
-                                    border: 1px solid #4CAF50;
-                                    color: #81C784;
+                                    background: linear-gradient(135deg, rgba(46, 204, 113, 0.12) 0%, rgba(39, 174, 96, 0.06) 100%);
+                                    border: 1px solid rgba(46, 204, 113, 0.3);
+                                    color: #2ecc71;
                                     """
                                 else:
                                     pt_label = "❌ ทายผิด! ได้ 0 คะแนน"
                                     card_style = """
-                                    background: rgba(255, 255, 255, 0.02);
-                                    border: 1px solid rgba(255, 255, 255, 0.08);
-                                    color: #a0aec0;
+                                    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(192, 57, 43, 0.05) 100%);
+                                    border: 1px solid rgba(231, 76, 60, 0.22);
+                                    color: #e74c3c;
                                     """
                                 
                                 st.markdown(
                                     f"""
-                                    <div style='padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; {card_style}'>
-                                        👤 ผู้เล่น: <b>{u_name}</b> | ผลทาย: <b>{p_h} - {p_a}</b> &nbsp;&nbsp;&nbsp;&nbsp; ({pt_label})
+                                    <div style='padding: 10px 15px; border-radius: 8px; margin-bottom: 6px; {card_style} font-size: 0.9rem; font-family: Kanit, sans-serif;'>
+                                        👤 ผู้เล่น: <b>{u_name}</b> | ผลทาย: <b>{p_h} - {p_a}</b>{pred_q_txt} &nbsp;&nbsp;&nbsp;&nbsp; ({pt_label}{bonus_txt})
                                     </div>
                                     """,
                                     unsafe_allow_html=True
