@@ -182,6 +182,10 @@ def show_congrats_dialog(leaders_str, max_score):
             margin-bottom: 15px;
             border: 1px solid rgba(245,184,46,0.3);
         }
+        /* ซ่อนปุ่มกากบาทปิด (X) ของ Streamlit Dialog เพื่อบังคับให้กดปุ่มนำทางหลักเท่านั้น */
+        button[aria-label="Close"] {
+            display: none !important;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -257,6 +261,10 @@ def show_champion_dialog(username):
             color: #a0aec0;
             margin-bottom: 20px;
             line-height: 1.45;
+        }
+        /* ซ่อนปุ่มกากบาทปิด (X) ของ Streamlit Dialog เพื่อบังคับให้ใช้ปุ่มของกล่องแชทอย่างเสถียร */
+        button[aria-label="Close"] {
+            display: none !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -1858,6 +1866,7 @@ if st.session_state.get('username') == "Art":
             existing_pred = db.get_user_champion_prediction(username)
             if not existing_pred or username == "Art":
                 st.session_state.show_champion_popup = True
+                st.rerun()
 
     if st.session_state.get('show_champion_popup', False):
         show_champion_dialog(username)
