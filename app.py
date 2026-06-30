@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 14:51:00 (Implemented unselected state & blocker validation guard for Golden Bonus selection)
+# Last cache clear and match update: 2026-06-30 14:58:00 (Moved Register New Player option to the top of selectbox)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1239,11 +1239,11 @@ except Exception as e:
     st.sidebar.error(f"⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้: {e}")
     existing_users = []
 
-options = ["เลือกชื่อของคุณ..."] + existing_users + ["➕ เพิ่มผู้เล่นใหม่..."]
+options = ["เลือกชื่อของคุณ...", "➕ เพิ่มผู้เล่นใหม่..."] + existing_users
 
 default_idx = 0
 if st.session_state.username in existing_users:
-    default_idx = existing_users.index(st.session_state.username) + 1
+    default_idx = existing_users.index(st.session_state.username) + 2
 
 selected_user = st.sidebar.selectbox("ชื่อผู้เล่น:", options, index=default_idx)
 
