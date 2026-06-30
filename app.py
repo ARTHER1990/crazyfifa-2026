@@ -1579,6 +1579,8 @@ if st.session_state.authenticated:
                             f"</div>",
                             unsafe_allow_html=True
                         )
+                        if m_id_int >= 68:
+                            st.markdown("<div style='font-size:0.7rem; color: #888; margin-top:5px; padding-left:2px;'>💡 <i>รอบน็อกเอาต์: ทายฝั่งเข้ารอบถูก โบนัส +1 แต้ม (ผิด +0)</i></div>", unsafe_allow_html=True)
         else:
             st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
     except Exception as sb_err:
