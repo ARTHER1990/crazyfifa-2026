@@ -596,8 +596,10 @@ def save_champion_prediction(username, predicted_team):
     try:
         import sqlite3
         conn = sqlite3.connect('worldcup.db')
+        # Clear existing row first to avoid duplicate rows and ensure uniqueness in SQLite
+        conn.execute("DELETE FROM champion_predictions WHERE username = ?", (name,))
         conn.execute("""
-            INSERT OR REPLACE INTO champion_predictions (username, predicted_team, timestamp)
+            INSERT INTO champion_predictions (username, predicted_team, timestamp)
             VALUES (?, ?, ?)
         """, (name, str(predicted_team), timestamp))
         conn.commit()
@@ -624,12 +626,12 @@ def save_champion_prediction(username, predicted_team):
 def get_user_champion_prediction(username):
     name = normalize_name(username)
     
-    # Query SQLite first for speed
+    # Query SQLite first for speed, ordering by timestamp DESC to get the absolute latest prediction
     try:
         import sqlite3
         conn = sqlite3.connect('worldcup.db')
         cursor = conn.cursor()
-        cursor.execute("SELECT predicted_team FROM champion_predictions WHERE username = ?", (name,))
+        cursor.execute("SELECT predicted_team FROM champion_predictions WHERE username = ? ORDER BY timestamp DESC LIMIT 1", (name,))
         row = cursor.fetchone()
         conn.close()
         if row:

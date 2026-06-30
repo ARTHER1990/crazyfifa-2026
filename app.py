@@ -317,8 +317,9 @@ def show_champion_dialog(username):
                 st.error("⚠️ กรุณาเลือกประเทศที่ต้องการทำนายก่อนกดบันทึกนะครับ!")
             else:
                 db.save_champion_prediction(username, selected_code)
+                st.cache_data.clear() # ล้างแคชทั้งหมดของแอปทันทีเพื่อบังคับอัปเดตสีกรอบต้อนรับคุณ Art คมชัดทันใจ 100%
                 st.session_state.show_champion_popup = False
-                st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว! ตัดสินใจให้ดี!", icon="✅")
+                st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว!", icon="✅")
                 st.rerun()
 
 
@@ -1260,98 +1261,98 @@ elif selected_user != "เลือกชื่อของคุณ...":
         predicted_team = db.get_user_champion_prediction(st.session_state.username)
         TEAM_THEMES = {
             "Argentina": {
-                "background": "linear-gradient(135deg, rgba(117, 170, 219, 0.3) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(117, 170, 219, 0.3) 100%)",
-                "border": "1px solid rgba(117, 170, 219, 0.6)",
+                "background": "linear-gradient(135deg, rgba(117, 170, 219, 0.55) 0%, rgba(255, 255, 255, 0.38) 50%, rgba(117, 170, 219, 0.55) 100%)",
+                "border": "1px solid rgba(117, 170, 219, 0.9)",
                 "emoji": "🇦🇷",
                 "text_color": "#FFFFFF"
             },
             "Brazil": {
-                "background": "linear-gradient(135deg, rgba(0, 155, 58, 0.25) 0%, rgba(254, 223, 0, 0.2) 50%, rgba(0, 155, 58, 0.25) 100%)",
-                "border": "1px solid rgba(254, 223, 0, 0.5)",
+                "background": "linear-gradient(135deg, rgba(0, 155, 58, 0.5) 0%, rgba(254, 223, 0, 0.35) 50%, rgba(0, 155, 58, 0.5) 100%)",
+                "border": "1px solid rgba(254, 223, 0, 0.85)",
                 "emoji": "🇧🇷",
                 "text_color": "#FFFFFF"
             },
             "Germany": {
-                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.45) 0%, rgba(221, 0, 0, 0.25) 50%, rgba(255, 204, 0, 0.2) 100%)",
-                "border": "1px solid rgba(221, 0, 0, 0.45)",
+                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(221, 0, 0, 0.45) 50%, rgba(255, 204, 0, 0.38) 100%)",
+                "border": "1px solid rgba(255, 204, 0, 0.8)",
                 "emoji": "🇩🇪",
                 "text_color": "#FFFFFF"
             },
             "France": {
-                "background": "linear-gradient(135deg, rgba(0, 35, 149, 0.25) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(237, 41, 57, 0.25) 100%)",
-                "border": "1px solid rgba(237, 41, 57, 0.5)",
+                "background": "linear-gradient(135deg, rgba(0, 35, 149, 0.5) 0%, rgba(255, 255, 255, 0.35) 50%, rgba(237, 41, 57, 0.5) 100%)",
+                "border": "1px solid rgba(237, 41, 57, 0.85)",
                 "emoji": "🇫🇷",
                 "text_color": "#FFFFFF"
             },
             "Spain": {
-                "background": "linear-gradient(135deg, rgba(198, 11, 30, 0.25) 0%, rgba(255, 196, 0, 0.25) 50%, rgba(198, 11, 30, 0.25) 100%)",
-                "border": "1px solid rgba(255, 196, 0, 0.5)",
+                "background": "linear-gradient(135deg, rgba(198, 11, 30, 0.5) 0%, rgba(255, 196, 0, 0.45) 50%, rgba(198, 11, 30, 0.5) 100%)",
+                "border": "1px solid rgba(255, 196, 0, 0.85)",
                 "emoji": "🇪🇸",
                 "text_color": "#FFFFFF"
             },
             "England": {
-                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(206, 17, 38, 0.2) 100%)",
-                "border": "1px solid rgba(206, 17, 38, 0.45)",
+                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(206, 17, 38, 0.45) 100%)",
+                "border": "1px solid rgba(206, 17, 38, 0.85)",
                 "emoji": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
                 "text_color": "#FFFFFF"
             },
             "Netherlands": {
-                "background": "linear-gradient(135deg, rgba(255, 155, 0, 0.25) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 155, 0, 0.25) 100%)",
-                "border": "1px solid rgba(255, 155, 0, 0.5)",
+                "background": "linear-gradient(135deg, rgba(255, 155, 0, 0.55) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 155, 0, 0.55) 100%)",
+                "border": "1px solid rgba(255, 155, 0, 0.85)",
                 "emoji": "🇳🇱",
                 "text_color": "#FFFFFF"
             },
             "Portugal": {
-                "background": "linear-gradient(135deg, rgba(4, 106, 56, 0.25) 0%, rgba(218, 41, 28, 0.25) 100%)",
-                "border": "1px solid rgba(218, 41, 28, 0.5)",
+                "background": "linear-gradient(135deg, rgba(4, 106, 56, 0.48) 0%, rgba(218, 41, 28, 0.48) 100%)",
+                "border": "1px solid rgba(218, 41, 28, 0.85)",
                 "emoji": "🇵🇹",
                 "text_color": "#FFFFFF"
             },
             "Belgium": {
-                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.35) 0%, rgba(255, 230, 0, 0.2) 50%, rgba(227, 6, 19, 0.2) 100%)",
-                "border": "1px solid rgba(255, 230, 0, 0.45)",
+                "background": "linear-gradient(135deg, rgba(0, 0, 0, 0.55) 0%, rgba(255, 230, 0, 0.4) 50%, rgba(227, 6, 19, 0.4) 100%)",
+                "border": "1px solid rgba(255, 230, 0, 0.8)",
                 "emoji": "🇧🇪",
                 "text_color": "#FFFFFF"
             },
             "Uruguay": {
-                "background": "linear-gradient(135deg, rgba(91, 194, 231, 0.25) 0%, rgba(255, 255, 255, 0.2) 100%)",
-                "border": "1px solid rgba(91, 194, 231, 0.5)",
+                "background": "linear-gradient(135deg, rgba(91, 194, 231, 0.5) 0%, rgba(255, 255, 255, 0.35) 100%)",
+                "border": "1px solid rgba(91, 194, 231, 0.85)",
                 "emoji": "🇺🇾",
                 "text_color": "#FFFFFF"
             },
             "Mexico": {
-                "background": "linear-gradient(135deg, rgba(0, 104, 71, 0.25) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(206, 17, 38, 0.25) 100%)",
-                "border": "1px solid rgba(0, 104, 71, 0.5)",
+                "background": "linear-gradient(135deg, rgba(0, 104, 71, 0.5) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(206, 17, 38, 0.5) 100%)",
+                "border": "1px solid rgba(0, 104, 71, 0.85)",
                 "emoji": "🇲🇽",
                 "text_color": "#FFFFFF"
             },
             "Japan": {
-                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(188, 0, 45, 0.25) 100%)",
-                "border": "1px solid rgba(188, 0, 45, 0.5)",
+                "background": "linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(188, 0, 45, 0.45) 100%)",
+                "border": "1px solid rgba(188, 0, 45, 0.85)",
                 "emoji": "🇯🇵",
                 "text_color": "#FFFFFF"
             },
             "Senegal": {
-                "background": "linear-gradient(135deg, rgba(0, 133, 63, 0.2) 0%, rgba(253, 239, 66, 0.2) 50%, rgba(227, 6, 19, 0.2) 100%)",
-                "border": "1px solid rgba(253, 239, 66, 0.5)",
+                "background": "linear-gradient(135deg, rgba(0, 133, 63, 0.45) 0%, rgba(253, 239, 66, 0.4) 50%, rgba(227, 6, 19, 0.4) 100%)",
+                "border": "1px solid rgba(253, 239, 66, 0.85)",
                 "emoji": "🇸🇳",
                 "text_color": "#FFFFFF"
             },
             "Morocco": {
-                "background": "linear-gradient(135deg, rgba(193, 39, 45, 0.25) 0%, rgba(0, 98, 51, 0.2) 100%)",
-                "border": "1px solid rgba(0, 98, 51, 0.5)",
+                "background": "linear-gradient(135deg, rgba(193, 39, 45, 0.5) 0%, rgba(0, 98, 51, 0.4) 100%)",
+                "border": "1px solid rgba(0, 98, 51, 0.85)",
                 "emoji": "🇲🇦",
                 "text_color": "#FFFFFF"
             },
             "Colombia": {
-                "background": "linear-gradient(135deg, rgba(252, 209, 22, 0.25) 0%, rgba(0, 56, 147, 0.2) 50%, rgba(206, 17, 38, 0.2) 100%)",
-                "border": "1px solid rgba(252, 209, 22, 0.5)",
+                "background": "linear-gradient(135deg, rgba(252, 209, 22, 0.5) 0%, rgba(0, 56, 147, 0.4) 50%, rgba(206, 17, 38, 0.4) 100%)",
+                "border": "1px solid rgba(252, 209, 22, 0.85)",
                 "emoji": "🇨🇴",
                 "text_color": "#FFFFFF"
             },
             "Norway": {
-                "background": "linear-gradient(135deg, rgba(239, 43, 45, 0.2) 0%, rgba(0, 32, 91, 0.25) 100%)",
-                "border": "1px solid rgba(239, 43, 45, 0.5)",
+                "background": "linear-gradient(135deg, rgba(239, 43, 45, 0.45) 0%, rgba(0, 32, 91, 0.45) 100%)",
+                "border": "1px solid rgba(239, 43, 45, 0.85)",
                 "emoji": "🇳🇴",
                 "text_color": "#FFFFFF"
             }
@@ -1359,8 +1360,8 @@ elif selected_user != "เลือกชื่อของคุณ...":
         
         # สีเขียวพาสเทลพรีเมียมคลาสสิก (กรณีที่ยังไม่ได้เริ่มทายผลแชมป์โลก) - ตรงตามสกรีนช็อต 100%
         default_theme = {
-            "background": "rgba(46, 125, 50, 0.22)",
-            "border": "1px solid rgba(76, 175, 80, 0.38)",
+            "background": "linear-gradient(135deg, rgba(46, 125, 50, 0.48) 0%, rgba(27, 94, 32, 0.48) 100%)",
+            "border": "1px solid rgba(76, 175, 80, 0.8)",
             "emoji": "⚽",
             "text_color": "#FFFFFF"
         }
@@ -1394,11 +1395,11 @@ elif selected_user != "เลือกชื่อของคุณ...":
             }}
             .welcome-card-flag-bg {{
                 position: absolute !important;
-                right: 8px !important;
+                right: 12px !important;
                 top: 50% !important;
                 transform: translateY(-50%) !important;
-                font-size: 40px !important;
-                opacity: 0.22 !important;
+                font-size: 58px !important;
+                opacity: 0.65 !important;
                 pointer-events: none !important;
                 user-select: none !important;
                 z-index: 1 !important;
