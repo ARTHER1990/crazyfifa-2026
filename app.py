@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 14:38:00 (Updated ID 69 winner as Morocco and forced redeploy for correct bonus rendering)
+# Last cache clear and match update: 2026-06-30 14:51:00 (Implemented unselected state & blocker validation guard for Golden Bonus selection)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -3018,29 +3018,32 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                         key=f"a_{match_id}"
                     )
                 
+                pred_q_choice = "ยังไม่ได้เลือกผู้เข้ารอบ"
                 pred_q = ""
                 if is_knockout:
                     st.markdown("<div style='margin-top: 10px; margin-bottom: 5px; border-top: 1px dashed rgba(212, 175, 55, 0.3); padding-top: 8px;'></div>", unsafe_allow_html=True)
-                    # หาอินเดกซ์เริ่มต้นของทีมเข้ารอบจากคำทายเก่า หรือคำนวณจากสกอร์เบื้องต้น
+                    # หาอินเดกซ์เริ่มต้นของทีมเข้ารอบจากคำทายเก่า หรือบังคับให้เป็นว่างเพื่อให้ผู้เล่นเลือกเองโดยไม่มีการทายออโต้ค้างไว้
                     default_index = 0
-                    if default_q == away:
+                    if default_q == home:
                         default_index = 1
-                    elif default_q == home:
-                        default_index = 0
-                    else:
-                        if pred_h > pred_a:
-                            default_index = 0
-                        elif pred_a > pred_h:
-                            default_index = 1
+                    elif default_q == away:
+                        default_index = 2
                     
-                    pred_q = st.radio(
+                    def format_qualify_team(val):
+                        if val == "ยังไม่ได้เลือกผู้เข้ารอบ":
+                            return "⚪ ยังไม่ได้เลือกผู้เข้ารอบ"
+                        return get_team_display(val)
+                    
+                    pred_q_choice = st.radio(
                         "🏆 **GOLDEN BONUS: ทายทีมที่ได้เข้ารอบต่อไป (รวมต่อเวลา/จุดโทษ) ได้สะสม +1 แต้ม**",
-                        options=[home, away],
-                        format_func=get_team_display,
+                        options=["ยังไม่ได้เลือกผู้เข้ารอบ", home, away],
+                        format_func=format_qualify_team,
                         index=default_index,
                         horizontal=True,
                         key=f"q_{match_id}"
                     )
+                    if pred_q_choice != "ยังไม่ได้เลือกผู้เข้ารอบ":
+                        pred_q = pred_q_choice
                 
                 with col3:
                     st.markdown("<div class='desktop-spacer' style='height: 28px;'></div>", unsafe_allow_html=True)
@@ -3053,16 +3056,19 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
                         
                     # ใช้ปุ่ม st.form_submit_button แทน st.button สำหรับส่วนประกอบภายใน st.form
                     if st.form_submit_button(btn_label, use_container_width=True, type=btn_type):
-                        try:
-                            db.save_prediction(username, match_id, pred_h, pred_a, pred_q)
-                            st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
-                            st.rerun()
-                        except Exception as e:
-                            err_str = str(e)
-                            if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
-                                st.warning("⚠️ **ระบบหนาแน่นชั่วคราว (Google Sheets Quota)** กรุณาเว้นระยะ 10-30 วินาที แล้วลองกดบันทึกใหม่อีกครั้งนะครับ 😊")
-                            else:
-                                st.error(f"❌ **เกิดข้อผิดพลาดในการบันทึกข้อมูล:** {err_str}")
+                        if is_knockout and pred_q_choice == "ยังไม่ได้เลือกผู้เข้ารอบ":
+                            st.error("⚠️ **คุณยังไม่ได้เลือกฝั่งเข้ารอบ (Golden Bonus)! กรุณาเลือกทีมที่เข้ารอบถัดไปก่อนบันทึกผลนะครับ**")
+                        else:
+                            try:
+                                db.save_prediction(username, match_id, pred_h, pred_a, pred_q)
+                                st.toast(f"⚽ บันทึกผลทาย {home_display} vs {away_display} เรียบร้อยแล้ว!")
+                                st.rerun()
+                            except Exception as e:
+                                err_str = str(e)
+                                if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
+                                    st.warning("⚠️ **ระบบหนาแน่นชั่วคราว (Google Sheets Quota)** กรุณาเว้นระยะ 10-30 วินาที แล้วลองกดบันทึกใหม่อีกครั้งนะครับ 😊")
+                                else:
+                                    st.error(f"❌ **เกิดข้อผิดพลาดในการบันทึกข้อมูล:** {err_str}")
                         
                     if has_pred:
                         st.markdown("<div style='color: #4CAF50; font-size: 0.95rem; font-weight: bold; margin-top: 6px; text-align: center;'>✅ บันทึกผลทายแล้ว</div>", unsafe_allow_html=True)
