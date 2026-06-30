@@ -1548,9 +1548,26 @@ if st.session_state.authenticated:
                                 hl_style = "background: rgba(231, 76, 60, 0.08); border: 1px solid rgba(231, 76, 60, 0.15); color: #e74c3c;"
                                 pt_txt = "❌ 0 แต้ม"
                             
+                            # จัดการแสดงผลระบบโบนัสรอบน็อกเอาต์ (Golden Bonus: Match ID >= 68)
+                            bonus_txt = ""
+                            pred_q_txt = ""
+                            m_id_int = safe_int(m_id)
+                            if m_id_int >= 68:
+                                p_qualify = str(row_p.get('pred_qualify', '')).strip()
+                                w_qualify = str(row_m.get('winner_qualify', '')).strip()
+                                if p_qualify:
+                                    # แสดงธง/ชื่อทีมที่เลือกเข้ารอบ
+                                    pred_q_txt = f" <span style='opacity: 0.8;'>🗳️ เลือก {get_team_display(p_qualify)}</span>"
+                                if p_qualify != "" and w_qualify != "" and w_qualify.lower() != "nan":
+                                    if p_qualify.lower() == w_qualify.lower():
+                                        bonus_txt = " <b style='color: #ffb703;'>+ 🌟 โบนัส 1 แต้ม</b>"
+                                        # ถ้าได้แต่โบนัสแต่ทายสกอร์ผิดหมดเลย ให้ปรับขอบและการ์ดให้น่าดึงดูดขึ้น
+                                        if pt_txt == "❌ 0 แต้ม":
+                                            hl_style = "background: rgba(255, 183, 3, 0.08); border: 1px solid rgba(255, 183, 3, 0.25); color: #ffb703;"
+                            
                             preds_html_list.append(
                                 f"<div style='font-size:0.8rem; padding:6px 10px; border-radius:6px; margin-bottom:5px; {hl_style}'>"
-                                f"👤 <b>{u_name}</b>: ทาย {p_h} - {p_a} ({pt_txt})"
+                                f"👤 <b>{u_name}</b>: ทาย {p_h} - {p_a}{pred_q_txt} ({pt_txt}{bonus_txt})"
                                 f"</div>"
                             )
                         
