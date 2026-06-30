@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 14:58:00 (Moved Register New Player option to the top of selectbox)
+# Last cache clear and match update: 2026-06-30 15:07:00 (Added Coming Soon label to champion prediction)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
@@ -1458,7 +1458,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
             <div class="custom-welcome-card">
                 <div class="welcome-card-text">
                     ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>
-                    {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.7; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก</div>'}
+                    {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.7; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก (จะเปิดให้ทายผลเร็วๆ นี้)</div>'}
                 </div>
                 <div class="welcome-card-flag-bg">{theme['emoji']}</div>
             </div>
@@ -1467,7 +1467,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
         # ปุ่มเปิดหน้าต่างทำนายผลแชมป์โลก 2026 แบบพรีเมียมสีทองสว่าง
         st.sidebar.markdown("""
             <style>
-            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"] {
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)"] {
                 background: linear-gradient(135deg, #FFE9A2 0%, #F5B82E 40%, #C48200 80%, #FFE9A2 100%) !important;
                 background-size: 200% auto !important;
                 border: none !important;
@@ -1479,14 +1479,14 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 margin-top: 5px !important;
                 margin-bottom: 5px !important;
             }
-            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"]:hover {
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)"]:hover {
                 transform: translateY(-1.5px) !important;
                 box-shadow: 0 6px 20px rgba(196, 130, 0, 0.35), 0 0 15px rgba(245, 184, 46, 0.3) !important;
                 color: #000000 !important;
             }
             </style>
         """, unsafe_allow_html=True)
-        if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026", use_container_width=True):
+        if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)", use_container_width=True):
             st.session_state.show_champion_popup = True
             st.rerun()
             
