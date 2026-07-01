@@ -512,9 +512,8 @@ db.init_db()
 bg_opacity_val = 0.67
 bg_opacity_bottom = 0.70
 
-# --- CSS ส่วนหัวและแอนิเมชัน ---
-st.markdown(f"""
-<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) -->
+# --- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) ---
+st.markdown("""
 <svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
   <filter id="slow-waving-filter" x="-20%" y="-20%" width="140%" height="140%">
     <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" result="turbulence">
@@ -526,6 +525,10 @@ st.markdown(f"""
     <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G" />
   </filter>
 </svg>
+""", unsafe_allow_html=True)
+
+# --- CSS ส่วนหัวและแอนิเมชัน ---
+st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
     
