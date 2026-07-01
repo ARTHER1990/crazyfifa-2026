@@ -514,6 +514,18 @@ bg_opacity_bottom = 0.70
 
 # --- CSS ส่วนหัวและแอนิเมชัน ---
 st.markdown(f"""
+<!-- SVG Filter สำหรับทำเอฟเฟกต์ธงสะบัดช้าๆ (Slow Flag Waving/Ripple Effect) -->
+<svg style="position: fixed; width: 0; height: 0; pointer-events: none;">
+  <filter id="slow-waving-filter" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" result="turbulence">
+      <animate attributeName="baseFrequency" 
+               values="0.015 0.05; 0.015 0.07; 0.015 0.05" 
+               dur="10s" 
+               repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
     
@@ -575,7 +587,7 @@ st.markdown(f"""
         100% {{ transform: translateX(400%) rotate(-45deg); }}
     }}
 
-    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลก - นำ SVG Filter ออกเพื่อคืนความคมชัดระดับ HD */
+    /* เลเยอร์พื้นหลัง Sidebar: ลายถ้วยบอลโลกพร้อมเอฟเฟกต์สะบัดช้าๆ */
     [data-testid="stSidebar"]::after {{
         content: "";
         position: absolute;
@@ -588,10 +600,10 @@ st.markdown(f"""
         background-size: cover;
         background-position: center;
         opacity: 0.22;
-        filter: grayscale(100%) contrast(110%) brightness(85%); /* แก้ไขบั๊กภาพมัวโดยเอา SVG Filter บิดเบี้ยวออก */
+        filter: grayscale(100%) contrast(110%) brightness(85%) url(#slow-waving-filter); /* ใช้ SVG Filter เพื่อทำเอฟเฟกต์สะบัด */
         pointer-events: none;
         z-index: -2; /* ล็อคไว้หลังสุดไม่ให้รบกวนเมนู */
-        transform: none; /* คืนค่าสเกลปกติเพื่อป้องกันความเบลอจากการขยายขนาด */
+        transform: scale(1.1); /* ขยายเผื่อขอบจากการบิดเบี้ยวของ Filter */
     }}
 
     /* ระบายสีข้อความเฉพาะจุดอย่างถูกต้องเพื่อไม่ให้ชนโครงสร้าง z-index */

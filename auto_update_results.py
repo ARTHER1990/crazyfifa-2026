@@ -131,15 +131,32 @@ def push_to_github():
     try:
         import subprocess
         print("\n🐙 [Git] กำลังบันทึกประวัติและส่งข้อมูลขึ้น GitHub...")
-        subprocess.run(["git", "add", "app.py", "worldcup.db", "update_results.py"], cwd=BASE_DIR, check=True)
+        
+        # 1. แอดไฟล์ธรรมดา
+        for file_name in ["app.py", "update_results.py"]:
+            try:
+                subprocess.run(["git", "add", file_name], cwd=BASE_DIR, check=False)
+            except Exception as e:
+                print(f"⚠️ ไม่สามารถแอดไฟล์ {file_name}: {e}")
+                
+        # 2. แอดไฟล์ worldcup.db โดยใช้แฟลก -f บังคับเนื่องจากติด .gitignore
+        try:
+            subprocess.run(["git", "add", "-f", "worldcup.db"], cwd=BASE_DIR, check=False)
+        except Exception as e:
+            print(f"⚠️ ไม่สามารถแอด -f worldcup.db: {e}")
+            
+        # 3. ลองรัน commit (ยอมให้ผ่านไปได้แม้ทำงานไม่มีการเปลี่ยนแปลงจริง)
         commit_msg = f"feat: Automated score update and cache flush via Peter AI ({datetime.now().strftime('%Y-%m-%d %H:%M')})"
-        subprocess.run(["git", "commit", "-m", commit_msg], cwd=BASE_DIR, check=True)
+        subprocess.run(["git", "commit", "-m", commit_msg], cwd=BASE_DIR, check=False)
+        
+        # 4. รัน git push ส่งข้อมูลขึ้นเซิร์ฟเวอร์
         subprocess.run(["git", "push"], cwd=BASE_DIR, check=True)
         print("🎉 [Git] ส่งข้อมูลขึ้น GitHub และสั่งล้างแคช RAM บนหน้าเว็บสำเร็จเสร็จสิ้น!")
         return True
     except Exception as e:
-        print(f"❌ [Git] เกิดข้อผิดพลาดในการรันคำสั่ง git: {e}")
+        print(f"❌ [Git] เกิดข้อผิดพลาดในการรันคำสั่ง git push: {e}")
         return False
+
 
 def main():
     print("🤖 เริ่มทำงานระบบ AI Auto-Update Results...")
