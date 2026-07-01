@@ -1,4 +1,4 @@
-# Last cache clear and match update: 2026-06-30 15:31:00 (Removed congrats popup button from sidebar to maintain clean UI)
+# Last cache clear and score update: 2026-07-01 07:44 (Auto updated: Ivory Coast 1-2 Norway)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
