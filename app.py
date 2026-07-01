@@ -519,10 +519,10 @@ st.markdown("""
     <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" result="turbulence">
       <animate attributeName="baseFrequency" 
                values="0.015 0.05; 0.015 0.07; 0.015 0.05" 
-               dur="10s" 
+               dur="18s" 
                repeatCount="indefinite" />
     </feTurbulence>
-    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G" />
+    <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="12" xChannelSelector="R" yChannelSelector="G" />
   </filter>
 </svg>
 """, unsafe_allow_html=True)
