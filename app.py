@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-01 11:30 (Auto updated: Mexico 2-0 Ecuador)
+# Last cache clear and score update: 2026-07-01 12:49 (Auto updated: Egypt 1-1 IR Iran)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
