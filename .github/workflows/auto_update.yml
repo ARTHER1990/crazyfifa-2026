@@ -1,0 +1,54 @@
+name: CRAZYFIFA 2026 Auto Update
+
+on:
+  schedule:
+    # รันทุกๆ 2 ชั่วโมง (คุณอาร์ตสามารถปรับแต่งเวลาได้ตามต้องการ)
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+    # เพิ่มปุ่มกดรันเองแบบแมนนวลในหน้าเว็บ GitHub
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 ดึงโค้ดจาก Repository
+      uses: actions/checkout@v3
+      with:
+        persist-credentials: true
+
+    - name: 🐍 ตั้งค่าใช้งาน Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: 📦 ติดตั้ง Packages / Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 🔑 สร้างไฟล์สิทธิ์ลับ Google Sheets (GCP Secret Key)
+      run: |
+        mkdir -p .secrets
+        echo '${{ secrets.GOOGLE_SHEETS_KEY }}' > .secrets/directed-graph-494807-i7-f79a56b5b375.json
+
+    - name: 🤖 รันสคริปต์สแกนผลและแจกคะแนนโดยปีเตอร์ AI
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: |
+        python auto_update_results.py
+
+    - name: 🐙 บันทึกประวัติและส่งข้อมูลกลับไปที่ GitHub (Auto Commit & Push)
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        # เพิ่มไฟล์ database และ app.py (ที่ถูกทัชเพื่อล้างแคช)
+        git add -f worldcup.db app.py
+        
+        # บันทึกคอมมิต (หากไม่มีการอัปเดตใหม่ก็ให้ข้ามไปโดยไม่พัง)
+        git commit -m "chore: Automated World Cup results update by Peter AI [skip ci]" || echo "ไม่มีข้อมูลอัปเดตใหม่ในรอบนี้"
+        
+        # พุชกลับขึ้นรีโปหลัก
+        git push origin main
