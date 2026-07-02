@@ -7,6 +7,9 @@ LOG_FILE="$BASE_DIR/auto_update.log"
 # ตรวจสอบความถูกต้องของสคริปต์
 echo "=== [$(date '+%Y-%m-%d %H:%M:%S')] เริ่มทำงานระบบอัปเดตอัตโนมัติ ===" >> "$LOG_FILE"
 
+# ตั้งค่า PATH ให้ครอบคลุมเพื่อความปลอดภัยสำหรับ Launchd บน macOS
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 # นำทางเข้าโฟลเดอร์หลักและสั่งรัน Python3
 cd "$BASE_DIR"
 python3 "$BASE_DIR/auto_update_results.py" >> "$LOG_FILE" 2>&1
