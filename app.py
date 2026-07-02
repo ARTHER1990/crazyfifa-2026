@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-02 08:43 (Enhanced Dual-Check Bonus Logic - Peter AI)
+# Last cache clear and score update: 2026-07-02 12:27 (Auto updated: United States 2-0 Bosnia and Herzegovina)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
