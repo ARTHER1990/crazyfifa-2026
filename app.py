@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-02 08:36 (Forced Permissions Override - Peter AI)
+# Last cache clear and score update: 2026-07-02 08:43 (Enhanced Dual-Check Bonus Logic - Peter AI)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone

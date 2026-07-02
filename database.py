@@ -310,6 +310,17 @@ def update_scores_logic():
             # คำนวณคะแนนโบนัสพิเศษ (โกลเดนโบนัส: ทีมเข้ารอบถัดไป) เฉพาะนัดน็อกเอาต์ที่มีผลผู้เข้ารอบจริง
             bonus = 0
             w_qualify = str(m.get('winner_qualify', '')).strip()
+            
+            # ระบบช่วยเหลือคำนวณผู้เข้ารอบน็อกเอาต์อัตโนมัติสองชั้น ป้องกันข้อมูล Google Sheets ตกหล่น
+            if (w_qualify == "" or w_qualify.lower() == "nan") and int(m_id) >= 68:
+                try:
+                    if int(r_h) > int(r_a):
+                        w_qualify = str(m.get('home_team', '')).strip()
+                    elif int(r_a) > int(r_h):
+                        w_qualify = str(m.get('away_team', '')).strip()
+                except Exception:
+                    pass
+
             p_qualify = str(p.get('pred_qualify', '')).strip()
             if p_qualify == "":
                 try:
