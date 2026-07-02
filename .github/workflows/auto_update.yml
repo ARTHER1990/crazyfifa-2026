@@ -10,6 +10,8 @@ on:
 jobs:
   auto-update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # บังคับปลดล็อกสิทธิ์เขียนไฟล์ลงคลังให้บอท GitHub Actions
     
     steps:
     - name: 📥 ดึงโค้ดจาก Repository
