@@ -211,10 +211,17 @@ def push_to_github():
     """
     try:
         import subprocess
-        print("\n🐙 [Git] กำลังบันทึกประวัติและส่งข้อมูลขึ้น GitHub...")
+        print("\n🐙 [Git] กำลังตรวจสอบกิ่งก้าน (Branch) และส่งข้อมูลขึ้น GitHub...")
         
+        # ป้องกันปัญหา detached HEAD โดยการบังคับสลับกลับไปกิ่ง main เสมอ
+        try:
+            subprocess.run(["git", "checkout", "main"], cwd=BASE_DIR, check=False)
+            subprocess.run(["git", "pull", "origin", "main"], cwd=BASE_DIR, check=False)
+        except Exception as e:
+            print(f"⚠️ ไม่สามารถตรวจสอบหรือสลับกิ่งไป main: {e}")
+            
         # 1. แอดไฟล์ธรรมดา
-        for file_name in ["app.py", "update_results.py"]:
+        for file_name in ["app.py", "update_results.py", "auto_update_results.py"]:
             try:
                 subprocess.run(["git", "add", file_name], cwd=BASE_DIR, check=False)
             except Exception as e:
@@ -228,11 +235,11 @@ def push_to_github():
             
         # 3. ลองรัน commit (ยอมให้ผ่านไปได้แม้ทำงานไม่มีการเปลี่ยนแปลงจริง)
         now_th = datetime.now(timezone(timedelta(hours=7))).strftime('%Y-%m-%d %H:%M')
-        commit_msg = f"feat: Automated score update and cache flush via Peter AI ({now_th})"
+        commit_msg = f"feat: Automated World Cup results update by Peter AI ({now_th})"
         subprocess.run(["git", "commit", "-m", commit_msg], cwd=BASE_DIR, check=False)
         
-        # 4. รัน git push ส่งข้อมูลขึ้นเซิร์ฟเวอร์
-        subprocess.run(["git", "push"], cwd=BASE_DIR, check=True)
+        # 4. รัน git push ส่งข้อมูลขึ้นเซิร์ฟเวอร์หลัก
+        subprocess.run(["git", "push", "origin", "main"], cwd=BASE_DIR, check=True)
         print("🎉 [Git] ส่งข้อมูลขึ้น GitHub และสั่งล้างแคช RAM บนหน้าเว็บสำเร็จเสร็จสิ้น!")
         return True
     except Exception as e:
@@ -352,17 +359,40 @@ def main():
             print(f"⚠️ สกอร์ของ Match ID {m_id} ไม่สมบูรณ์ ข้ามการเขียนข้อมูล")
             continue
 
+        # ดึงค่าเดิมใน Google Sheets (ตาราง matches) เพื่อป้องกันการเขียนทับข้อมูลที่คุณอาร์ตกรอกไว้แล้ว
+        existing_sheet_winner = ""
+        try:
+            ws_check = db.get_worksheet('matches')
+            data_check = ws_check.get_all_values()
+            df_check = pd.DataFrame(data_check[1:], columns=data_check[0])
+            mask_check = df_check['id'].astype(str) == str(m_id)
+            if mask_check.any():
+                val_val = df_check.loc[mask_check, 'winner_qualify'].values[0]
+                if pd.notnull(val_val) and str(val_val).strip() != "" and str(val_val).lower() != "nan":
+                    existing_sheet_winner = str(val_val).strip()
+        except Exception as e:
+            print(f"⚠️ ตรวจสอบค่าเดิมใน Google Sheets ไม่สำเร็จ: {e}")
+
         if winner_qualify is None or str(winner_qualify).strip() == "" or str(winner_qualify).lower() == "null":
             winner_qualify = ""
-            # Fallback คำนวณผู้ชนะรอบน็อกเอาต์แบบนุ่มนวล
-            try:
-                if int(m_id) >= 68:
-                    if int(h_score) > int(a_score):
-                        winner_qualify = home_team
-                    elif int(a_score) > int(h_score):
-                        winner_qualify = away_team
-            except Exception:
-                pass
+            # 1. ลองใช้ค่าเดิมจาก Google Sheets ที่มีอยู่แล้วก่อน
+            if existing_sheet_winner != "":
+                winner_qualify = existing_sheet_winner
+                print(f"ℹ️ Match ID {m_id}: พบข้อมูลผู้เข้ารอบเดิมใน Google Sheets คือ [{winner_qualify}] นำมาใช้งานแทนค่าว่าง")
+            else:
+                # 2. Fallback คำนวณผู้ชนะรอบน็อกเอาต์แบบนุ่มนวลถ้าไม่มีค่าเดิม
+                try:
+                    if int(m_id) >= 68:
+                        if int(h_score) > int(a_score):
+                            winner_qualify = home_team
+                        elif int(a_score) > int(h_score):
+                            winner_qualify = away_team
+                except Exception:
+                    pass
+        elif existing_sheet_winner != "" and winner_qualify != existing_sheet_winner:
+            # ป้องกันกรณีที่ AI ค้นเจอค่าใหม่แบบเพี้ยนๆ แต่ในชีตมีค่าที่แอดมินกรอกไว้ถูกต้องแล้ว ให้ยึดชีตเป็นหลัก
+            winner_qualify = existing_sheet_winner
+            print(f"ℹ️ Match ID {m_id}: ยึดค่าผู้เข้ารอบเดิมจาก Google Sheets [{winner_qualify}] ป้องกันการเขียนทับด้วยผลค้นหาใหม่")
 
         print(f"🔥 บันทึกผลแมตช์อย่างเป็นทางการ! Match ID {m_id}: {home_team} {h_score} - {a_score} {away_team} | ผู้เข้ารอบ: {winner_qualify}")
 

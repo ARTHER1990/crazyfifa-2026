@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-03 13:27 (Auto updated: Switzerland 2-0 Algeria)
+# Last cache clear and score update: 2026-07-04 16:05 (Manual recovery: Argentina, Colombia, Australia)
 import streamlit as st
 import database as db
 from datetime import datetime, timedelta, timezone
