@@ -261,22 +261,27 @@ def main():
         print(f"❌ ไม่พบไฟล์ฐานข้อมูล SQLite ที่เส้นทาง {db_path}")
         return
 
-    # 2. ค้นหาแมตช์ที่เลยเวลาเตะแล้วแต่สถานะยังคงเป็น 'Upcoming' หรือแมตช์ที่แข่งเสร็จในรอบน็อกเอาต์แล้วแต่ไม่มีผู้เข้ารอบสะสม
+    # 2. ค้นหาแมตช์ที่เลยเวลาเตะแล้วแต่สถานะยังคงเป็น 'Upcoming' หรือแมตช์ที่แข่งเสร็จในรอบน็อกเอาต์แล้วแต่ไม่มีผู้เข้ารอบสะสม (ตรวจหาจาก Google Sheets โดยตรงเป็นแหล่งอ้างอิงสูงสุด)
     try:
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
+        df_m = db.get_matches()
+        df_m['id_int'] = pd.to_numeric(df_m['id'], errors='coerce').fillna(0).astype(int)
         
-        # ดึงคู่แข่งขันที่ยังแข่งไม่เสร็จ หรือคู่ที่จบแล้วในรอบน็อกเอาต์ (ID >= 68) แต่ขาดผู้เข้ารอบสะสม (winner_qualify)
-        cursor.execute("""
-            SELECT id, home_team, away_team, match_time, status 
-            FROM matches 
-            WHERE status='Upcoming' 
-               OR (status='Finished' AND id >= 68 AND (winner_qualify IS NULL OR TRIM(winner_qualify) = ''))
-        """)
-        upcoming_matches = cursor.fetchall()
-        conn.close()
+        mask_upcoming = df_m['status'] == 'Upcoming'
+        mask_ko_empty = (df_m['status'] == 'Finished') & (df_m['id_int'] >= 68) & (df_m['winner_qualify'].fillna('').str.strip() == '')
+        
+        filtered_df = df_m[mask_upcoming | mask_ko_empty]
+        upcoming_matches = []
+        for _, row in filtered_df.iterrows():
+            upcoming_matches.append((
+                int(row['id']),
+                str(row['home_team']),
+                str(row['away_team']),
+                str(row['match_time']),
+                str(row['status'])
+            ))
+        db.get_matches.clear()
     except Exception as e:
-        print(f"❌ ดึงข้อมูลจากฐานข้อมูลล้มเหลว: {e}")
+        print(f"❌ ดึงข้อมูล matches จาก Google Sheets ล้มเหลว: {e}")
         return
 
     if not upcoming_matches:
