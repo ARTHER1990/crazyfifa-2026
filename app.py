@@ -2970,8 +2970,7 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             audio_html = ""
             if speech_b64 != "":
                 # สร้าง UI เครื่องเล่นเสียงเสมือนจริงในกล่อง AI Box
-            audio_html = """
-<div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 10px; border: 1px dashed rgba(255, 215, 0, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                audio_html = """<div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 10px; border: 1px dashed rgba(255, 215, 0, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
     <div style="font-size: 0.85rem; color: #ffd700; display: flex; align-items: center; gap: 6px;">
         <span>🎙️</span>
         <span><b>ปีเตอร์พากย์เสียงวิเคราะห์:</b> ความเร็ว 1.18x | เพลงสนามหรี่อัตโนมัติ</span>
