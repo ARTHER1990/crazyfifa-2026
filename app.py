@@ -87,7 +87,7 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
         var isSpeechEnded = sessionStorage.getItem("peter_speech_ended");
         
         if (music) {{
-            music.volume = 0.30;
+            music.volume = 0.45;
         }}
         if (speech) {{
             speech.playbackRate = 1.18;
@@ -101,7 +101,7 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             }}
             speech.play().then(() => {{
                 console.log("Speech playing...");
-                if (music) music.volume = 0.08;
+                if (music) music.volume = 0.15;
             }}).catch(err => {{
                 console.log("Speech autoplay blocked:", err);
             }});
@@ -111,10 +111,10 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
                 sessionStorage.removeItem("peter_speech_time");
                 if (music) {{
                     var volInterval = setInterval(function() {{
-                        if (music.volume < 0.30) {{
+                        if (music.volume < 0.45) {{
                             music.volume += 0.02;
                         }} else {{
-                            music.volume = 0.30;
+                            music.volume = 0.45;
                             clearInterval(volInterval);
                         }}
                     }}, 100);
@@ -122,7 +122,7 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             }};
         }} else {{
             if (music) {{
-                music.volume = 0.30;
+                music.volume = 0.45;
             }}
         }}
         
