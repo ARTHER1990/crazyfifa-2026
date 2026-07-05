@@ -62,7 +62,7 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Vinícius Júnior (32) | Ismael Saibari (21)",
+    "scorers":"Vinicius Junior (32) | Ismael Saibari (21)",
     "winner_qualify":""
   },
   {
@@ -601,7 +601,7 @@
     "home_score":"3",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Güler10'Yılmaz31'Ayhan90+8' | Trusty3'Berhalter49'",
+    "scorers":"Arda Guler (10) | Auston Trusty (3) | Orkun Kökçü (31) | Sebastian Berhalter (49) | Kaan Ayhan (90+8)",
     "winner_qualify":""
   },
   {
@@ -667,7 +667,7 @@
     "home_score":"1",
     "away_score":"3",
     "status":"Finished",
-    "scorers":"Al-Taamari55' | Lo Celso19'La. Martínez31' (pen.)Messi80'",
+    "scorers":"Mousa al-Taamari (55) | Giovani Lo Celso (19), Lautaro Martinez (31 Pen), Lionel Messi (80)",
     "winner_qualify":""
   },
   {
@@ -711,7 +711,7 @@
     "home_score":"0",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Bellingham62'Kane67'",
+    "scorers":"Jude Bellingham (62) | Harry Kane (67)",
     "winner_qualify":""
   },
   {
@@ -722,7 +722,7 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"P. Sučić31'Vlašić83' | Luckassen73'",
+    "scorers":"Petar Sucic (31), Nikola Vlasic (83) | Derrick Luckassen (73)",
     "winner_qualify":""
   },
   {
@@ -744,8 +744,8 @@
     "home_score":"1",
     "away_score":"4",
     "status":"Finished",
-    "scorers":"Aasgaard21' | Dembélé7',20',32'Doué90+4'",
-    "winner_qualify":""
+    "scorers":"Thelo Aasgaard (21) | Ousmane Dembele (7) | Ousmane Dembele (20) | Ousmane Dembele (32) | Desire Doue (90+4)",
+    "winner_qualify":"France"
   },
   {
     "id":"72",
@@ -755,8 +755,8 @@
     "home_score":"5",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"Diarra4'I. Sarr56'P. Gueye59',71'I. Ndiaye82'",
-    "winner_qualify":""
+    "scorers":"Habib Diarra (4) | Ismaila Sarr (56) | Pape Gueye (59) | Pape Gueye (71) | Iliman Ndiaye (82)",
+    "winner_qualify":"Senegal"
   },
   {
     "id":"73",
@@ -766,8 +766,8 @@
     "home_score":"0",
     "away_score":"0",
     "status":"Finished",
-    "scorers":"0 - 0",
-    "winner_qualify":""
+    "scorers":"",
+    "winner_qualify":"Cabo Verde"
   },
   {
     "id":"74",
@@ -777,8 +777,8 @@
     "home_score":"0",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Álex Baena 42'",
-    "winner_qualify":""
+    "scorers":"Alex Baena (42)",
+    "winner_qualify":"Spain"
   },
   {
     "id":"75",
@@ -788,8 +788,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Mahmoud Saber 5' | Ramin Rezaeian 14'",
-    "winner_qualify":""
+    "scorers":"Mahmoud Saber (5) | Ramin Rezaeian (14)",
+    "winner_qualify":"Egypt"
   },
   {
     "id":"76",
@@ -799,74 +799,74 @@
     "home_score":"1",
     "away_score":"5",
     "status":"Finished",
-    "scorers":"Elijah Just 84' | Leandro Trossard 28', 50', Kevin De Bruyne 66', Romelu Lukaku 86', Alexis Saelemaekers 90+4'",
-    "winner_qualify":""
+    "scorers":"Elijah Just (84) | Leandro Trossard (28), Leandro Trossard (50), Kevin De Bruyne (66), Romelu Lukaku (86), Alexis Saelemaekers (90+4)",
+    "winner_qualify":"Belgium"
   },
   {
     "id":"78",
     "home_team":"Ivory Coast",
     "away_team":"Norway",
     "match_time":"2026-07-01 01:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"1",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Amad Diallo (74) | Antonio Nusa (39), Erling Haaland (86)",
+    "winner_qualify":"Norway"
   },
   {
     "id":"77",
     "home_team":"France",
     "away_team":"Sweden",
     "match_time":"2026-07-01 04:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"3",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Kylian Mbappé (45) | Bradley Barcola (53) | Kylian Mbappé (74)",
+    "winner_qualify":"France"
   },
   {
     "id":"79",
     "home_team":"Mexico",
     "away_team":"Ecuador",
     "match_time":"2026-07-01 08:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Julián Quiñones (22) | Raúl Jiménez (31)",
+    "winner_qualify":"Mexico"
   },
   {
     "id":"80",
     "home_team":"England",
     "away_team":"DR Congo",
     "match_time":"2026-07-02 01:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Harry Kane (75) | Brian Cipenga (7) | Harry Kane (86)",
+    "winner_qualify":"England"
   },
   {
     "id":"82",
     "home_team":"Belgium",
     "away_team":"Senegal",
     "match_time":"2026-07-02 04:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"3",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Romelu Lukaku (86), Youri Tielemans (89, 120+5 pen) | Diarra (25), Ismaïla Sarr (51)",
+    "winner_qualify":"Belgium"
   },
   {
     "id":"81",
     "home_team":"United States",
     "away_team":"Bosnia and Herzegovina",
-    "match_time":"2026-07-02 08:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "match_time":"2026-07-02 07:30:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Folarin Balogun (45) | Malik Tillman (82)",
+    "winner_qualify":"United States"
   },
   {
     "id":"68",
@@ -876,7 +876,7 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Havertz54' | Enciso42'",
+    "scorers":"Kai Havertz (54) | Julio Enciso (42)",
     "winner_qualify":"Paraguay"
   },
   {
@@ -887,8 +887,8 @@
     "home_score":"1",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Gakpo72' | Diop90+1'",
-    "winner_qualify":""
+    "scorers":"Cody Gakpo (72) | Issa Diop (90+1)",
+    "winner_qualify":"Morocco"
   },
   {
     "id":"70",
@@ -898,7 +898,161 @@
     "home_score":"2",
     "away_score":"1",
     "status":"Finished",
-    "scorers":"Casemiro56'Martinelli90+5' | Sano29'",
+    "scorers":"Kaishu Sano (29) | Casemiro (56) | Gabriel Martinelli (95)",
     "winner_qualify":"Brazil"
+  },
+  {
+    "id":"84",
+    "home_team":"Spain",
+    "away_team":"Austria",
+    "match_time":"2026-07-03 02:00:00",
+    "home_score":"3",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Mikel Oyarzabal (36) | Mikel Oyarzabal (89) | Pedro Porro (66)",
+    "winner_qualify":"Spain"
+  },
+  {
+    "id":"83",
+    "home_team":"Portugal",
+    "away_team":"Croatia",
+    "match_time":"2026-07-03 06:00:00",
+    "home_score":"2",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Cristiano Ronaldo (68) | Ivan Perišić (53), Gonçalo Ramos (94)",
+    "winner_qualify":"Portugal"
+  },
+  {
+    "id":"85",
+    "home_team":"Switzerland",
+    "away_team":"Algeria",
+    "match_time":"2026-07-03 10:00:00",
+    "home_score":"2",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Breel Embolo (10) | Dan Ndoye (46)",
+    "winner_qualify":"Switzerland"
+  },
+  {
+    "id":"86",
+    "home_team":"Argentina",
+    "away_team":"Cape Verde",
+    "match_time":"2026-07-04 05:00:00",
+    "home_score":"3",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Lionel Messi (29'), Lisandro Martinez (103'), Cristian Romero (111') | Deroy Duarte (59'), Sidny Lopes Cabral (103')",
+    "winner_qualify":"Argentina"
+  },
+  {
+    "id":"88",
+    "home_team":"Australia",
+    "away_team":"Egypt",
+    "match_time":"2026-07-04 08:00:00",
+    "home_score":"1",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Mohamed Hany (OG 55') | Emam Ashour (13')",
+    "winner_qualify":"Egypt"
+  },
+  {
+    "id":"87",
+    "home_team":"Colombia",
+    "away_team":"Ghana",
+    "match_time":"2026-07-04 08:30:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Jhon Arias (14') |",
+    "winner_qualify":"Colombia"
+  },
+  {
+    "id":"89",
+    "home_team":"Canada",
+    "away_team":"Morocco",
+    "match_time":"2026-07-05 04:00:00",
+    "home_score":"0",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Ounahi50',82'Rahimi90+8'",
+    "winner_qualify":""
+  },
+  {
+    "id":"90",
+    "home_team":"Paraguay",
+    "away_team":"France",
+    "match_time":"2026-07-05 01:00:00",
+    "home_score":"0",
+    "away_score":"1",
+    "status":"Finished",
+    "scorers":"Mbappé70'(pen.)",
+    "winner_qualify":""
+  },
+  {
+    "id":"91",
+    "home_team":"Brazil",
+    "away_team":"Norway",
+    "match_time":"2026-07-06 03:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"92",
+    "home_team":"Mexico",
+    "away_team":"England",
+    "match_time":"2026-07-06 09:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"93",
+    "home_team":"Spain",
+    "away_team":"Portugal",
+    "match_time":"2026-07-07 03:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"94",
+    "home_team":"United States",
+    "away_team":"Belgium",
+    "match_time":"2026-07-07 10:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"95",
+    "home_team":"ผู้ชนะคู่ 86",
+    "away_team":"ผู้ชนะคู่ 88",
+    "match_time":"2026-07-07 23:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
+  },
+  {
+    "id":"96",
+    "home_team":"ผู้ชนะคู่ 85",
+    "away_team":"ผู้ชนะคู่ 87",
+    "match_time":"2026-07-08 06:00:00",
+    "home_score":"",
+    "away_score":"",
+    "status":"Upcoming",
+    "scorers":"",
+    "winner_qualify":""
   }
 ]

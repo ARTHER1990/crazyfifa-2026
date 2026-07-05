@@ -1,17 +1,17 @@
 [
   {
     "username":"Art",
-    "total_score":"50",
+    "total_score":"84",
     "pin":"1990"
   },
   {
     "username":"ต้องใจ",
-    "total_score":"54",
+    "total_score":"89",
     "pin":"0311"
   },
   {
     "username":"Aim",
-    "total_score":"52",
+    "total_score":"81",
     "pin":"2244"
   },
   {
@@ -31,17 +31,17 @@
   },
   {
     "username":"NOTE",
-    "total_score":"61",
+    "total_score":"98",
     "pin":"1234"
   },
   {
     "username":"FAII",
-    "total_score":"37",
+    "total_score":"74",
     "pin":"2402"
   },
   {
     "username":"Nong",
-    "total_score":"51",
+    "total_score":"89",
     "pin":"1234"
   },
   {
@@ -51,12 +51,12 @@
   },
   {
     "username":"Tayshi",
-    "total_score":"57",
+    "total_score":"89",
     "pin":"1234"
   },
   {
     "username":"Robert B",
-    "total_score":"57",
+    "total_score":"93",
     "pin":"123"
   },
   {
@@ -66,7 +66,12 @@
   },
   {
     "username":"Bow",
-    "total_score":"24",
+    "total_score":"42",
     "pin":"1234"
+  },
+  {
+    "username":"ปีเตอร์ลิง",
+    "total_score":"13",
+    "pin":"8888"
   }
 ]
