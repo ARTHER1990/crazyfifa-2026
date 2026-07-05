@@ -2970,87 +2970,87 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             audio_html = ""
             if speech_b64 != "":
                 # สร้าง UI เครื่องเล่นเสียงเสมือนจริงในกล่อง AI Box
-                audio_html = """
-                <div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 10px; border: 1px dashed rgba(255, 215, 0, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-                    <div style="font-size: 0.85rem; color: #ffd700; display: flex; align-items: center; gap: 6px;">
-                        <span>🎙️</span>
-                        <span><b>ปีเตอร์พากย์เสียงวิเคราะห์:</b> ความเร็ว 1.18x | เพลงสนามหรี่อัตโนมัติ</span>
-                    </div>
-                    <button id="crazyfifa-audio-btn" onclick="toggleCrazyFifaAudio()" style="background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%); border: none; padding: 6px 14px; border-radius: 20px; color: #000; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.3s;">
-                        ⏸️ กำลังเล่น...
-                    </button>
-                </div>
-                
-                <audio id="speech-audio-src">
-                    <source src="data:audio/mp3;base64,{speech_b64}" type="audio/mp3">
-                </audio>
-                
-                <script>
-                    var speech = document.getElementById("speech-audio-src");
-                    var btn = document.getElementById("crazyfifa-audio-btn");
-                    var isPlaying = false;
-                    
-                    // ปรับแต่งเสียงพากย์เร่งสปีด 1.18x
-                    speech.playbackRate = 1.18;
-                    speech.volume = 1.0;
-                    
-                    function toggleCrazyFifaAudio() {
-                        var bgMusic = document.getElementById("bg-music");
-                        if (!isPlaying) {
-                            speech.play().then(() => {
-                                isPlaying = true;
-                                btn.innerText = "⏸️ หยุดเสียง";
-                                if (bgMusic) {
-                                    bgMusic.volume = 0.08; // หรี่เพลงสนามเหลือ 8%
-                                }
-                            }).catch(e => console.log("Speech play failed:", e));
-                        } else {
-                            speech.pause();
-                            btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
-                            isPlaying = false;
-                            if (bgMusic) {
-                                bgMusic.volume = 0.30; // คืนระดับเสียงเพลงสนามเป็น 30%
-                            }
-                        }
-                    }
-                    
-                    // สั่ง Autoplay เล่นอัตโนมัติทันที
-                    function autoPlayFifa() {
-                        var bgMusic = document.getElementById("bg-music");
-                        speech.play().then(() => {
-                            isPlaying = true;
-                            btn.innerText = "⏸️ หยุดเสียง";
-                            console.log("Autoplay speech success!");
-                            if (bgMusic) {
-                                bgMusic.volume = 0.08; // หรี่เพลงสนามลงทันทีเมื่อเริ่มพูด
-                            }
-                        }).catch(err => {
-                            console.log("Autoplay blocked by browser, waiting for user click:", err);
-                            btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
-                        });
-                    }
-                    
-                    // ตั้งเวลาเล่นอัตโนมัติหลังหน้าจอเรนเดอร์เสร็จ (600ms)
-                    setTimeout(autoPlayFifa, 600);
-                    
-                    // เมื่อพูดจบ ให้ดึงระดับความดังเพลงสนามกลับคืนสู่ปกติแบบนุ่มนวล
-                    speech.onended = function() {
-                        btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
-                        isPlaying = false;
-                        var bgMusic = document.getElementById("bg-music");
-                        if (bgMusic) {
-                            var volumeInterval = setInterval(function() {
-                                if (bgMusic.volume < 0.30) {
-                                    bgMusic.volume += 0.02; // ค่อยๆ เพิ่มระดับเสียงขึ้นทีละนิด
-                                } else {
-                                    bgMusic.volume = 0.30;
-                                    clearInterval(volumeInterval);
-                                }
-                            }, 100);
-                        }
-                    };
-                </script>
-                """.replace("{speech_b64}", speech_b64)
+            audio_html = """
+<div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.05); border-radius: 10px; border: 1px dashed rgba(255, 215, 0, 0.2); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+    <div style="font-size: 0.85rem; color: #ffd700; display: flex; align-items: center; gap: 6px;">
+        <span>🎙️</span>
+        <span><b>ปีเตอร์พากย์เสียงวิเคราะห์:</b> ความเร็ว 1.18x | เพลงสนามหรี่อัตโนมัติ</span>
+    </div>
+    <button id="crazyfifa-audio-btn" onclick="toggleCrazyFifaAudio()" style="background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%); border: none; padding: 6px 14px; border-radius: 20px; color: #000; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+        ▶️ คลิกเพื่อฟังเสียง
+    </button>
+</div>
+
+<audio id="speech-audio-src">
+    <source src="data:audio/mp3;base64,{speech_b64}" type="audio/mp3">
+</audio>
+
+<script>
+    var speech = document.getElementById("speech-audio-src");
+    var btn = document.getElementById("crazyfifa-audio-btn");
+    var isPlaying = false;
+    
+    // ปรับแต่งเสียงพากย์เร่งสปีด 1.18x
+    speech.playbackRate = 1.18;
+    speech.volume = 1.0;
+    
+    function toggleCrazyFifaAudio() {
+        var bgMusic = document.getElementById("bg-music");
+        if (!isPlaying) {
+            speech.play().then(() => {
+                isPlaying = true;
+                btn.innerText = "⏸️ หยุดเสียง";
+                if (bgMusic) {
+                    bgMusic.volume = 0.08; // หรี่เพลงสนามเหลือ 8%
+                }
+            }).catch(e => console.log("Speech play failed:", e));
+        } else {
+            speech.pause();
+            btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
+            isPlaying = false;
+            if (bgMusic) {
+                bgMusic.volume = 0.30; // คืนระดับเสียงเพลงสนามเป็น 30%
+            }
+        }
+    }
+    
+    // สั่ง Autoplay เล่นอัตโนมัติทันที
+    function autoPlayFifa() {
+        var bgMusic = document.getElementById("bg-music");
+        speech.play().then(() => {
+            isPlaying = true;
+            btn.innerText = "⏸️ หยุดเสียง";
+            console.log("Autoplay speech success!");
+            if (bgMusic) {
+                bgMusic.volume = 0.08; // หรี่เพลงสนามลงทันทีเมื่อเริ่มพูด
+            }
+        }).catch(err => {
+            console.log("Autoplay blocked by browser, waiting for user click:", err);
+            btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
+        });
+    }
+    
+    // ตั้งเวลาเล่นอัตโนมัติหลังหน้าจอเรนเดอร์เสร็จ (600ms)
+    setTimeout(autoPlayFifa, 600);
+    
+    // เมื่อพูดจบ ให้ดึงระดับความดังเพลงสนามกลับคืนสู่ปกติแบบนุ่มนวล
+    speech.onended = function() {
+        btn.innerText = "▶️ คลิกเพื่อฟังเสียง";
+        isPlaying = false;
+        var bgMusic = document.getElementById("bg-music");
+        if (bgMusic) {
+            var volumeInterval = setInterval(function() {
+                if (bgMusic.volume < 0.30) {
+                    bgMusic.volume += 0.02; // ค่อยๆ เพิ่มระดับเสียงขึ้นทีละนิด
+                } else {
+                    bgMusic.volume = 0.30;
+                    clearInterval(volumeInterval);
+                }
+            }, 100);
+        }
+    };
+</script>
+""".replace("{speech_b64}", speech_b64)
             
             # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ HTML ให้สวยงาม
             st.markdown(personalized_report + audio_html, unsafe_allow_html=True)
