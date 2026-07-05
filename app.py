@@ -67,15 +67,85 @@ def get_audio_html(audio_path):
             audio_base64 = base64.b64encode(f.read()).decode()
             _AUDIO_CACHE[audio_path] = audio_base64
             
-    return f"""
+    # โหลดและแปลงไฟล์เสียงพากย์ปีเตอร์ (อยู่ใน current_dir เดียวกัน)
+    speech_base64 = ""
+    speech_path = os.path.join(current_dir, 'ai_analysis_fast.mp3')
+    if not os.path.exists(speech_path):
+        speech_path = os.path.join(current_dir, 'ai_analysis_sample.mp3')
+        
+    try:
+        if os.path.exists(speech_path):
+            with open(speech_path, "rb") as f:
+                speech_base64 = base64.b64encode(f.read()).decode()
+    except Exception:
+        pass
+
+    html_code = """
         <audio autoplay loop id="bg-music">
             <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
         </audio>
+    """.replace("{audio_base64}", audio_base64)
+    
+    if speech_base64 != "":
+        html_code += """
+        <audio autoplay id="peter-speech">
+            <source src="data:audio/mp3;base64,{speech_base64}" type="audio/mp3">
+        </audio>
+        
         <script>
-            var audio = document.getElementById("bg-music");
-            audio.volume = 0.3; // ตั้งความดังที่ 30% เพื่อความพรีเมี่ยม
+            var music = document.getElementById("bg-music");
+            var speech = document.getElementById("peter-speech");
+            
+            // ตั้งระดับสปีดพูดเป็น 1.18 เท่าตามสั่ง
+            speech.playbackRate = 1.18;
+            speech.volume = 1.0;
+            
+            // ตั้งความดังปกติของเพลงสนามไว้ที่ 30%
+            if (music) {
+                music.volume = 0.30;
+            }
+            
+            // สั่งเล่นเสียงพากย์ผ่าน JavaScript ตรงๆ เพื่อก้าวข้ามข้อจำกัด autoplay ของบราวเซอร์
+            speech.play().then(() => {
+                console.log("Speech autoplay success!");
+                // หากพากย์เสียงเริ่มแล้ว ให้หรี่เพลงสนามลงเหลือ 8%
+                if (music) {
+                    music.volume = 0.08;
+                }
+            }).catch(err => {
+                console.log("Speech autoplay blocked by browser, keeping music at 30%:", err);
+                // หากโดนบล็อก ให้เล่นเพลงสนามที่ความดัง 30% ตามปกติ
+                if (music) {
+                    music.volume = 0.30;
+                }
+            });
+            
+            // เมื่อเสียงพากย์จบ ให้ค่อยๆ เร่งระดับเสียงเพลงสนามกลับคืนสู่ปกติแบบนุ่มนวล
+            speech.onended = function() {
+                if (music) {
+                    var volumeInterval = setInterval(function() {
+                        if (music.volume < 0.30) {
+                            music.volume += 0.02;
+                        } else {
+                            music.volume = 0.30;
+                            clearInterval(volumeInterval);
+                        }
+                    }, 100);
+                }
+            };
         </script>
-    """
+        """.replace("{speech_base64}", speech_base64)
+    else:
+        html_code += """
+        <script>
+            var music = document.getElementById("bg-music");
+            if (music) {
+                music.volume = 0.30;
+            }
+        </script>
+        """
+        
+    return html_code
 
 
 
