@@ -294,7 +294,7 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
             # ตรวจสอบว่าแฮชตรงกันและวันที่ตรงกันหรือไม่ (ให้เจนใหม่วันละครั้ง หรือเมื่อคะแนนมีการเปลี่ยนแปลง)
             if cache_data.get("hash_key") == current_hash and cache_data.get("date") == today_str:
                 content = cache_data.get("content")
-                output_voice_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
+                output_voice_path = os.path.join(current_dir, "static", "ai_analysis_fast.webp")
                 
                 # คำนวณแฮชข้อความเพื่อเทียบว่าตรงกับเสียงบนดิสก์จริงไหม
                 content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()
@@ -331,7 +331,7 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
     
     if ai_text:
         content_hash = hashlib.md5(ai_text.encode("utf-8")).hexdigest()
-        output_voice_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
+        output_voice_path = os.path.join(current_dir, "static", "ai_analysis_fast.webp")
         
         # จัดการจัดเก็บแคชลงไฟล์โลคัลทันทีโดยไม่รอสร้างไฟล์เสียง เพื่อให้หน้าเว็บโหลดเร็วที่สุด
         try:

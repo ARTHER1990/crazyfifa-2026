@@ -1,5 +1,8 @@
 # Last cache clear and score update: 2026-07-04 16:05 (Manual recovery: Argentina, Colombia, Australia)
 import streamlit as st
+import mimetypes
+mimetypes.add_type("audio/mp3", ".mp3")
+mimetypes.add_type("audio/mpeg", ".mp3")
 import database as db
 from datetime import datetime, timedelta, timezone
 import pandas as pd
@@ -63,8 +66,10 @@ def get_base64_image(image_path):
 def get_audio_html(audio_path, session_audio_id="default_id"):
     import time
     filename = os.path.basename(audio_path)
-    if filename == "Shakira Burna Boy Dai Dai Official Video.mp3":
-        filename = "bg_music.mp3"
+    if filename.endswith(".mp3"):
+        filename = filename[:-4] + ".webp"
+    if filename == "Shakira Burna Boy Dai Dai Official Video.webp":
+        filename = "bg_music.webp"
         
     voice_time = int(time.time())
     
@@ -74,7 +79,7 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
         <source src="/app/static/{filename}" type="audio/mp3">
     </audio>
     <audio id="peter-speech">
-        <source src="/app/static/ai_analysis_fast.mp3?t={voice_time}" type="audio/mp3">
+        <source src="/app/static/ai_analysis_fast.webp?t={voice_time}" type="audio/mp3">
     </audio>
     
     <script>
