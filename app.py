@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 import base64
 import os
+import streamlit.components.v1 as components
 
 # ฟังก์ชันล้างไฟล์ขยะ Icon\r ในโฟลเดอร์ .git ป้องกันปัญหา git bad ref refs/tags/Icon? ถาวร
 def cleanup_git_icons():
@@ -22,6 +23,8 @@ def cleanup_git_icons():
         pass
 
 cleanup_git_icons()
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # ฟังก์ชันสำหรับแปลงค่าตัวเลขอย่างปลอดภัย (ดักจับ None, NaN, ช่องว่าง)
 def safe_int(val, default=0):
@@ -57,97 +60,202 @@ def get_base64_image(image_path):
         return b64
 
 # ฟังก์ชันสำหรับเพลง
-def get_audio_html(audio_path):
-    if not os.path.exists(audio_path):
-        return ""
-    if audio_path in _AUDIO_CACHE:
-        audio_base64 = _AUDIO_CACHE[audio_path]
-    else:
-        with open(audio_path, "rb") as f:
-            audio_base64 = base64.b64encode(f.read()).decode()
-            _AUDIO_CACHE[audio_path] = audio_base64
-            
-    # โหลดและแปลงไฟล์เสียงพากย์ปีเตอร์ (อยู่ใน current_dir เดียวกัน)
-    speech_base64 = ""
-    speech_path = os.path.join(current_dir, 'ai_analysis_fast.mp3')
-    if not os.path.exists(speech_path):
-        speech_path = os.path.join(current_dir, 'ai_analysis_sample.mp3')
+def get_audio_html(audio_path, session_audio_id="default_id"):
+    import time
+    filename = os.path.basename(audio_path)
+    if filename == "Shakira Burna Boy Dai Dai Official Video.mp3":
+        filename = "bg_music.mp3"
         
-    try:
-        if os.path.exists(speech_path):
-            with open(speech_path, "rb") as f:
-                speech_base64 = base64.b64encode(f.read()).decode()
-    except Exception:
-        pass
-
-    html_code = """
-        <audio autoplay loop id="bg-music">
-            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-        </audio>
-    """.replace("{audio_base64}", audio_base64)
+    voice_time = int(time.time())
     
-    if speech_base64 != "":
-        html_code += """
-        <audio autoplay id="peter-speech">
-            <source src="data:audio/mp3;base64,{speech_base64}" type="audio/mp3">
-        </audio>
+    html_code = f"""
+    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL -->
+    <audio loop id="bg-music">
+        <source src="/app/static/{filename}" type="audio/mp3">
+    </audio>
+    <audio id="peter-speech">
+        <source src="/app/static/ai_analysis_fast.mp3?t={voice_time}" type="audio/mp3">
+    </audio>
+    
+    <script>
+        var music = document.getElementById("bg-music");
+        var speech = document.getElementById("peter-speech");
         
-        <script>
-            var music = document.getElementById("bg-music");
-            var speech = document.getElementById("peter-speech");
-            
-            // ตั้งระดับสปีดพูดเป็น 1.18 เท่าตามสั่ง
+        // ดึงตำแหน่งเวลาเล่นล่าสุดจาก Session Storage ป้องกันเพลงเริ่มใหม่ตอนสลับแท็บ
+        var savedMusicTime = sessionStorage.getItem("peter_music_time");
+        var savedSpeechTime = sessionStorage.getItem("peter_speech_time");
+        var isSpeechEnded = sessionStorage.getItem("peter_speech_ended");
+        
+        if (music) {{
+            music.volume = 0.30;
+        }}
+        if (speech) {{
             speech.playbackRate = 1.18;
             speech.volume = 1.0;
-            
-            // ตั้งความดังปกติของเพลงสนามไว้ที่ 30%
-            if (music) {
-                music.volume = 0.30;
-            }
-            
-            // สั่งเล่นเสียงพากย์ผ่าน JavaScript ตรงๆ เพื่อก้าวข้ามข้อจำกัด autoplay ของบราวเซอร์
-            speech.play().then(() => {
-                console.log("Speech autoplay success!");
-                // หากพากย์เสียงเริ่มแล้ว ให้หรี่เพลงสนามลงเหลือ 8%
-                if (music) {
-                    music.volume = 0.08;
-                }
-            }).catch(err => {
-                console.log("Speech autoplay blocked by browser, keeping music at 30%:", err);
-                // หากโดนบล็อก ให้เล่นเพลงสนามที่ความดัง 30% ตามปกติ
-                if (music) {
-                    music.volume = 0.30;
-                }
-            });
-            
-            // เมื่อเสียงพากย์จบ ให้ค่อยๆ เร่งระดับเสียงเพลงสนามกลับคืนสู่ปกติแบบนุ่มนวล
-            speech.onended = function() {
-                if (music) {
-                    var volumeInterval = setInterval(function() {
-                        if (music.volume < 0.30) {
-                            music.volume += 0.02;
-                        } else {
-                            music.volume = 0.30;
-                            clearInterval(volumeInterval);
-                        }
-                    }, 100);
-                }
-            };
-        </script>
-        """.replace("{speech_base64}", speech_base64)
-    else:
-        html_code += """
-        <script>
-            var music = document.getElementById("bg-music");
-            if (music) {
-                music.volume = 0.30;
-            }
-        </script>
-        """
+        }}
         
+        // จัดการเสียงพากย์ปีเตอร์ AI
+        if (speech && isSpeechEnded !== "true") {{
+            if (savedSpeechTime) {{
+                speech.currentTime = parseFloat(savedSpeechTime);
+            }}
+            speech.play().then(() => {{
+                console.log("Speech playing...");
+                if (music) music.volume = 0.08;
+            }}).catch(err => {{
+                console.log("Speech autoplay blocked:", err);
+            }});
+            
+            speech.onended = function() {{
+                sessionStorage.setItem("peter_speech_ended", "true");
+                sessionStorage.removeItem("peter_speech_time");
+                if (music) {{
+                    var volInterval = setInterval(function() {{
+                        if (music.volume < 0.30) {{
+                            music.volume += 0.02;
+                        }} else {{
+                            music.volume = 0.30;
+                            clearInterval(volInterval);
+                        }}
+                    }}, 100);
+                }}
+            }};
+        }} else {{
+            if (music) {{
+                music.volume = 0.30;
+            }}
+        }}
+        
+        // จัดการดนตรีและเพลงประกอบ
+        if (music) {{
+            if (savedMusicTime) {{
+                music.currentTime = parseFloat(savedMusicTime);
+            }}
+            music.play().then(() => {{
+                console.log("Music playing...");
+            }}).catch(err => {{
+                console.log("Music autoplay blocked:", err);
+            }});
+        }}
+        
+        // บันทึกตำแหน่งเวลาการเล่นทุกๆ 100ms เพื่อนำมาเล่นต่อหลัง rerun หน้าจอ
+        setInterval(function() {{
+            if (music && !music.paused) {{
+                sessionStorage.setItem("peter_music_time", music.currentTime);
+            }}
+            if (speech && !speech.paused && isSpeechEnded !== "true") {{
+                sessionStorage.setItem("peter_speech_time", speech.currentTime);
+            }}
+        }}, 100);
+    </script>
+    """
     return html_code
 
+def show_standalone_radio_player():
+    st.set_page_config(page_title="CrazyFIFA Peter AI Radio", page_icon="📻", layout="centered")
+    
+    st.markdown("""
+        <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            
+            /* นำเข้าฟอนต์ Kanit จาก Google Fonts */
+            @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+            
+            body, [data-testid="stAppViewContainer"] {
+                background: linear-gradient(135deg, #070f14 0%, #0d1e26 50%, #152f3d 100%) !important;
+                color: #ffffff !important;
+                font-family: 'Kanit', sans-serif !important;
+            }
+            .radio-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                padding: 30px;
+                border-radius: 24px;
+                background: rgba(255, 255, 255, 0.03);
+                border: 1px solid rgba(255, 215, 0, 0.2);
+                backdrop-filter: blur(12px);
+                box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+                max-width: 400px;
+                margin: 40px auto;
+            }
+            .spinning-disc {
+                width: 140px;
+                height: 140px;
+                border-radius: 50%;
+                border: 5px solid #00FF87;
+                background: radial-gradient(circle, #000 25%, #222 65%, #050505 70%);
+                animation: spin 4s linear infinite;
+                box-shadow: 0 0 30px rgba(0, 255, 135, 0.5);
+                margin-bottom: 25px;
+                position: relative;
+            }
+            .spinning-disc::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 30px;
+                height: 30px;
+                background: #0d1e26;
+                border-radius: 50%;
+                border: 3px solid #00FF87;
+            }
+            @keyframes spin {
+                100% { transform: rotate(360deg); }
+            }
+            .glowing-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #00FF87;
+                text-shadow: 0 0 15px rgba(0, 255, 135, 0.4);
+                margin-bottom: 8px;
+                letter-spacing: 1px;
+            }
+            .subtitle {
+                font-size: 0.95rem;
+                opacity: 0.85;
+                margin-bottom: 12px;
+                color: #60EFFF;
+            }
+            .info-box {
+                font-size: 0.8rem;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px 15px;
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                margin-top: 15px;
+                line-height: 1.4;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="radio-container">
+        <div class="spinning-disc"></div>
+        <div class="glowing-title">📻 PETER AI RADIO</div>
+        <div class="subtitle">วิทยุขอบสนามบอลโลก 2026</div>
+        <p style="font-size: 0.9rem; opacity: 0.75; margin: 0 0 15px 0;">ดนตรี Shakira x Burna Boy และเสียงพากย์ปีเตอร์ AI</p>
+        <div class="info-box">
+            👉 <b>ย่อหน้าต่างนี้ทิ้งไว้ได้เลยครับ</b> เสียงจะเล่นยาวต่อเนื่อง 100% โดยไม่กระตุกหรือเริ่มต้นใหม่เมื่อสลับดูแท็บข้อมูลในหน้าต่างหลัก
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
+    audio_html = get_audio_html(song_path, session_audio_id="standalone_radio_session")
+    
+    components.html(audio_html, height=0, width=0)
 
+# ตรวจสอบว่าเป็นการเรียกเปิดวิทยุปีเตอร์แบบ Standalone ในหน้าต่างใหม่หรือไม่
+if st.query_params.get("embed_player") == "true":
+    show_standalone_radio_player()
+    st.stop()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_full_path = os.path.join(current_dir, "ต่างดาว_optimized.webp")
@@ -2631,28 +2739,30 @@ if st.session_state.authenticated:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🎵 บรรยากาศสนาม")
     
-    # ป้องกันความคลาดเคลื่อนทางสถานะ (State Desynchronization) และปัญหาปุ่ม toggle รีเซ็ตตัวเองตอนเปลี่ยนหน้า
-    # โดยใช้ค่าเริ่มต้น (value) จากตัวแปรสถานะพึงประสงค์อิสระที่เก็บบันทึกถาวรใน Session State
     music_on = st.sidebar.toggle(
         "เปิดเสียงเชียร์", 
         value=st.session_state.music_saved_preference,
         key="music_toggle_widget"
     )
-    # อัปเดตและล็อกบันทึกสถานะความชอบของผู้ใช้ทันทีแบบเรียลไทม์ ป้องกันบั๊กลืมสถานะเปิด/ปิดเพลง
     st.session_state.music_saved_preference = music_on
-
     
-    # จองพื้นที่ (Placeholder: กล่องจองพื้นที่บนหน้าเว็บ) เพื่อบังคับให้ระบบประมวลผลเขียนทับและลบตัวเล่นเพลงอย่างทันทีทันใด
     music_placeholder = st.sidebar.empty()
     
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
+        audio_html = get_audio_html(song_path)
         with music_placeholder.container():
-            st.markdown(get_audio_html(song_path), unsafe_allow_html=True)
-        st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai")
+            components.html(audio_html, height=0, width=0)
+        st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai (สตรีมมิ่งไร้รอยต่อ)")
     else:
-        # หากกดปิด: บังคับทำลายออบเจกต์ตัวเล่นเสียงและเคลียร์กล่องจองพื้นที่ให้ว่างเปล่าทันที ส่งผลให้เสียงเงียบสนิทใน 1 คลิก!
-        music_placeholder.empty()
+        with music_placeholder.container():
+            components.html("""
+            <script>
+                sessionStorage.removeItem("peter_music_time");
+                sessionStorage.removeItem("peter_speech_time");
+                sessionStorage.removeItem("peter_speech_ended");
+            </script>
+            """, height=0, width=0)
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")

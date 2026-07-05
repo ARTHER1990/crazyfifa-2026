@@ -291,9 +291,32 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
         try:
             with open(cache_path, "r", encoding="utf-8") as f:
                 cache_data = json.load(f)
-                # ตรวจสอบว่าแฮชตรงกันและวันที่ตรงกันหรือไม่ (ให้เจนใหม่วันละครั้ง หรือเมื่อคะแนนมีการเปลี่ยนแปลง)
-                if cache_data.get("hash_key") == current_hash and cache_data.get("date") == today_str:
-                    return cache_data.get("content"), cache_data.get("model_used", "Gemini 2.5 Flash"), True
+            # ตรวจสอบว่าแฮชตรงกันและวันที่ตรงกันหรือไม่ (ให้เจนใหม่วันละครั้ง หรือเมื่อคะแนนมีการเปลี่ยนแปลง)
+            if cache_data.get("hash_key") == current_hash and cache_data.get("date") == today_str:
+                content = cache_data.get("content")
+                output_voice_path = os.path.join(current_dir, "ai_analysis_fast.mp3")
+                
+                # คำนวณแฮชข้อความเพื่อเทียบว่าตรงกับเสียงบนดิสก์จริงไหม
+                content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()
+                audio_hash = cache_data.get("audio_generated_for_hash")
+                
+                # หากเสียงยังไม่เคยถูกสร้างสำหรับเนื้อหานี้ หรือไฟล์เสียงหายไป
+                if audio_hash != content_hash or not os.path.exists(output_voice_path):
+                    import threading
+                    def run_tts_async():
+                        try:
+                            # บังคับสร้างเสียงวิเคราะห์ใหม่ใน background thread เพื่อไม่ให้หน้าเว็บหลักค้าง
+                            generated = generate_peter_voice(content, output_voice_path)
+                            if generated:
+                                cache_data["audio_generated_for_hash"] = content_hash
+                                with open(cache_path, "w", encoding="utf-8") as f_w:
+                                    json.dump(cache_data, f_w, ensure_ascii=False, indent=2)
+                        except Exception as e_voice:
+                            print(f"Error in async voice generation: {e_voice}")
+                    
+                    threading.Thread(target=run_tts_async, daemon=True).start()
+                        
+                return content, cache_data.get("model_used", "Gemini 2.5 Flash"), True
         except Exception as e:
             print(f"Error reading AI cache: {e}")
 
@@ -307,7 +330,10 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
     ai_text, model_name = call_gemini_api(prompt, api_key)
     
     if ai_text:
-        # 4. จัดการจัดเก็บแคชลงไฟล์โลคัลเพื่อใช้ซ้ำรอบถัดไป
+        content_hash = hashlib.md5(ai_text.encode("utf-8")).hexdigest()
+        output_voice_path = os.path.join(current_dir, "ai_analysis_fast.mp3")
+        
+        # จัดการจัดเก็บแคชลงไฟล์โลคัลทันทีโดยไม่รอสร้างไฟล์เสียง เพื่อให้หน้าเว็บโหลดเร็วที่สุด
         try:
             cache_payload = {
                 "date": today_str,
@@ -320,6 +346,24 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
                 json.dump(cache_payload, f, ensure_ascii=False, indent=2)
         except Exception as e:
             print(f"Error saving AI cache: {e}")
+
+        # รันการแปลงเสียงวิเคราะห์ใน background thread เพื่อแก้ปัญหาระบบค้าง
+        import threading
+        def run_tts_async():
+            try:
+                audio_ok = generate_peter_voice(ai_text, output_voice_path)
+                if audio_ok:
+                    # อ่านแคชปัจจุบันมาอัปเดตแฮชเสียง
+                    if os.path.exists(cache_path):
+                        with open(cache_path, "r", encoding="utf-8") as f_r:
+                            c_data = json.load(f_r)
+                        c_data["audio_generated_for_hash"] = content_hash
+                        with open(cache_path, "w", encoding="utf-8") as f_w:
+                            json.dump(c_data, f_w, ensure_ascii=False, indent=2)
+            except Exception as e_voice:
+                print(f"Error generating realtime voice in background: {e_voice}")
+        
+        threading.Thread(target=run_tts_async, daemon=True).start()
             
         return ai_text, model_name, False
     
@@ -333,3 +377,92 @@ def get_ai_summary(leaderboard_df, matches_df, predictions_df, force_refresh=Fal
             pass
             
     return "🎙️ ปีเตอร์รายงานตัวครับ! ตอนนี้เซิร์ฟเวอร์ปัญญาประดิษฐ์กำลังพักครึ่งสนามชั่วคราว ไม่สามารถดึงรายงานสดได้ในเวลานี้ โปรดลองใหม่อีกครั้งในภายหลังครับ", "ระบบออฟไลน์", False
+
+
+# --- ระบบแปลงข้อความเป็นเสียงพากย์ปีเตอร์ AI (Real-Time Text-to-Speech) ---
+import re
+import urllib.parse
+import requests
+
+def clean_text_for_tts(html_text):
+    # 1. ลบแท็ก HTML ทั้งหมด
+    text = re.sub(r'<[^>]+>', '', html_text)
+    
+    # 2. ปรับแต่งคำพากย์เฉพาะ:
+    text = text.replace("{USERNAME}", "คุณ").replace("{{USERNAME}}", "คุณ")
+    
+    # 3. ลบ Technical Terms ในวงเล็บอ่าน เพื่อให้เสียงพูดกระชับ สละสลวย ไม่พ่นคำอ่านซ้ำซ้อน
+    text = re.sub(r'\([^)]+\)', '', text)
+    
+    # 4. ลบเครื่องหมายสัญลักษณ์พิเศษ
+    text = text.replace("*", "").replace("-", "").replace("#", "")
+    
+    # 5. ยุบช่องว่างและบรรทัดว่างให้เป็นช่องเดียว
+    text = " ".join(text.split())
+    
+    return text
+
+def chunk_thai_text(text, max_len=150):
+    # ตัวแบ่งประโยคและคำ
+    delimiters = [" ", ",", "，", ".", "!", "?", "।"]
+    chunks = []
+    current = ""
+    
+    for char in text:
+        current += char
+        if len(current) >= max_len:
+            split_idx = -1
+            for i in range(len(current) - 1, max(0, len(current) - 30), -1):
+                if current[i] in delimiters:
+                    split_idx = i
+                    break
+            
+            if split_idx != -1:
+                chunks.append(current[:split_idx + 1].strip())
+                current = current[split_idx + 1:]
+            else:
+                chunks.append(current.strip())
+                current = ""
+                
+    if current.strip():
+        chunks.append(current.strip())
+        
+    return chunks
+
+def generate_peter_voice(text, output_path):
+    cleaned = clean_text_for_tts(text)
+    chunks = chunk_thai_text(cleaned)
+    combined_audio = b""
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    
+    for chunk in chunks:
+        if not chunk:
+            continue
+        params = {
+            "ie": "UTF-8",
+            "tl": "th",
+            "client": "tw-ob",
+            "q": chunk
+        }
+        url = "https://translate.google.com/translate_tts"
+        try:
+            r = requests.get(url, params=params, headers=headers, timeout=10)
+            if r.status_code == 200:
+                combined_audio += r.content
+            else:
+                print(f"Error TTS status: {r.status_code} for chunk: {chunk}")
+        except Exception as e:
+            print(f"TTS connection error: {e}")
+            
+    if combined_audio:
+        try:
+            with open(output_path, "wb") as f:
+                f.write(combined_audio)
+            print(f"Successfully generated new AI voice file at: {output_path}")
+            return True
+        except Exception as e:
+            print(f"Error saving generated voice file: {e}")
+    return False
