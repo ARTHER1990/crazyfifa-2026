@@ -2777,10 +2777,10 @@ try:
     all_matches_rem['match_dt'] = pd.to_datetime(all_matches_rem['match_time'])
     now_th_rem = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
     
-    # ดึงคู่ที่ยังไม่จบการแข่งขัน และเวลาเตะยังไม่ถึงกำหนด (ยังแก้ไขได้)
+    # ดึงคู่ที่ยังไม่จบการแข่งขัน และเวลาเตะต้องมากกว่าเวลาปัจจุบันอย่างน้อย 1 ชั่วโมง (สามารถแก้ไขได้)
     active_upcoming_rem = all_matches_rem[
         (all_matches_rem['status'] != 'Finished') & 
-        (all_matches_rem['match_dt'] > now_th_rem)
+        (all_matches_rem['match_dt'] > now_th_rem + pd.Timedelta(hours=1))
     ]
     
     user_preds_rem = db.get_user_predictions(username)
@@ -3267,7 +3267,8 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             m_time = m_time.to_pydatetime()
         status = row['status']
         now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
-        is_locked = now_th > m_time or status == 'Finished'
+        # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง ตามสเปกความปลอดภัยสูงสุดของคุณอาร์ต
+        is_locked = now_th > (m_time - timedelta(hours=1)) or status == 'Finished'
 
         has_pred = match_id in user_preds_cached
         preds_tuple = user_preds_cached.get(match_id, (0, 0, ""))
@@ -4769,7 +4770,8 @@ elif menu == "ประวัติการทายผล (My Predictions)":
                     m_time = row_m['match_dt'] if 'match_dt' in row_m and pd.notnull(row_m['match_dt']) else pd.to_datetime(row_m['match_time'])
                     if not isinstance(m_time, datetime):
                         m_time = m_time.to_pydatetime()
-                    is_locked = now_th > m_time or row_m['status'] == 'Finished'
+                    # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง เพื่อป้องกันการลักไก่แก้ไขสกอร์หลังบอลใกล้เตะหรือเตะแล้ว
+                    is_locked = now_th > (m_time - timedelta(hours=1)) or row_m['status'] == 'Finished'
                     
                     if has_pred:
                         pred_h, pred_a, *extra = user_preds[safe_int(m_id)]
