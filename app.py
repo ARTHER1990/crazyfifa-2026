@@ -103,9 +103,9 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     import os
     import time
     
-    # เรียกเล่นไฟล์เสียงและเสียงพากย์ผ่าน URL ตรงสัมพัทธ์ เพื่อขจัดปัญหาคอขวด WebSocket Payload Limit และรักษาระดับความเร็วกริบ
-    audio_url = "static/stadium_crowd.webp"
-    speech_url = "static/ai_analysis_fast.webp"
+    # เรียกเล่นไฟล์เสียงและเสียงพากย์ผ่าน URL ตรงจาก GitHub เพื่อขจัดปัญหาการไม่ได้เสิร์ฟไฟล์ Static บนคลาวด์และ WebSocket Payload Limit
+    audio_url = "https://raw.githubusercontent.com/ARTHER1990/crazyfifa-2026/main/static/stadium_crowd.webp"
+    speech_url = "https://raw.githubusercontent.com/ARTHER1990/crazyfifa-2026/main/static/ai_analysis_fast.webp"
     
     song_title = "🔊 เสียงบรรยากาศเชียร์ขอบสนาม"
     song_subtitle = "ระดับเสียง 15% คลอเบื้องหลัง (stadium_crowd.mp3)"
@@ -114,22 +114,33 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     speech_subtitle = "ระดับเสียง 100% เต็มพลัง (อัปเดตล่าสุดหน้าเว็บ)"
     
     html_code = f"""<!-- แผงเครื่องเล่นแบบคู่ (เสียงพากย์ปีเตอร์ AI + เสียงเชียร์ขอบสนามสไตล์พรีเมี่ยม) -->
+<style>
+@keyframes peter-bounce-bar {{
+    0% {{ height: 20%; }}
+    100% {{ height: 100%; }}
+}}
+@keyframes peter-pulse-glow {{
+    0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(0, 255, 135, 0.4)); }}
+    50% {{ transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 255, 135, 0.8)); }}
+    100% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(0, 255, 135, 0.4)); }}
+}}
+</style>
 <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
-<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.85) 0%, rgba(13, 30, 38, 0.95) 100%); border: 1px solid rgba(0, 255, 135, 0.4); border-radius: 12px; padding: 10px 12px; box-sizing: border-box; width: 100%; height: 75px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
-<div style="display: flex; align-items: center; gap: 8px;">
-<span style="font-size: 1.5rem; animation: pulse 2s infinite;">🎙️</span>
-<div style="display: flex; flex-direction: column;">
-<span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{speech_title}</span>
-<span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{speech_subtitle}</span>
-<span style="font-size: 0.6rem; color: #60EFFF; opacity: 0.7; margin-top: 2px;">{song_title} (เบาคลอ 15% อัตโนมัติ)</span>
+<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.92) 0%, rgba(13, 30, 38, 0.98) 100%); border: 1px solid rgba(0, 255, 135, 0.45); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 85px; height: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
+<div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+<span style="font-size: 1.6rem; animation: peter-pulse-glow 2s infinite; flex-shrink: 0; display: inline-block;">🎙️</span>
+<div style="display: flex; flex-direction: column; min-width: 0; word-break: break-word;">
+<span style="font-size: 0.8rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3); line-height: 1.4; margin-bottom: 2px;">{speech_title}</span>
+<span style="font-size: 0.68rem; color: #a0aec0; opacity: 0.9; line-height: 1.3; margin-bottom: 3px;">{speech_subtitle}</span>
+<span style="font-size: 0.62rem; color: #60EFFF; opacity: 0.8; line-height: 1.2; word-break: break-word;">{song_title} (เบาคลอ 15% อัตโนมัติ)</span>
 </div>
 </div>
-<div style="display: flex; align-items: flex-end; gap: 3px; height: 20px; margin-right: 5px;">
-<div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-<div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-<div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-<div style="width: 3px; height: 60%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-<div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+<div style="display: flex; align-items: flex-end; gap: 3px; height: 22px; margin-left: auto; flex-shrink: 0;">
+<div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.2s infinite ease-in-out alternate;"></div>
+<div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 0.8s infinite ease-in-out alternate 0.2s;"></div>
+<div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.5s infinite ease-in-out alternate 0.4s;"></div>
+<div style="width: 3px; height: 60%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.0s infinite ease-in-out alternate 0.1s;"></div>
+<div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 0.7s infinite ease-in-out alternate 0.3s;"></div>
 </div>
 </div>
 <!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) -->
