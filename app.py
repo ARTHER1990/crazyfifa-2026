@@ -74,12 +74,12 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     voice_time = int(time.time())
     
     html_code = f"""
-    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL -->
+    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL (เอา type ออกเพื่อเลี่ยงปัญหา MIME Conflict) -->
     <audio loop id="bg-music">
-        <source src="/static/{filename}" type="audio/mp3">
+        <source src="/static/{filename}">
     </audio>
     <audio id="peter-speech">
-        <source src="/static/ai_analysis_fast.webp?t={voice_time}" type="audio/mp3">
+        <source src="/static/ai_analysis_fast.webp?t={voice_time}">
     </audio>
     
     <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
@@ -115,6 +115,17 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     </style>
     
     <script>
+        var sessionAudioId = "{session_audio_id}";
+        var savedAudioId = sessionStorage.getItem("peter_current_audio_id");
+        
+        // หากบทวิเคราะห์มีการอัปเดตเป็นตัวใหม่ (หรือ ID แฮชไม่ตรงกัน) ให้บังคับล้างประวัติการเล่นจบ เพื่อเล่นเสียงตัวใหม่ทันที!
+        if (sessionAudioId && sessionAudioId !== savedAudioId) {{
+            sessionStorage.removeItem("peter_speech_ended");
+            sessionStorage.removeItem("peter_speech_time");
+            sessionStorage.setItem("peter_current_audio_id", sessionAudioId);
+            console.log("Detected new AI analysis voice version! Resetted session speech ended state.");
+        }}
+
         var music = document.getElementById("bg-music");
         var speech = document.getElementById("peter-speech");
         
@@ -2829,7 +2840,20 @@ if st.session_state.authenticated:
     
     if music_on:
         song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
-        audio_html = get_audio_html(song_path)
+        
+        # ดึงแฮชของบทวิเคราะห์ปัจจุบันจากไฟล์แคชเป็นเวอร์ชันเสียงพากย์เพื่อล้าง session ที่จบลงแล้วโดยอัตโนมัติเมื่อเนื้อหาเปลี่ยน
+        current_voice_version = "default_v1"
+        try:
+            cache_path_sb = os.path.join(current_dir, "ai_cache.json")
+            if os.path.exists(cache_path_sb):
+                with open(cache_path_sb, "r", encoding="utf-8") as f_r_sb:
+                    import json
+                    c_data_sb = json.load(f_r_sb)
+                    current_voice_version = c_data_sb.get("hash_key", "default_v1")
+        except:
+            pass
+            
+        audio_html = get_audio_html(song_path, session_audio_id=current_voice_version)
         with music_placeholder.container():
             components.html(audio_html, height=0, width=0)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai (สตรีมมิ่งไร้รอยต่อ)")
