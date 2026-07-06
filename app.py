@@ -103,27 +103,13 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     import os
     import time
     
-    # 1. โหลดและแปลงไฟล์เสียงเชียร์สนาม (stadium_crowd.mp3)
-    audio_b64 = get_base64_audio(audio_path)
+    # เรียกเล่นไฟล์เสียงและเสียงพากย์ผ่าน URL ตรงสัมพัทธ์ เพื่อขจัดปัญหาคอขวด WebSocket Payload Limit และรักษาระดับความเร็วกริบ
+    audio_url = "static/stadium_crowd.webp"
+    speech_url = "static/ai_analysis_fast.webp"
     
-    # 2. โหลดและแปลงไฟล์เสียงพากย์ปีเตอร์ AI ล่าสุด (static/ai_analysis_fast.webp หรือ .mp3)
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.webp")
-    if not os.path.exists(speech_path):
-        speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
-        
-    speech_b64 = get_base64_audio(speech_path)
+    song_title = "🔊 เสียงบรรยากาศเชียร์ขอบสนาม"
+    song_subtitle = "ระดับเสียง 15% คลอเบื้องหลัง (stadium_crowd.mp3)"
     
-    if not audio_b64:
-        return f"<!-- ข้อผิดพลาด: ไม่สามารถโหลดหรือแปลงไฟล์เสียงเป็น Base64 ได้ -->"
-        
-    song_title = "กำลังบรรเลงเพลงขอบสนาม..."
-    song_subtitle = "ระดับเสียง 15% บรรยากาศสนามคลอเบาๆ"
-    
-    if "stadium_crowd" in audio_path:
-        song_title = "🔊 เสียงบรรยากาศเชียร์ขอบสนาม"
-        song_subtitle = "ระดับเสียง 15% คลอเบื้องหลัง (stadium_crowd.mp3)"
-        
     speech_title = "🎙️ ปีเตอร์ AI กำลังพากย์บทวิเคราะห์..."
     speech_subtitle = "ระดับเสียง 100% เต็มพลัง (อัปเดตล่าสุดหน้าเว็บ)"
     
@@ -148,11 +134,11 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
 </div>
 <!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) -->
 <audio loop id="bg-music" style="display:none; width:0; height:0;">
-<source src="data:audio/mp3;base64,{audio_b64}" type="audio/mpeg">
+<source src="{audio_url}" type="audio/mpeg">
 </audio>
 <!-- เครื่องเล่นเสียงพากย์ปีเตอร์ AI (No Loop, Volume 100%) -->
 <audio id="peter-speech" style="display:none; width:0; height:0;">
-<source src="data:audio/mp3;base64,{speech_b64}" type="audio/mpeg">
+<source src="{speech_url}" type="audio/mpeg">
 </audio>
 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var m=document.getElementById('bg-music');var s=document.getElementById('peter-speech');if(m){{m.volume=0.15;m.muted=false;var savedMTime=sessionStorage.getItem('peter_music_time');if(savedMTime){{var pMTime=parseFloat(savedMTime);if(!isNaN(pMTime)&&Math.abs(m.currentTime-pMTime)>2.0){{m.currentTime=pMTime;console.log('Restored music to:',pMTime);}}}}m.play().catch(function(e){{console.log('Music play blocked:',e);}});}}if(s){{s.volume=1.0;s.muted=false;var currentSession='{session_audio_id}';var savedSession=sessionStorage.getItem('peter_speech_session');if(savedSession!==currentSession){{sessionStorage.setItem('peter_speech_session',currentSession);sessionStorage.removeItem('peter_speech_time');sessionStorage.removeItem('peter_speech_ended');}}var savedSTime=sessionStorage.getItem('peter_speech_time');var sEnded=sessionStorage.getItem('peter_speech_ended');if(sEnded!=='true'){{if(savedSTime){{var pSTime=parseFloat(savedSTime);if(!isNaN(pSTime)&&Math.abs(s.currentTime-pSTime)>2.0){{s.currentTime=pSTime;}}}}s.play().catch(function(e){{console.log('Speech play blocked:',e);}});}}}}if(!window.peterAudioTimer){{window.peterAudioTimer=setInterval(function(){{var music=document.getElementById('bg-music');var speech=document.getElementById('peter-speech');if(music&&!music.paused){{sessionStorage.setItem('peter_music_time',music.currentTime);}}if(speech){{if(!speech.paused&&!speech.ended){{sessionStorage.setItem('peter_speech_time',speech.currentTime);}}if(speech.ended){{sessionStorage.setItem('peter_speech_ended','true');}}}}}},100);}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
 </div>"""
