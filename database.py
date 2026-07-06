@@ -574,19 +574,7 @@ def get_world_cup_standings():
 @st.cache_data(ttl=300)
 def get_champion_predictions_df():
     cols = ['username', 'predicted_team', 'timestamp']
-    # 1. Try reading from SQLite first for speed and offline robustness
-    try:
-        import sqlite3
-        conn = sqlite3.connect('worldcup.db')
-        df_sql = pd.read_sql_query("SELECT * FROM champion_predictions", conn)
-        conn.close()
-        if not df_sql.empty:
-            save_local_backup('champion_predictions', df_sql)
-            return df_sql
-    except Exception as e:
-        print(f"SQLite reading error for champion_predictions: {e}")
-
-    # 2. If SQLite is empty or errors, pull from Google Sheets
+    # 1. Try Google Sheets first as the absolute Source of Truth
     try:
         ws = get_worksheet('champion_predictions')
         data = ws.get_all_values()
@@ -595,7 +583,7 @@ def get_champion_predictions_df():
         else:
             df = pd.DataFrame(data[1:], columns=data[0])
         
-        # Save to SQLite immediately to sync both sides
+        # Save/Sync to SQLite immediately
         try:
             import sqlite3
             conn = sqlite3.connect('worldcup.db')
@@ -607,17 +595,22 @@ def get_champion_predictions_df():
         save_local_backup('champion_predictions', df)
         return df
     except Exception as e:
-        # If worksheet does not exist on Google Sheets, create it
+        print(f"Google Sheets reading error for champion_predictions, trying SQLite fallback: {e}")
+
+        # 2. Fallback to SQLite if Google Sheets fails
         try:
-            sh = get_spreadsheet()
-            ws = sh.add_worksheet(title='champion_predictions', rows="100", cols="3")
-            ws.append_row(cols)
-            df = pd.DataFrame(columns=cols)
-            save_local_backup('champion_predictions', df)
-            return df
-        except Exception as ex:
-            print(f"Error creating champion_predictions worksheet: {ex}")
-            return load_local_backup('champion_predictions', cols)
+            import sqlite3
+            conn = sqlite3.connect('worldcup.db')
+            df_sql = pd.read_sql_query("SELECT * FROM champion_predictions", conn)
+            conn.close()
+            if not df_sql.empty:
+                save_local_backup('champion_predictions', df_sql)
+                return df_sql
+        except Exception as esql:
+            print(f"SQLite reading error for champion_predictions fallback: {esql}")
+
+        # 3. Fallback to Local Backup
+        return load_local_backup('champion_predictions', cols)
 
 def save_champion_prediction(username, predicted_team):
     name = normalize_name(username)
@@ -657,25 +650,15 @@ def save_champion_prediction(username, predicted_team):
 def get_user_champion_prediction(username):
     name = normalize_name(username)
     
-    # Query SQLite first for speed, ordering by timestamp DESC to get the absolute latest prediction
-    try:
-        import sqlite3
-        conn = sqlite3.connect('worldcup.db')
-        cursor = conn.cursor()
-        cursor.execute("SELECT predicted_team FROM champion_predictions WHERE username = ? ORDER BY timestamp DESC LIMIT 1", (name,))
-        row = cursor.fetchone()
-        conn.close()
-        if row:
-            return str(row[0]).strip()
-    except Exception as e:
-        print(f"SQLite query error in get_user_champion_prediction: {e}")
-        
-    # Fallback to DataFrame if SQLite fails
+    # ดึงข้อมูลจาก DataFrame ที่ผ่านกระบวนการตรวจสอบและซิงก์ตรงจาก Google Sheets เป็นหลัก
     df = get_champion_predictions_df()
-    if df.empty: return ""
+    if df.empty: 
+        return ""
+        
     user_pred = df[df['username'] == name]
     if user_pred.empty:
         return ""
+        
     return str(user_pred.iloc[0]['predicted_team']).strip()
 
 

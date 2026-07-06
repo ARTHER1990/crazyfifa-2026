@@ -4857,7 +4857,7 @@ elif menu == "ห้องควบคุมระบบ (Admin)":
                 st.balloons()
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Power by Gemini 3.1 Pro & Streamlit")
+st.sidebar.caption("Power by Gemini 3.5 Pro & Streamlit (Updated Champion Sync)")
 
 # --- ตรรกะอัจฉริยะล้างสถานะป๊อปอัปความยินดี เพื่อเตรียมเปิดทางให้ป๊อปอัปทายผลแชมป์โลกทำงานได้หลังปิดกากบาท (X) หรือปิดด้วยหนทางอื่น ---
 if st.session_state.get('congrats_active_in_render', False):
