@@ -29,6 +29,9 @@ cleanup_git_icons()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+# ตรรกะเปิดใช้งานระบบทำนายผลแชมป์โลก (ตั้งเป็น False ในวันนี้ตามที่คุณอาร์ตชะลอเปิด และแก้เป็น True ในวันพรุ่งนี้เพื่อเปิดระบบพร้อมกัน 100%)
+IS_CHAMPION_PRED_ACTIVE = False
+
 # ฟังก์ชันสำหรับแปลงค่าตัวเลขอย่างปลอดภัย (ดักจับ None, NaN, ช่องว่าง)
 def safe_int(val, default=0):
     if val is None:
@@ -502,24 +505,22 @@ def show_champion_dialog(username):
         </div>
     """, unsafe_allow_html=True)
     
+    global IS_CHAMPION_PRED_ACTIVE
+    
     TEAMS_LIST = [
         ("", "🏳️ กรุณาเลือกประเทศที่ต้องการทำนาย..."),
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
-        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
-        ("Germany", "🇩🇪 เยอรมนี (Germany)"),
         ("France", "🇫🇷 ฝรั่งเศส (France)"),
         ("Spain", "🇪🇸 สเปน (Spain)"),
         ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
-        ("Netherlands", "🇳🇱 เนเธอร์แลนด์ (Netherlands)"),
         ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
         ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
-        ("Uruguay", "🇺🇾 อุรุกวัย (Uruguay)"),
-        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
-        ("Japan", "🇯🇵 ญี่ปุ่น (Japan)"),
-        ("Senegal", "🇸🇳 เซเนกัล (Senegal)"),
         ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
         ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
-        ("Norway", "🇳🇴 นอร์เวย์ (Norway)")
+        ("Norway", "🇳🇴 นอร์เวย์ (Norway)"),
+        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)"),
+        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)"),
+        ("Egypt", "🇪🇬 อียิปต์ (Egypt)")
     ]
     
     existing_pred = db.get_user_champion_prediction(username)
@@ -541,17 +542,29 @@ def show_champion_dialog(username):
                 <span style='color: #cbd5e0; font-size: 0.88rem;'>คุณเลือกทายผลแชมป์โลกคือ <b>{TEAMS_LIST[default_idx][1]}</b> และไม่สามารถแก้ไขได้อีกแล้วครับ</span>
             </div>
         """, unsafe_allow_html=True)
+    elif not IS_CHAMPION_PRED_ACTIVE:
+        # กรณีระบบชะลอการเปิดทำนายผลเพื่อรอจบคู่แข่งขันรอบ 16 ทีมสุดท้ายคืนนี้
+        st.markdown(f"""
+            <div style='background-color: rgba(245, 184, 46, 0.08); border: 1.5px solid #F5B82E; border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 15px;'>
+                <span style='color: #FFE9A2; font-weight: bold; font-size: 1.05rem; text-shadow: 0 0 5px rgba(245,184,46,0.3);'>⏳ เตรียมเปิดระบบทำนายผลแชมป์โลกวันพรุ่งนี้!</span><br><br>
+                <span style='color: #cbd5e0; font-size: 0.92rem; line-height: 1.55;'>
+                    ระบบทำนายผลแชมป์โลก 2026 จะเปิดให้ส่งผลทายอย่างเป็นทางการใน<b>วันพรุ่งนี้</b><br>
+                    หลังจากแมตช์การแข่งขันรอบ 16 ทีมสุดท้ายที่เหลือในคืนนี้เตะเสร็จสมบูรณ์ เพื่อให้ได้รายชื่อทีมรอบ 8 ทีมสุดท้ายที่เที่ยงตรงและเท่าเทียมที่สุดสำหรับผู้เล่นทุกคนครับ! ⚽🔥
+                </span>
+            </div>
+        """, unsafe_allow_html=True)
                 
     team_codes = [t[0] for t in TEAMS_LIST]
     team_labels = [t[1] for t in TEAMS_LIST]
     
-    selected_label = st.selectbox(
-        "เลือกประเทศแชมป์โลกในใจคุณ:", 
-        team_labels, 
-        index=default_idx,
-        disabled=is_locked  # บล็อกการเปลี่ยนค่าเมื่อล็อกแล้ว
-    )
-    selected_code = team_codes[team_labels.index(selected_label)]
+    if IS_CHAMPION_PRED_ACTIVE or is_locked:
+        selected_label = st.selectbox(
+            "เลือกประเทศแชมป์โลกในใจคุณ:", 
+            team_labels, 
+            index=default_idx,
+            disabled=is_locked  # บล็อกการเปลี่ยนค่าเมื่อล็อกแล้ว
+        )
+        selected_code = team_codes[team_labels.index(selected_label)]
     
     st.write("")
     col1, col2 = st.columns(2)
@@ -562,6 +575,8 @@ def show_champion_dialog(username):
     with col2:
         if is_locked:
             st.button("🔒 ยืนยันคำทำนายแล้ว", use_container_width=True, disabled=True)
+        elif not IS_CHAMPION_PRED_ACTIVE:
+            st.button("⏳ เตรียมเปิดเร็วๆ นี้", use_container_width=True, disabled=True)
         else:
             if st.button("💾 บันทึกคำทำนาย 🏆", use_container_width=True, type="primary"):
                 if selected_code == "":
@@ -2099,7 +2114,7 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
         if not show_congrats_rendered:
             st.session_state.show_congrats_popup = False
             existing_pred = db.get_user_champion_prediction(username)
-            if not existing_pred:
+            if not existing_pred and IS_CHAMPION_PRED_ACTIVE:
                 st.session_state.show_champion_popup = True
             st.rerun()
     except Exception as e:
@@ -2119,7 +2134,8 @@ if st.session_state.get('username'):
         if 'auto_champion_check_done' not in st.session_state:
             st.session_state.auto_champion_check_done = True
             existing_pred = db.get_user_champion_prediction(username)
-            if not existing_pred or username == "Art":
+            # เด้งอัตโนมัติก็ต่อเมื่อเปิดรับทำนายจริงแล้ว หรือแอดมิน Art ต้องการทดสอบระบบ
+            if (not existing_pred and IS_CHAMPION_PRED_ACTIVE) or username == "Art":
                 st.session_state.show_champion_popup = True
                 st.rerun()
 
