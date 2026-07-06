@@ -66,20 +66,25 @@ def get_base64_image(image_path):
 def get_audio_html(audio_path, session_audio_id="default_id"):
     import time
     filename = os.path.basename(audio_path)
-    if filename.endswith(".mp3"):
-        filename = filename[:-4] + ".webp"
-    if filename == "Shakira Burna Boy Dai Dai Official Video.webp":
-        filename = "bg_music.webp"
+    # ปรับปรุงให้อ้างอิงเป็น .mp3 แท้เพื่อเสิร์ฟด้วย MIME type audio/mpeg ที่เบราว์เซอร์รองรับแบบสากล
+    if filename.endswith(".webp"):
+        filename = filename[:-5] + ".mp3"
+    if filename == "Shakira Burna Boy Dai Dai Official Video.mp3" or filename == "bg_music.webp" or filename == "Shakira Burna Boy Dai Dai Official Video.webp":
+        filename = "bg_music.mp3"
+    elif filename.endswith(".mp3"):
+        pass
+    else:
+        filename = "bg_music.mp3"
         
     voice_time = int(time.time())
     
     html_code = f"""
-    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL (เอา type ออกเพื่อเลี่ยงปัญหา MIME Conflict) -->
+    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL คืนค่าเสียง MP3 แท้พร้อมระบุ Type ป้องกันเบราว์เซอร์บล็อก MIME -->
     <audio loop id="bg-music">
-        <source src="/app/static/{filename}">
+        <source src="/app/static/{filename}" type="audio/mpeg">
     </audio>
     <audio id="peter-speech">
-        <source src="/app/static/ai_analysis_fast.webp?t={voice_time}">
+        <source src="/app/static/ai_analysis_fast.mp3?t={voice_time}" type="audio/mpeg">
     </audio>
     
     <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
