@@ -221,7 +221,7 @@ def push_to_github():
             print(f"⚠️ ไม่สามารถตรวจสอบหรือสลับกิ่งไป main: {e}")
             
         # 1. แอดไฟล์ธรรมดา
-        for file_name in ["app.py", "update_results.py", "auto_update_results.py"]:
+        for file_name in ["app.py", "update_results.py", "auto_update_results.py", "ai_cache.json", "static/ai_analysis_fast.webp"]:
             try:
                 subprocess.run(["git", "add", file_name], cwd=BASE_DIR, check=False)
             except Exception as e:
@@ -452,6 +452,15 @@ def main():
             print("🎉 คำนวณและแจกคะแนนสมาชิกทายผลสำเร็จ!")
         except Exception as e:
             print(f"❌ การคำนวณแต้มทายผลมีข้อผิดพลาด: {e}")
+
+        # --- สังเคราะห์เสียงพากย์ปีเตอร์ AI ใหม่ด้วยข้อมูลแข่งล่าสุด ---
+        try:
+            import subprocess
+            print("\n🎙️ [AI Voice] เริ่มระบบสร้างบทวิเคราะห์และเสียงพากย์ปีเตอร์ AI ล่าสุดแบบอัตโนมัติ...")
+            subprocess.run(["python3", "generate_latest_ai.py"], cwd=BASE_DIR, check=True)
+            print("✅ [AI Voice] ปรับปรุงบทวิเคราะห์และสังเคราะห์เสียงใหม่สำเร็จ!")
+        except Exception as e_voice:
+            print(f"❌ [AI Voice] เกิดข้อผิดพลาดในการสังเคราะห์เสียงใหม่: {e_voice}")
 
         # --- ทัชไฟล์และดัน Git เพื่อล้างแคช RAM บนหน้าเว็บจริง ---
         if last_match_info:

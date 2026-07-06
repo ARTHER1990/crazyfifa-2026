@@ -5213,7 +5213,7 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"NOTE",
@@ -5285,7 +5285,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Tayshi",
@@ -5333,13 +5333,13 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"Tayshi",
     "match_id":"93",
-    "pred_home":"2",
-    "pred_away":"1",
+    "pred_home":"1",
+    "pred_away":"2",
     "pred_qualify":"Portugal",
     "points_earned":"0"
   },
@@ -5549,14 +5549,14 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Nong",
     "match_id":"94",
-    "pred_home":"1",
-    "pred_away":"2",
-    "pred_qualify":"Belgium",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"United States",
     "points_earned":"0"
   },
   {
@@ -5597,7 +5597,7 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"Aim",
@@ -5645,6 +5645,62 @@
     "pred_home":"2",
     "pred_away":"1",
     "pred_qualify":"United States",
+    "points_earned":"0"
+  },
+  {
+    "username":"ปีเตอร์ลิง",
+    "match_id":"92",
+    "pred_home":"1",
+    "pred_away":"0",
+    "pred_qualify":"Mexico",
+    "points_earned":"0"
+  },
+  {
+    "username":"ปีเตอร์ลิง",
+    "match_id":"93",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Spain",
+    "points_earned":"0"
+  },
+  {
+    "username":"ปีเตอร์ลิง",
+    "match_id":"94",
+    "pred_home":"0",
+    "pred_away":"1",
+    "pred_qualify":"Belgium",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"95",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"96",
+    "pred_home":"0",
+    "pred_away":"2",
+    "pred_qualify":"Colombia",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"95",
+    "pred_home":"3",
+    "pred_away":"1",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"96",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Colombia",
     "points_earned":"0"
   }
 ]

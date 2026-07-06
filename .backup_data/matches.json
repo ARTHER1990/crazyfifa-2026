@@ -1004,12 +1004,12 @@
     "id":"92",
     "home_team":"Mexico",
     "away_team":"England",
-    "match_time":"2026-07-06 09:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "match_time":"2026-07-06 07:00:00",
+    "home_score":"2",
+    "away_score":"3",
+    "status":"Finished",
+    "scorers":"Quiñones42'Jiménez69'(pen.) | Bellingham36',38'Kane60'(pen.)",
+    "winner_qualify":"England"
   },
   {
     "id":"93",
@@ -1035,8 +1035,8 @@
   },
   {
     "id":"95",
-    "home_team":"ผู้ชนะคู่ 86",
-    "away_team":"ผู้ชนะคู่ 88",
+    "home_team":"Argentina",
+    "away_team":"Egypt",
     "match_time":"2026-07-07 23:00:00",
     "home_score":"",
     "away_score":"",
@@ -1046,9 +1046,9 @@
   },
   {
     "id":"96",
-    "home_team":"ผู้ชนะคู่ 85",
-    "away_team":"ผู้ชนะคู่ 87",
-    "match_time":"2026-07-08 06:00:00",
+    "home_team":"Switzerland",
+    "away_team":"Colombia",
+    "match_time":"2026-07-08 03:00:00",
     "home_score":"",
     "away_score":"",
     "status":"Upcoming",
