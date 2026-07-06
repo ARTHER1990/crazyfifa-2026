@@ -102,64 +102,17 @@ def get_base64_audio(audio_path):
         return ""
 
 # ฟังก์ชันสำหรับเพลง
-def get_audio_html(audio_path, session_audio_id="default_id"):
-    import os
-    import time
-    
-    # ดึงไฟล์เสียงเชียร์ขอบสนามจาก GitHub โดยตรง เพื่อหลบเลี่ยงปัญหา Tornado 404 และลด Payload ของ WebSocket บนคลาวด์
-    audio_url = "https://raw.githubusercontent.com/ARTHER1990/crazyfifa-2026/main/static/stadium_crowd.webp"
-    
-    # ดึงเสียงพากย์ของปีเตอร์ AI อัปเดตล่าสุดที่สร้างใหม่จากดิสก์จริงบนเซิร์ฟเวอร์ ด้วยพาธ Static ท้องถิ่น
-    voice_time = int(time.time())
-    speech_url = f"/app/static/ai_analysis_fast.webp?t={voice_time}"
-    
-    song_title = "🔊 เสียงบรรยากาศเชียร์ขอบสนาม"
-    song_subtitle = "ระดับเสียง 15% คลอเบื้องหลัง (stadium_crowd.mp3)"
-    
-    speech_title = "🎙️ ปีเตอร์ AI กำลังพากย์บทวิเคราะห์..."
-    speech_subtitle = "ระดับเสียง 100% เต็มพลัง (อัปเดตล่าสุดหน้าเว็บ)"
-    
-    html_code = f"""<!-- แผงเครื่องเล่นแบบคู่ (เสียงพากย์ปีเตอร์ AI + เสียงเชียร์ขอบสนามสไตล์พรีเมี่ยม) -->
-<style>
-@keyframes peter-bounce-bar {{
-    0% {{ height: 20%; }}
-    100% {{ height: 100%; }}
-}}
-@keyframes peter-pulse-glow {{
-    0% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(0, 255, 135, 0.4)); }}
-    50% {{ transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(0, 255, 135, 0.8)); }}
-    100% {{ transform: scale(1); filter: drop-shadow(0 0 2px rgba(0, 255, 135, 0.4)); }}
-}}
-</style>
-<div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
-<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.92) 0%, rgba(13, 30, 38, 0.98) 100%); border: 1px solid rgba(0, 255, 135, 0.45); border-radius: 12px; padding: 12px 14px; box-sizing: border-box; width: 100%; min-height: 85px; height: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
-<div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
-<span style="font-size: 1.6rem; animation: peter-pulse-glow 2s infinite; flex-shrink: 0; display: inline-block;">🎙️</span>
-<div style="display: flex; flex-direction: column; min-width: 0; word-break: break-word;">
-<span style="font-size: 0.8rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3); line-height: 1.4; margin-bottom: 2px;">{speech_title}</span>
-<span style="font-size: 0.68rem; color: #a0aec0; opacity: 0.9; line-height: 1.3; margin-bottom: 3px;">{speech_subtitle}</span>
-<span style="font-size: 0.62rem; color: #60EFFF; opacity: 0.8; line-height: 1.2; word-break: break-word;">{song_title} (เบาคลอ 15% อัตโนมัติ)</span>
-</div>
-</div>
-<div style="display: flex; align-items: flex-end; gap: 3px; height: 22px; margin-left: auto; flex-shrink: 0;">
-<div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.2s infinite ease-in-out alternate;"></div>
-<div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 0.8s infinite ease-in-out alternate 0.2s;"></div>
-<div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.5s infinite ease-in-out alternate 0.4s;"></div>
-<div style="width: 3px; height: 60%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 1.0s infinite ease-in-out alternate 0.1s;"></div>
-<div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 0.7s infinite ease-in-out alternate 0.3s;"></div>
-</div>
-</div>
-<!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) (ถอด type ออกเพื่อป้องกันปัญหา MIME Conflict และ nosniff ของคลาวด์) -->
-<audio loop id="bg-music" style="display:none; width:0; height:0;">
-<source src="{audio_url}">
-</audio>
-<!-- เครื่องเล่นเสียงพากย์ปีเตอร์ AI (No Loop, Volume 100%) (ถอด type ออกเพื่อป้องกันปัญหา MIME Conflict และ nosniff ของคลาวด์) -->
-<audio id="peter-speech" style="display:none; width:0; height:0;">
-<source src="{speech_url}">
-</audio>
-<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var m=document.getElementById('bg-music');var s=document.getElementById('peter-speech');function startAudio_unlock(){{if(m){{var savedMTime=sessionStorage.getItem('peter_music_time');if(savedMTime){{var pMTime=parseFloat(savedMTime);if(!isNaN(pMTime)&&Math.abs(m.currentTime-pMTime)>2.0){{m.currentTime=pMTime;}}}}m.muted=false;m.volume=0.15;m.play().catch(function(e){{console.log('Music blocked, waiting user action:',e);}});}}if(s){{s.volume=1.0;s.playbackRate=1.18;s.muted=false;var currentSession='{session_audio_id}';var savedSession=sessionStorage.getItem('peter_speech_session');if(savedSession!==currentSession){{sessionStorage.setItem('peter_speech_session',currentSession);sessionStorage.removeItem('peter_speech_time');sessionStorage.removeItem('peter_speech_ended');}}var savedSTime=sessionStorage.getItem('peter_speech_time');var sEnded=sessionStorage.getItem('peter_speech_ended');if(sEnded!=='true'){{if(savedSTime){{var pSTime=parseFloat(savedSTime);if(!isNaN(pSTime)&&Math.abs(s.currentTime-pSTime)>2.0){{s.currentTime=pSTime;}}}}s.play().then(function(){{if(m)m.volume=0.15;}}).catch(function(e){{console.log('Speech blocked, waiting user action:',e);}});}}else{{if(m)m.volume=0.45;}}}}}}if(s){{s.onended=function(){{sessionStorage.setItem('peter_speech_ended','true');sessionStorage.removeItem('peter_speech_time');if(m){{var volInterval=setInterval(function(){{if(m.volume<0.45){{m.volume+=0.02;}}else{{m.volume=0.45;clearInterval(volInterval);}}}},100);}}}};}}startAudio_unlock();var unlockEvents=['click','touchstart','touchend','keydown'];function unlock_listener(){{startAudio_unlock();unlockEvents.forEach(function(ev){{document.removeEventListener(ev,unlock_listener,true);}});}}unlockEvents.forEach(function(ev){{document.addEventListener(ev,unlock_listener,true);}});if(!window.peterAudioTimer){{window.peterAudioTimer=setInterval(function(){{var music=document.getElementById('bg-music');var speech=document.getElementById('peter-speech');if(music&&!music.paused){{sessionStorage.setItem('peter_music_time',music.currentTime);}}if(speech){{if(!speech.paused&&!speech.ended){{sessionStorage.setItem('peter_speech_time',speech.currentTime);}}if(speech.ended){{sessionStorage.setItem('peter_speech_ended','true');}}}}}},100);}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
-</div>"""
-    return html_code
+def get_audio_html(is_off=False):
+    return ""
+
+def render_audio_hosts_in_sidebar():
+    return ""
+
+def get_ambient_audio_html():
+    return ""
+
+def get_peter_voice_html(session_audio_id="default_id"):
+    return ""
 
 def show_standalone_radio_player():
     st.set_page_config(page_title="CrazyFIFA Peter AI Radio", page_icon="📻", layout="centered")
@@ -438,7 +391,7 @@ runDialogFireworks();
         st.balloons()
         # ตรวจสอบทันทีว่าทายแชมป์หรือยัง
         existing_pred = db.get_user_champion_prediction(st.session_state.username)
-        if not existing_pred and IS_CHAMPION_PRED_ACTIVE:
+        if not existing_pred or st.session_state.username == "Art":
             st.session_state.show_champion_popup = True
         st.rerun()
 
@@ -2134,8 +2087,8 @@ if st.session_state.get('username'):
         if 'auto_champion_check_done' not in st.session_state:
             st.session_state.auto_champion_check_done = True
             existing_pred = db.get_user_champion_prediction(username)
-            # เด้งอัตโนมัติก็ต่อเมื่อเปิดรับทำนายจริงแล้ว และผู้เล่นยังไม่ได้เลือกทำนายผล
-            if not existing_pred and IS_CHAMPION_PRED_ACTIVE:
+            # เด้งอัตโนมัติก็ต่อเมื่อเปิดรับทำนายจริงแล้ว หรือแอดมิน Art ต้องการทดสอบระบบ
+            if (not existing_pred and IS_CHAMPION_PRED_ACTIVE) or username == "Art":
                 st.session_state.show_champion_popup = True
                 st.rerun()
 
@@ -2780,48 +2733,30 @@ if st.session_state.authenticated:
     )
     
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🎵 บรรยากาศสนาม")
+    st.sidebar.subheader("📻 เครื่องเล่นเสียงควบคุม")
     
-    music_on = st.sidebar.toggle(
-        "เปิดเสียงเชียร์", 
-        value=st.session_state.music_saved_preference,
-        key="music_toggle_widget"
-    )
-    st.session_state.music_saved_preference = music_on
+    # 1. แถบเสียงพากย์ปีเตอร์ AI (วิเคราะห์คะแนน 1.60x)
+    speech_file_path = os.path.join(current_dir, "static", "ai_analysis_fast.webp")
+    if not os.path.exists(speech_file_path):
+        speech_file_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
+    if os.path.exists(speech_file_path):
+        st.sidebar.audio(
+            speech_file_path,
+            format="audio/webp" if speech_file_path.endswith(".webp") else "audio/mp3",
+            autoplay=True
+        )
     
-    music_placeholder = st.sidebar.empty()
-    
-    if music_on:
-        song_path = os.path.join(current_dir, "stadium_crowd.mp3")
-        
-        # ดึงแฮชของบทวิเคราะห์ปัจจุบันจากไฟล์แคชเป็นเวอร์ชันเสียงพากย์เพื่อล้าง session ที่จบลงแล้วโดยอัตโนมัติเมื่อเนื้อหาเปลี่ยน
-        current_voice_version = "default_v1"
-        try:
-            cache_path_sb = os.path.join(current_dir, "ai_cache.json")
-            if os.path.exists(cache_path_sb):
-                with open(cache_path_sb, "r", encoding="utf-8") as f_r_sb:
-                    import json
-                    c_data_sb = json.load(f_r_sb)
-                    current_voice_version = c_data_sb.get("hash_key", "default_v1")
-        except:
-            pass
-            
-        audio_html = get_audio_html(song_path, session_audio_id=current_voice_version)
-        with music_placeholder.container():
-            st.markdown(audio_html, unsafe_allow_html=True)
-        st.sidebar.caption("📻 กำลังบรรเลง: เสียงเชียร์สนามบอลโลก (สตรีมมิ่งไร้รอยต่อ)")
-    else:
-        with music_placeholder.container():
-            st.markdown("""
-            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
-                (function(){
-                    sessionStorage.removeItem('peter_music_time');
-                    sessionStorage.removeItem('peter_speech_time');
-                    sessionStorage.removeItem('peter_speech_ended');
-                    console.log('Peter AI Audio: Session storage cleared.');
-                })()
-            " style="display:none; width:0; height:0; pointer-events:none;">
-            """, unsafe_allow_html=True)
+    # 2. แถบเสียงบรรยากาศสนาม (กล่อมเบาๆ)
+    music_file_path = os.path.join(current_dir, "static", "stadium_crowd_low.webp")
+    if not os.path.exists(music_file_path):
+        music_file_path = os.path.join(current_dir, "static", "stadium_crowd_low.mp3")
+    if os.path.exists(music_file_path):
+        st.sidebar.audio(
+            music_file_path,
+            format="audio/webp" if music_file_path.endswith(".webp") else "audio/mp3",
+            autoplay=True,
+            loop=True
+        )
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
@@ -3192,6 +3127,23 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 
             # แสดงเนื้อหาบทสรุปเป็น markdown เพื่อประมวลผลข้อความและ HTML ให้สวยงาม
             st.markdown(personalized_report, unsafe_allow_html=True)
+            
+            # ดึงแฮชของบทวิเคราะห์เพื่อแยกแยะเสียงพากย์วิเคราะห์ชุดปัจจุบัน
+            current_voice_version = "default_v1"
+            try:
+                cache_path_sb = os.path.join(current_dir, "ai_cache.json")
+                if os.path.exists(cache_path_sb):
+                    with open(cache_path_sb, "r", encoding="utf-8") as f_r_sb:
+                        import json
+                        c_data_sb = json.load(f_r_sb)
+                        current_voice_version = c_data_sb.get("hash_key", "default_v1")
+            except:
+                pass
+            st.session_state.current_voice_version = current_voice_version
+            
+            # แทรกปุ่มฟังเสียงพากย์ของปีเตอร์ AI
+            peter_voice_html = get_peter_voice_html(session_audio_id=current_voice_version)
+            st.markdown(peter_voice_html, unsafe_allow_html=True)
             
             # ปิดกล่อง HTML
             st.markdown("</div>", unsafe_allow_html=True)
@@ -4857,7 +4809,7 @@ elif menu == "ห้องควบคุมระบบ (Admin)":
                 st.balloons()
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Power by Gemini 3.5 Pro & Streamlit (Updated Champion Sync)")
+st.sidebar.caption("Power by Gemini 3.1 Pro & Streamlit")
 
 # --- ตรรกะอัจฉริยะล้างสถานะป๊อปอัปความยินดี เพื่อเตรียมเปิดทางให้ป๊อปอัปทายผลแชมป์โลกทำงานได้หลังปิดกากบาท (X) หรือปิดด้วยหนทางอื่น ---
 if st.session_state.get('congrats_active_in_render', False):
