@@ -82,6 +82,38 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
         <source src="/app/static/ai_analysis_fast.webp?t={voice_time}" type="audio/mp3">
     </audio>
     
+    <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
+    <div id="autoplay-banner" style="display: none; position: fixed; bottom: 24px; right: 24px; z-index: 999999; max-width: 330px; background: linear-gradient(135deg, rgba(7, 15, 20, 0.9) 0%, rgba(13, 30, 38, 0.95) 100%); border: 1px solid rgba(0, 255, 135, 0.45); border-radius: 20px; padding: 18px; box-shadow: 0 15px 45px rgba(0,0,0,0.65), 0 0 20px rgba(0, 255, 135, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-family: 'Kanit', sans-serif; animation: slideInPeter 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;">
+        <div style="font-size: 1rem; font-weight: bold; color: #00FF87; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">
+            <span>📻 พร้อมส่งเสียงขอบสนามแล้ว!</span>
+        </div>
+        <div style="font-size: 0.82rem; color: #e2e8f0; margin-bottom: 14px; line-height: 1.4; opacity: 0.95;">
+            เนื่องจากเบราว์เซอร์เครื่องนี้บล็อกการเล่นเสียงอัตโนมัติ กรุณาแตะปุ่มเพื่อสัมผัสเสียงเชียร์และเสียงพากย์ปีเตอร์ AI ล่าสุดเพื่อเพิ่มความเร้าใจครับ
+        </div>
+        <button id="btn-start-audio" onclick="enableAutoplayAudio()" style="width: 100%; background: linear-gradient(90deg, #00FF87 0%, #60EFFF 100%); border: none; border-radius: 10px; color: #070f14; font-weight: 700; font-family: 'Kanit', sans-serif; padding: 10px 14px; cursor: pointer; transition: all 0.25s ease; font-size: 0.88rem; box-shadow: 0 4px 15px rgba(0, 255, 135, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🔊 เปิดลำโพงขอบสนาม</span>
+        </button>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
+        @keyframes slideInPeter {{
+            0% {{ transform: translateY(50px) scale(0.95); opacity: 0; }}
+            100% {{ transform: translateY(0) scale(1); opacity: 1; }}
+        }}
+        @keyframes fadeOutPeter {{
+            0% {{ opacity: 1; transform: translateY(0) scale(1); }}
+            100% {{ opacity: 0; transform: translateY(20px) scale(0.95); }}
+        }}
+        #btn-start-audio:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 135, 0.5), 0 0 10px rgba(96, 239, 255, 0.3);
+        }}
+        #btn-start-audio:active {{
+            transform: translateY(1px);
+        }}
+    </style>
+    
     <script>
         var music = document.getElementById("bg-music");
         var speech = document.getElementById("peter-speech");
@@ -99,6 +131,57 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             speech.volume = 1.0;
         }}
         
+        function showAutoplayBanner() {{
+            var banner = document.getElementById("autoplay-banner");
+            if (banner) {{
+                banner.style.display = "block";
+            }}
+        }}
+
+        window.enableAutoplayAudio = function() {{
+            var m = document.getElementById("bg-music");
+            var s = document.getElementById("peter-speech");
+            var banner = document.getElementById("autoplay-banner");
+            
+            var promises = [];
+            if (m) promises.push(m.play());
+            if (s && isSpeechEnded !== "true") promises.push(s.play());
+            
+            Promise.all(promises).then(() => {{
+                console.log("Audio started successfully via click gesture!");
+                if (s && isSpeechEnded !== "true") {{
+                    if (m) m.volume = 0.15;
+                }}
+                if (banner) {{
+                    banner.style.animation = "fadeOutPeter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both";
+                    setTimeout(function() {{
+                        banner.style.display = "none";
+                    }}, 400);
+                }}
+            }}).catch(err => {{
+                console.log("Still failed to play audio:", err);
+            }});
+        }};
+        
+        var musicPlayed = false;
+        var speechPlayed = false;
+        var isBlocked = false;
+
+        // จัดการดนตรีและเพลงประกอบ
+        if (music) {{
+            if (savedMusicTime) {{
+                music.currentTime = parseFloat(savedMusicTime);
+            }}
+            music.play().then(() => {{
+                console.log("Music playing...");
+                musicPlayed = true;
+            }}).catch(err => {{
+                console.log("Music autoplay blocked:", err);
+                isBlocked = true;
+                showAutoplayBanner();
+            }});
+        }}
+        
         // จัดการเสียงพากย์ปีเตอร์ AI
         if (speech && isSpeechEnded !== "true") {{
             if (savedSpeechTime) {{
@@ -106,9 +189,12 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             }}
             speech.play().then(() => {{
                 console.log("Speech playing...");
+                speechPlayed = true;
                 if (music) music.volume = 0.15;
             }}).catch(err => {{
                 console.log("Speech autoplay blocked:", err);
+                isBlocked = true;
+                showAutoplayBanner();
             }});
             
             speech.onended = function() {{
@@ -126,21 +212,9 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
                 }}
             }};
         }} else {{
-            if (music) {{
+            if (music && !isBlocked) {{
                 music.volume = 0.45;
             }}
-        }}
-        
-        // จัดการดนตรีและเพลงประกอบ
-        if (music) {{
-            if (savedMusicTime) {{
-                music.currentTime = parseFloat(savedMusicTime);
-            }}
-            music.play().then(() => {{
-                console.log("Music playing...");
-            }}).catch(err => {{
-                console.log("Music autoplay blocked:", err);
-            }});
         }}
         
         // บันทึกตำแหน่งเวลาการเล่นทุกๆ 100ms เพื่อนำมาเล่นต่อหลัง rerun หน้าจอ

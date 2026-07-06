@@ -976,7 +976,7 @@
     "away_score":"3",
     "status":"Finished",
     "scorers":"Ounahi50',82'Rahimi90+8'",
-    "winner_qualify":""
+    "winner_qualify":"Morocco"
   },
   {
     "id":"90",
@@ -987,18 +987,18 @@
     "away_score":"1",
     "status":"Finished",
     "scorers":"Mbappé70'(pen.)",
-    "winner_qualify":""
+    "winner_qualify":"France"
   },
   {
     "id":"91",
     "home_team":"Brazil",
     "away_team":"Norway",
     "match_time":"2026-07-06 03:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"1",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Neymar (90+9) | Erling Haaland (79), Erling Haaland (90)",
+    "winner_qualify":"Norway"
   },
   {
     "id":"92",

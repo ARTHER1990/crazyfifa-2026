@@ -5210,7 +5210,7 @@
   {
     "username":"NOTE",
     "match_id":"92",
-    "pred_home":"1",
+    "pred_home":"0",
     "pred_away":"2",
     "pred_qualify":"England",
     "points_earned":"0"
@@ -5277,7 +5277,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"Norway",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Art",
@@ -5461,13 +5461,13 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"Norway",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Robert B",
     "match_id":"92",
-    "pred_home":"2",
-    "pred_away":"1",
+    "pred_home":"1",
+    "pred_away":"0",
     "pred_qualify":"Mexico",
     "points_earned":"0"
   },
@@ -5629,6 +5629,22 @@
     "pred_home":"2",
     "pred_away":"0",
     "pred_qualify":"ผู้ชนะคู่ 85",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"93",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"Spain",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"94",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"United States",
     "points_earned":"0"
   }
 ]
