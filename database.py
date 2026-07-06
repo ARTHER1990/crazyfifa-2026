@@ -196,6 +196,26 @@ def safe_int(val, default=0):
 
 def save_prediction(username, match_id, pred_home, pred_away, pred_qualify=""):
     name = normalize_name(username)
+    
+    # 🔒 ป้องกันการแอบบันทึกทายผลหากเลยเวลาปิดทายล่วงหน้า 1 ชั่วโมงแล้ว เพื่อความปลอดภัยระดับสูงสุด (Server-side Validation)
+    try:
+        df_m = get_matches()
+        match_row = df_m[df_m['id'].astype(str) == str(match_id)]
+        if not match_row.empty:
+            m_time_str = match_row.iloc[0]['match_time']
+            m_status = match_row.iloc[0]['status']
+            m_time = pd.to_datetime(m_time_str)
+            now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
+            
+            # ปิดรับทายผลล่วงหน้า 1 ชั่วโมง หรือเมื่อสถานะเป็น Finished
+            if now_th > (m_time - timedelta(hours=1)) or m_status == 'Finished':
+                raise Exception("🚫 แมตช์นี้ปิดรับทายผลและล็อกคะแนนแล้ว ไม่สามารถแก้ไขได้ครับ")
+    except Exception as e_lock:
+        if "🚫" in str(e_lock):
+            raise e_lock
+        # กรณี error ด้านเน็ตเวิร์ก/ชีตอื่นๆ ให้ข้ามการเช็คเพื่อไม่ให้ระบบหลักค้าง
+        pass
+
     ws = get_worksheet('predictions')
     df = get_predictions_df()
     
