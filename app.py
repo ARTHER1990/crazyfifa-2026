@@ -524,16 +524,33 @@ def show_champion_dialog(username):
     
     existing_pred = db.get_user_champion_prediction(username)
     default_idx = 0
+    is_locked = False
+    
     if existing_pred:
+        is_locked = True
         for idx, (code, _) in enumerate(TEAMS_LIST):
             if code == existing_pred:
                 default_idx = idx
                 break
                 
+    # แสดงกล่องแจ้งเตือนความปลอดภัยสีทองเมื่อล็อกผลทำนายแล้ว
+    if is_locked:
+        st.markdown(f"""
+            <div style='background-color: rgba(245, 184, 46, 0.08); border: 1.5px solid #F5B82E; border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 15px;'>
+                <span style='color: #FFE9A2; font-weight: bold; font-size: 0.95rem; text-shadow: 0 0 5px rgba(245,184,46,0.3);'>🔒 สิทธิ์การทำนายของคุณถูกล็อกเรียบร้อยแล้ว</span><br>
+                <span style='color: #cbd5e0; font-size: 0.88rem;'>คุณเลือกทายผลแชมป์โลกคือ <b>{TEAMS_LIST[default_idx][1]}</b> และไม่สามารถแก้ไขได้อีกแล้วครับ</span>
+            </div>
+        """, unsafe_allow_html=True)
+                
     team_codes = [t[0] for t in TEAMS_LIST]
     team_labels = [t[1] for t in TEAMS_LIST]
     
-    selected_label = st.selectbox("เลือกประเทศแชมป์โลกในใจคุณ:", team_labels, index=default_idx)
+    selected_label = st.selectbox(
+        "เลือกประเทศแชมป์โลกในใจคุณ:", 
+        team_labels, 
+        index=default_idx,
+        disabled=is_locked  # บล็อกการเปลี่ยนค่าเมื่อล็อกแล้ว
+    )
     selected_code = team_codes[team_labels.index(selected_label)]
     
     st.write("")
@@ -543,15 +560,18 @@ def show_champion_dialog(username):
             st.session_state.show_champion_popup = False
             st.rerun()
     with col2:
-        if st.button("💾 บันทึกคำทำนาย 🏆", use_container_width=True, type="primary"):
-            if selected_code == "":
-                st.error("⚠️ กรุณาเลือกประเทศที่ต้องการทำนายก่อนกดบันทึกนะครับ!")
-            else:
-                db.save_champion_prediction(username, selected_code)
-                st.cache_data.clear() # ล้างแคชทั้งหมดของแอปทันทีเพื่อบังคับอัปเดตสีกรอบต้อนรับคุณ Art คมชัดทันใจ 100%
-                st.session_state.show_champion_popup = False
-                st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว!", icon="✅")
-                st.rerun()
+        if is_locked:
+            st.button("🔒 ยืนยันคำทำนายแล้ว", use_container_width=True, disabled=True)
+        else:
+            if st.button("💾 บันทึกคำทำนาย 🏆", use_container_width=True, type="primary"):
+                if selected_code == "":
+                    st.error("⚠️ กรุณาเลือกประเทศที่ต้องการทำนายก่อนกดบันทึกนะครับ!")
+                else:
+                    db.save_champion_prediction(username, selected_code)
+                    st.cache_data.clear() # ล้างแคชทั้งหมดของแอปทันทีเพื่อบังคับอัปเดตสีกรอบต้อนรับคุณ Art คมชัดทันใจ 100%
+                    st.session_state.show_champion_popup = False
+                    st.toast(f"🏆 บันทึกคำทำนายแชมป์โลก: {selected_label} สำเร็จแล้ว!", icon="✅")
+                    st.rerun()
 
 
 @st.cache_data(ttl=1800)
@@ -1658,7 +1678,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
             <div class="custom-welcome-card">
                 <div class="welcome-card-text">
                     ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>
-                    {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.7; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก (จะเปิดให้ทายผลเร็วๆ นี้)</div>'}
+                    {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.75; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก (โปรดกดปุ่มด้านล่าง)</div>'}
                 </div>
                 <div class="welcome-card-flag-bg">{theme['emoji']}</div>
             </div>
@@ -1667,7 +1687,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
         # ปุ่มเปิดหน้าต่างทำนายผลแชมป์โลก 2026 แบบพรีเมียมสีทองสว่าง
         st.sidebar.markdown("""
             <style>
-            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)"] {
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"] {
                 background: linear-gradient(135deg, #FFE9A2 0%, #F5B82E 40%, #C48200 80%, #FFE9A2 100%) !important;
                 background-size: 200% auto !important;
                 border: none !important;
@@ -1679,14 +1699,14 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 margin-top: 5px !important;
                 margin-bottom: 5px !important;
             }
-            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)"]:hover {
+            button[aria-label="🏆 ทำนายผลแชมป์โลก 2026"]:hover {
                 transform: translateY(-1.5px) !important;
                 box-shadow: 0 6px 20px rgba(196, 130, 0, 0.35), 0 0 15px rgba(245, 184, 46, 0.3) !important;
                 color: #000000 !important;
             }
             </style>
         """, unsafe_allow_html=True)
-        if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026 (เร็วๆ นี้)", use_container_width=True):
+        if st.sidebar.button("🏆 ทำนายผลแชมป์โลก 2026", use_container_width=True):
             st.session_state.show_champion_popup = True
             st.rerun()
             
@@ -2088,12 +2108,12 @@ div[data-testid="element-container"]:has(.congrats-trigger-marker) + div[data-te
         st.session_state.show_congrats_popup = False
 
 
-# --- ระบบป๊อบอัพทำนายผลแชมป์โลก 2026 (ระบบใหม่เสถียร 100% สำหรับคุณ Art เท่านั้น) ---
+# --- ระบบป๊อบอัพทำนายผลแชมป์โลก 2026 (ระบบเสถียรแบบล็อกสิทธิ์ถาวร 100%) ---
 if 'show_champion_popup' not in st.session_state:
     st.session_state.show_champion_popup = False
 
-# ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน (เฉพาะคุณ Art เท่านั้น)
-if st.session_state.get('username') == "Art":
+# ตรวจสอบการเปิดป๊อปอัปทายผลแชมป์โลกครั้งแรกอัตโนมัติเมื่อล็อกอิน (สำหรับผู้ใช้ทุกคน)
+if st.session_state.get('username'):
     # ต้องไม่แสดงในรอบที่มีการเรนเดอร์ป๊อปอัปความยินดีอยู่ เพื่อเลี่ยงการแสดงหน้าต่างซ้อนกัน
     if not st.session_state.get('show_congrats_popup', False) and not st.session_state.get('congrats_active_in_render', False):
         if 'auto_champion_check_done' not in st.session_state:
