@@ -67,7 +67,7 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     import time
     import base64
     
-    # กำหนดเส้นทางไฟล์เสียงจริงในเครื่องเพื่อทำการดึงข้อมูลมาแปลงเป็น Base64
+    # 定義เส้นทางไฟล์เสียงจริงในเครื่องเพื่อทำการดึงข้อมูลมาแปลงเป็น Base64
     bg_music_path = os.path.join(current_dir, "static", "bg_music.mp3")
     speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
     
@@ -113,35 +113,171 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
         <source src="data:audio/mp3;base64,{speech_b64}" type="audio/mpeg">
     </audio>
     
-    <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
-    <div id="autoplay-banner" style="display: none; position: fixed; bottom: 24px; right: 24px; z-index: 999999; max-width: 330px; background: linear-gradient(135deg, rgba(7, 15, 20, 0.9) 0%, rgba(13, 30, 38, 0.95) 100%); border: 1px solid rgba(0, 255, 135, 0.45); border-radius: 20px; padding: 18px; box-shadow: 0 15px 45px rgba(0,0,0,0.65), 0 0 20px rgba(0, 255, 135, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-family: 'Kanit', sans-serif; animation: slideInPeter 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;">
-        <div style="font-size: 1rem; font-weight: bold; color: #00FF87; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">
-            <span>📻 พร้อมส่งเสียงขอบสนามแล้ว!</span>
+    <!-- แผงควบคุมเสียงสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับฝังใน Sidebar โดยตรง -->
+    <div id="audio-controller-card" class="audio-card">
+        <!-- สถานะเมื่อเล่นเสียงได้สำเร็จ (Playing State) -->
+        <div id="playing-state" class="state-container" style="display: flex;">
+            <div class="card-info">
+                <span class="status-dot pulsing"></span>
+                <span class="status-text">🔊 กำลังส่งเสียงเชียร์ขอบสนาม</span>
+            </div>
+            <div class="visual-eq">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
         </div>
-        <div style="font-size: 0.82rem; color: #e2e8f0; margin-bottom: 14px; line-height: 1.4; opacity: 0.95;">
-            เนื่องจากเบราว์เซอร์เครื่องนี้บล็อกการเล่นเสียงอัตโนมัติ กรุณาแตะปุ่มเพื่อสัมผัสเสียงเชียร์และเสียงพากย์ปีเตอร์ AI ล่าสุดเพื่อเพิ่มความเร้าใจครับ
+        
+        <!-- สถานะเมื่อถูกเบราว์เซอร์บล็อก Autoplay (Blocked State) -->
+        <div id="blocked-state" class="state-container" style="display: none;">
+            <button id="btn-start-audio" onclick="enableAutoplayAudio()" class="btn-primary">
+                <span>🔊 เปิดลำโพงขอบสนาม</span>
+            </button>
+            <p class="blocked-tip">กรุณาแตะปุ่มเพื่อรับฟังเสียงพากย์ปีเตอร์ AI ล่าสุด</p>
         </div>
-        <button id="btn-start-audio" onclick="enableAutoplayAudio()" style="width: 100%; background: linear-gradient(90deg, #00FF87 0%, #60EFFF 100%); border: none; border-radius: 10px; color: #070f14; font-weight: 700; font-family: 'Kanit', sans-serif; padding: 10px 14px; cursor: pointer; transition: all 0.25s ease; font-size: 0.88rem; box-shadow: 0 4px 15px rgba(0, 255, 135, 0.35); display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <span>🔊 เปิดลำโพงขอบสนาม</span>
-        </button>
     </div>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap');
-        @keyframes slideInPeter {{
-            0% {{ transform: translateY(50px) scale(0.95); opacity: 0; }}
-            100% {{ transform: translateY(0) scale(1); opacity: 1; }}
+        
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Kanit', sans-serif;
         }}
-        @keyframes fadeOutPeter {{
-            0% {{ opacity: 1; transform: translateY(0) scale(1); }}
-            100% {{ opacity: 0; transform: translateY(20px) scale(0.95); }}
+        
+        .audio-card {{
+            background: linear-gradient(135deg, rgba(7, 15, 20, 0.7) 0%, rgba(13, 30, 38, 0.85) 100%);
+            border: 1px solid rgba(0, 255, 135, 0.25);
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-sizing: border-box;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
         }}
-        #btn-start-audio:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 135, 0.5), 0 0 10px rgba(96, 239, 255, 0.3);
+        
+        .audio-card:hover {{
+            border-color: rgba(0, 255, 135, 0.45);
+            box-shadow: 0 8px 30px rgba(0, 255, 135, 0.15);
         }}
-        #btn-start-audio:active {{
+        
+        .state-container {{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }}
+        
+        #playing-state {{
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+        }}
+        
+        .card-info {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }}
+        
+        .pulsing {{
+            width: 8px;
+            height: 8px;
+            background-color: #00FF87;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00FF87;
+            animation: pulse 1.5s infinite;
+        }}
+        
+        @keyframes pulse {{
+            0% {{ transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 255, 135, 0.7); }}
+            70% {{ transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 6px rgba(0, 255, 135, 0); }}
+            100% {{ transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 255, 135, 0); }}
+        }}
+        
+        .status-text {{
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            text-shadow: 0 0 5px rgba(255,255,255,0.1);
+        }}
+        
+        .visual-eq {{
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 16px;
+            margin-right: 5px;
+        }}
+        
+        .eq-bar {{
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to top, #00FF87, #60EFFF);
+            border-radius: 2px;
+            animation: bounce 0.8s ease-in-out infinite alternate;
+        }}
+        
+        .eq-bar:nth-child(1) {{ animation-duration: 0.6s; }}
+        .eq-bar:nth-child(2) {{ animation-duration: 0.9s; animation-delay: 0.15s; }}
+        .eq-bar:nth-child(3) {{ animation-duration: 0.75s; animation-delay: 0.3s; }}
+        .eq-bar:nth-child(4) {{ animation-duration: 0.85s; animation-delay: 0.1s; }}
+        .eq-bar:nth-child(5) {{ animation-duration: 0.65s; animation-delay: 0.2s; }}
+        
+        @keyframes bounce {{
+            0% {{ height: 25%; }}
+            100% {{ height: 100%; }}
+        }}
+        
+        .btn-primary {{
+            width: 100%;
+            background: linear-gradient(90deg, #00FF87 0%, #60EFFF 100%);
+            border: none;
+            border-radius: 8px;
+            color: #070f14;
+            font-weight: 700;
+            font-family: 'Kanit', sans-serif;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 0.82rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 135, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }}
+        
+        .btn-primary:hover {{
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 255, 135, 0.45);
+        }}
+        
+        .btn-primary:active {{
             transform: translateY(1px);
+        }}
+        
+        .blocked-tip {{
+            font-size: 0.7rem;
+            color: #a0aec0;
+            margin: 0;
+            opacity: 0.85;
+            text-align: center;
         }}
     </style>
     
@@ -173,17 +309,23 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             speech.volume = 1.0;
         }}
         
-        function showAutoplayBanner() {{
-            var banner = document.getElementById("autoplay-banner");
-            if (banner) {{
-                banner.style.display = "block";
+        function updateUIState(isPlaying) {{
+            var playingState = document.getElementById("playing-state");
+            var blockedState = document.getElementById("blocked-state");
+            if (playingState && blockedState) {{
+                if (isPlaying) {{
+                    playingState.style.display = "flex";
+                    blockedState.style.display = "none";
+                }} else {{
+                    playingState.style.display = "none";
+                    blockedState.style.display = "flex";
+                }}
             }}
         }}
 
         window.enableAutoplayAudio = function() {{
             var m = document.getElementById("bg-music");
             var s = document.getElementById("peter-speech");
-            var banner = document.getElementById("autoplay-banner");
             
             var promises = [];
             if (m) promises.push(m.play());
@@ -194,14 +336,10 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
                 if (s && isSpeechEnded !== "true") {{
                     if (m) m.volume = 0.15;
                 }}
-                if (banner) {{
-                    banner.style.animation = "fadeOutPeter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both";
-                    setTimeout(function() {{
-                        banner.style.display = "none";
-                    }}, 400);
-                }}
+                updateUIState(true);
             }}).catch(err => {{
                 console.log("Still failed to play audio:", err);
+                updateUIState(false);
             }});
         }};
         
@@ -217,10 +355,11 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             music.play().then(() => {{
                 console.log("Music playing...");
                 musicPlayed = true;
+                if (!isBlocked) updateUIState(true);
             }}).catch(err => {{
                 console.log("Music autoplay blocked:", err);
                 isBlocked = true;
-                showAutoplayBanner();
+                updateUIState(false);
             }});
         }}
         
@@ -233,10 +372,11 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
                 console.log("Speech playing...");
                 speechPlayed = true;
                 if (music) music.volume = 0.15;
+                if (!isBlocked) updateUIState(true);
             }}).catch(err => {{
                 console.log("Speech autoplay blocked:", err);
                 isBlocked = true;
-                showAutoplayBanner();
+                updateUIState(false);
             }});
             
             speech.onended = function() {{
@@ -371,7 +511,7 @@ def show_standalone_radio_player():
     song_path = os.path.join(current_dir, "Shakira Burna Boy Dai Dai Official Video.mp3")
     audio_html = get_audio_html(song_path, session_audio_id="standalone_radio_session")
     
-    components.html(audio_html, height=0, width=0)
+    components.html(audio_html, height=110)
 
 # ตรวจสอบว่าเป็นการเรียกเปิดวิทยุปีเตอร์แบบ Standalone ในหน้าต่างใหม่หรือไม่
 if st.query_params.get("embed_player") == "true":
@@ -2886,7 +3026,7 @@ if st.session_state.authenticated:
             
         audio_html = get_audio_html(song_path, session_audio_id=current_voice_version)
         with music_placeholder.container():
-            components.html(audio_html, height=0, width=0)
+            components.html(audio_html, height=110)
         st.sidebar.caption("📻 กำลังบรรเลง: Shakira & Burna Boy - Dai Dai (สตรีมมิ่งไร้รอยต่อ)")
     else:
         with music_placeholder.container():
