@@ -438,7 +438,7 @@ runDialogFireworks();
         st.balloons()
         # ตรวจสอบทันทีว่าทายแชมป์หรือยัง
         existing_pred = db.get_user_champion_prediction(st.session_state.username)
-        if not existing_pred or st.session_state.username == "Art":
+        if not existing_pred and IS_CHAMPION_PRED_ACTIVE:
             st.session_state.show_champion_popup = True
         st.rerun()
 
@@ -2134,8 +2134,8 @@ if st.session_state.get('username'):
         if 'auto_champion_check_done' not in st.session_state:
             st.session_state.auto_champion_check_done = True
             existing_pred = db.get_user_champion_prediction(username)
-            # เด้งอัตโนมัติก็ต่อเมื่อเปิดรับทำนายจริงแล้ว หรือแอดมิน Art ต้องการทดสอบระบบ
-            if (not existing_pred and IS_CHAMPION_PRED_ACTIVE) or username == "Art":
+            # เด้งอัตโนมัติก็ต่อเมื่อเปิดรับทำนายจริงแล้ว และผู้เล่นยังไม่ได้เลือกทำนายผล
+            if not existing_pred and IS_CHAMPION_PRED_ACTIVE:
                 st.session_state.show_champion_popup = True
                 st.rerun()
 
