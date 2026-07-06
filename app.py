@@ -103,30 +103,42 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     import os
     import time
     
-    # แปลงไฟล์เพลงเป็น Base64 Data URI เพื่อข้ามขั้นตอนเน็ตเวิร์กและการบล็อก MIME type ของเซิร์ฟเวอร์โดยสมบูรณ์ 100%
+    # 1. โหลดและแปลงไฟล์เสียงเชียร์สนาม (stadium_crowd.mp3)
     audio_b64 = get_base64_audio(audio_path)
+    
+    # 2. โหลดและแปลงไฟล์เสียงพากย์ปีเตอร์ AI ล่าสุด (static/ai_analysis_fast.webp หรือ .mp3)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.webp")
+    if not os.path.exists(speech_path):
+        speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
+        
+    speech_b64 = get_base64_audio(speech_path)
     
     if not audio_b64:
         return f"<!-- ข้อผิดพลาด: ไม่สามารถโหลดหรือแปลงไฟล์เสียงเป็น Base64 ได้ -->"
         
     song_title = "กำลังบรรเลงเพลงขอบสนาม..."
-    song_subtitle = "ระดับเสียง 85% พรีเมี่ยม (ถอดรหัสตรง Base64 เสถียร)"
+    song_subtitle = "ระดับเสียง 15% บรรยากาศสนามคลอเบาๆ"
     
     if "stadium_crowd" in audio_path:
-        song_title = "🔊 บรรยากาศเสียงเชียร์ขอบสนาม..."
-        song_subtitle = "ระดับเสียง 85% พรีเมี่ยม (stadium_crowd.mp3)"
+        song_title = "🔊 เสียงบรรยากาศเชียร์ขอบสนาม"
+        song_subtitle = "ระดับเสียง 15% คลอเบื้องหลัง (stadium_crowd.mp3)"
         
-    html_code = f"""<!-- แผงเครื่องเล่นเพลงบรรยากาศสนามบอลโลก 2026 สไตล์พรีเมี่ยมสุดหรูหรา -->
+    speech_title = "🎙️ ปีเตอร์ AI กำลังพากย์บทวิเคราะห์..."
+    speech_subtitle = "ระดับเสียง 100% เต็มพลัง (อัปเดตล่าสุดหน้าเว็บ)"
+    
+    html_code = f"""<!-- แผงเครื่องเล่นแบบคู่ (เสียงพากย์ปีเตอร์ AI + เสียงเชียร์ขอบสนามสไตล์พรีเมี่ยม) -->
 <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
-<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.8) 0%, rgba(13, 30, 38, 0.9) 100%); border: 1px solid rgba(0, 255, 135, 0.3); border-radius: 12px; padding: 10px 12px; box-sizing: border-box; width: 100%; height: 60px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
-<div style="display: flex; align-items: center; gap: 6px;">
-<span style="font-size: 1.25rem;">🔊</span>
+<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.85) 0%, rgba(13, 30, 38, 0.95) 100%); border: 1px solid rgba(0, 255, 135, 0.4); border-radius: 12px; padding: 10px 12px; box-sizing: border-box; width: 100%; height: 75px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
+<div style="display: flex; align-items: center; gap: 8px;">
+<span style="font-size: 1.5rem; animation: pulse 2s infinite;">🎙️</span>
 <div style="display: flex; flex-direction: column;">
-<span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{song_title}</span>
-<span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{song_subtitle}</span>
+<span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{speech_title}</span>
+<span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{speech_subtitle}</span>
+<span style="font-size: 0.6rem; color: #60EFFF; opacity: 0.7; margin-top: 2px;">{song_title} (เบาคลอ 15% อัตโนมัติ)</span>
 </div>
 </div>
-<div style="display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-right: 5px;">
+<div style="display: flex; align-items: flex-end; gap: 3px; height: 20px; margin-right: 5px;">
 <div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
 <div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
 <div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
@@ -134,11 +146,15 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
 <div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
 </div>
 </div>
-<audio loop id="bg-music" controls autoplay style="width: 100%; height: 32px; border-radius: 6px; outline: none; filter: invert(0.85) sepia(1) saturate(5) hue-rotate(90deg); background: rgba(0, 255, 135, 0.15);">
+<!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) -->
+<audio loop id="bg-music" style="display:none; width:0; height:0;">
 <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mpeg">
-<p>เบราว์เซอร์ของคุณไม่รองรับการเล่นเสียง กรุณากดตรวจสอบผ่านแถบควบคุมด้านบนครับ</p>
 </audio>
-<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var music=document.getElementById('bg-music');if(music){{music.volume=0.85;music.muted=false;var savedTime=sessionStorage.getItem('peter_music_time');if(savedTime){{var parsedTime=parseFloat(savedTime);if(!isNaN(parsedTime)&&Math.abs(music.currentTime-parsedTime)>2.0){{music.currentTime=parsedTime;console.log('Continuous Audio: Restored music playhead to:',parsedTime);}}}}if(!window.peterMusicTimer){{window.peterMusicTimer=setInterval(function(){{var m=document.getElementById('bg-music');if(m&&!m.paused){{sessionStorage.setItem('peter_music_time',m.currentTime);}}}},100);}}var playPromise=music.play();if(playPromise!==undefined){{playPromise.then(function(){{console.log('Peter Audio Engine: Background music playing smoothly.');}}).catch(function(err){{console.log('Autoplay blocked. Waiting for user interaction...',err);}});}}}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
+<!-- เครื่องเล่นเสียงพากย์ปีเตอร์ AI (No Loop, Volume 100%) -->
+<audio id="peter-speech" style="display:none; width:0; height:0;">
+<source src="data:audio/mp3;base64,{speech_b64}" type="audio/mpeg">
+</audio>
+<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var m=document.getElementById('bg-music');var s=document.getElementById('peter-speech');if(m){{m.volume=0.15;m.muted=false;var savedMTime=sessionStorage.getItem('peter_music_time');if(savedMTime){{var pMTime=parseFloat(savedMTime);if(!isNaN(pMTime)&&Math.abs(m.currentTime-pMTime)>2.0){{m.currentTime=pMTime;console.log('Restored music to:',pMTime);}}}}m.play().catch(function(e){{console.log('Music play blocked:',e);}});}}if(s){{s.volume=1.0;s.muted=false;var currentSession='{session_audio_id}';var savedSession=sessionStorage.getItem('peter_speech_session');if(savedSession!==currentSession){{sessionStorage.setItem('peter_speech_session',currentSession);sessionStorage.removeItem('peter_speech_time');sessionStorage.removeItem('peter_speech_ended');}}var savedSTime=sessionStorage.getItem('peter_speech_time');var sEnded=sessionStorage.getItem('peter_speech_ended');if(sEnded==='true'){{s.currentTime=s.duration||99999;}}else if(savedSTime){{var pSTime=parseFloat(savedSTime);if(!isNaN(pSTime)&&Math.abs(s.currentTime-pSTime)>2.0){{s.currentTime=pSTime;}}}}s.play().catch(function(e){{console.log('Speech play blocked:',e);}});}}if(!window.peterAudioTimer){{window.peterAudioTimer=setInterval(function(){{var music=document.getElementById('bg-music');var speech=document.getElementById('peter-speech');if(music&&!music.paused){{sessionStorage.setItem('peter_music_time',music.currentTime);}}if(speech){{if(!speech.paused&&!speech.ended){{sessionStorage.setItem('peter_speech_time',speech.currentTime);}}if(speech.ended){{sessionStorage.setItem('peter_speech_ended','true');}}}}}},100);}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
 </div>"""
     return html_code
 
