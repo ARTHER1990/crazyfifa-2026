@@ -116,94 +116,30 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
         song_title = "🔊 บรรยากาศเสียงเชียร์ขอบสนาม..."
         song_subtitle = "ระดับเสียง 85% พรีเมี่ยม (stadium_crowd.mp3)"
         
-    html_code = f"""
-    <!-- แผงเครื่องเล่นเพลงบรรยากาศสนามบอลโลก 2026 สไตล์พรีเมี่ยมสุดหรูหรา -->
-    <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
-        <div class="peter-audio-card" style="
-            background: linear-gradient(135deg, rgba(7, 15, 20, 0.8) 0%, rgba(13, 30, 38, 0.9) 100%);
-            border: 1px solid rgba(0, 255, 135, 0.3);
-            border-radius: 12px;
-            padding: 10px 12px;
-            box-sizing: border-box;
-            width: 100%;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            margin-bottom: 4px;
-        ">
-            <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 1.25rem;">🔊</span>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{song_title}</span>
-                    <span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{song_subtitle}</span>
-                </div>
-            </div>
-            
-            <div style="display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-right: 5px;">
-                <div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-                <div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-                <div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-                <div style="width: 3px; height: 60%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-                <div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
-            </div>
-        </div>
-        
-        <!-- เครื่องเล่นเสียงแบบป้อนข้อมูล Base64 Data URI ตรง 100% ข้ามระบบเครือข่าย ปลอดภัยและรับประกันเสียงออกถาวร -->
-        <audio loop id="bg-music" controls autoplay style="width: 100%; height: 32px; border-radius: 6px; outline: none; filter: invert(0.85) sepia(1) saturate(5) hue-rotate(90deg); background: rgba(0, 255, 135, 0.15);">
-            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mpeg">
-            <p>เบราว์เซอร์ของคุณไม่รองรับการเล่นเสียง กรุณากดตรวจสอบผ่านแถบควบคุมด้านบนครับ</p>
-        </audio>
-
-        <!-- เทคนิคขั้นสูง เจาะทะลุการบล็อกสคริปต์ของ React ด้วย 1x1 GIF Onload Handler -->
-        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
-            (function(){{
-                try {{
-                    var music = document.getElementById('bg-music');
-                    if (music) {{
-                        music.volume = 0.85;
-                        music.muted = false;
-                        
-                        // ดึงเวลาล่าสุดจาก sessionStorage มาเล่นต่อ
-                        var savedTime = sessionStorage.getItem('peter_music_time');
-                        if (savedTime) {{
-                            var parsedTime = parseFloat(savedTime);
-                            if (!isNaN(parsedTime) && Math.abs(music.currentTime - parsedTime) > 2.0) {{
-                                music.currentTime = parsedTime;
-                                console.log('Continuous Audio: Restored music playhead to:', parsedTime);
-                            }}
-                        }}
-                        
-                        // ติดตั้งระบบ Interval บันทึกเวลาเล่นลง sessionStorage ทุกๆ 100ms
-                        if (!window.peterMusicTimer) {{
-                            window.peterMusicTimer = setInterval(function() {{
-                                var m = document.getElementById('bg-music');
-                                if (m && !m.paused) {{
-                                    sessionStorage.setItem('peter_music_time', m.currentTime);
-                                }}
-                            }}, 100);
-                        }}
-                        
-                        // ปลุกระบบให้เล่นออโต้
-                        var playPromise = music.play();
-                        if (playPromise !== undefined) {{
-                            playPromise.then(function() {{
-                                console.log('Peter Audio Engine: Background music playing smoothly.');
-                            }}).catch(function(err) {{
-                                console.log('Autoplay blocked. Waiting for user interaction...', err);
-                            }});
-                        }}
-                    }}
-                }} catch(e) {{
-                    console.error('Peter Audio Engine failure:', e);
-                }}
-            }})()
-        " style="display:none; width:0; height:0; pointer-events:none;">
-    </div>
-    """
+    html_code = f"""<!-- แผงเครื่องเล่นเพลงบรรยากาศสนามบอลโลก 2026 สไตล์พรีเมี่ยมสุดหรูหรา -->
+<div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
+<div class="peter-audio-card" style="background: linear-gradient(135deg, rgba(7, 15, 20, 0.8) 0%, rgba(13, 30, 38, 0.9) 100%); border: 1px solid rgba(0, 255, 135, 0.3); border-radius: 12px; padding: 10px 12px; box-sizing: border-box; width: 100%; height: 60px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); margin-bottom: 4px;">
+<div style="display: flex; align-items: center; gap: 6px;">
+<span style="font-size: 1.25rem;">🔊</span>
+<div style="display: flex; flex-direction: column;">
+<span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{song_title}</span>
+<span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{song_subtitle}</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 3px; height: 16px; margin-right: 5px;">
+<div style="width: 3px; height: 80%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+<div style="width: 3px; height: 40%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+<div style="width: 3px; height: 95%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+<div style="width: 3px; height: 60%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+<div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px;"></div>
+</div>
+</div>
+<audio loop id="bg-music" controls autoplay style="width: 100%; height: 32px; border-radius: 6px; outline: none; filter: invert(0.85) sepia(1) saturate(5) hue-rotate(90deg); background: rgba(0, 255, 135, 0.15);">
+<source src="data:audio/mp3;base64,{audio_b64}" type="audio/mpeg">
+<p>เบราว์เซอร์ของคุณไม่รองรับการเล่นเสียง กรุณากดตรวจสอบผ่านแถบควบคุมด้านบนครับ</p>
+</audio>
+<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var music=document.getElementById('bg-music');if(music){{music.volume=0.85;music.muted=false;var savedTime=sessionStorage.getItem('peter_music_time');if(savedTime){{var parsedTime=parseFloat(savedTime);if(!isNaN(parsedTime)&&Math.abs(music.currentTime-parsedTime)>2.0){{music.currentTime=parsedTime;console.log('Continuous Audio: Restored music playhead to:',parsedTime);}}}}if(!window.peterMusicTimer){{window.peterMusicTimer=setInterval(function(){{var m=document.getElementById('bg-music');if(m&&!m.paused){{sessionStorage.setItem('peter_music_time',m.currentTime);}}}},100);}}var playPromise=music.play();if(playPromise!==undefined){{playPromise.then(function(){{console.log('Peter Audio Engine: Background music playing smoothly.');}}).catch(function(err){{console.log('Autoplay blocked. Waiting for user interaction...',err);}});}}}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
+</div>"""
     return html_code
 
 def show_standalone_radio_player():
