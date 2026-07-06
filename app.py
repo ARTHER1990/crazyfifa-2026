@@ -65,26 +65,52 @@ def get_base64_image(image_path):
 # ฟังก์ชันสำหรับเพลง
 def get_audio_html(audio_path, session_audio_id="default_id"):
     import time
-    filename = os.path.basename(audio_path)
-    # ปรับปรุงให้อ้างอิงเป็น .mp3 แท้เพื่อเสิร์ฟด้วย MIME type audio/mpeg ที่เบราว์เซอร์รองรับแบบสากล
-    if filename.endswith(".webp"):
-        filename = filename[:-5] + ".mp3"
-    if filename == "Shakira Burna Boy Dai Dai Official Video.mp3" or filename == "bg_music.webp" or filename == "Shakira Burna Boy Dai Dai Official Video.webp":
-        filename = "bg_music.mp3"
-    elif filename.endswith(".mp3"):
-        pass
-    else:
-        filename = "bg_music.mp3"
+    import base64
+    
+    # กำหนดเส้นทางไฟล์เสียงจริงในเครื่องเพื่อทำการดึงข้อมูลมาแปลงเป็น Base64
+    bg_music_path = os.path.join(current_dir, "static", "bg_music.mp3")
+    speech_path = os.path.join(current_dir, "static", "ai_analysis_fast.mp3")
+    
+    # 1. โหลดและแคชเพลงประกอบ (bg-music) เป็น Base64 ข้ามขีดจำกัดเรื่องเครือข่ายของ iframe sandbox
+    bg_music_b64 = _AUDIO_CACHE.get("bg_music")
+    if not bg_music_b64:
+        if os.path.exists(bg_music_path):
+            try:
+                with open(bg_music_path, "rb") as f_bg:
+                    bg_music_b64 = base64.b64encode(f_bg.read()).decode()
+                    _AUDIO_CACHE["bg_music"] = bg_music_b64
+            except:
+                bg_music_b64 = ""
+        else:
+            bg_music_b64 = ""
+            
+    # 2. โหลดและแคชเสียงพากย์ปีเตอร์ (peter-speech) เป็น Base64 (ล้างแคชเก่าออกเมื่อมีการอัปเดต ID เสียงพากย์ใหม่)
+    cache_id = f"speech_{session_audio_id}"
+    speech_b64 = _AUDIO_CACHE.get(cache_id)
+    if not speech_b64:
+        if os.path.exists(speech_path):
+            try:
+                with open(speech_path, "rb") as f_sp:
+                    speech_b64 = base64.b64encode(f_sp.read()).decode()
+                    # เคลียร์แรมจากเสียงพากย์อันเก่าออกเพื่อประหยัด RAM สูงสุด
+                    for k in list(_AUDIO_CACHE.keys()):
+                        if k.startswith("speech_"):
+                            del _AUDIO_CACHE[k]
+                    _AUDIO_CACHE[cache_id] = speech_b64
+            except:
+                speech_b64 = ""
+        else:
+            speech_b64 = ""
         
     voice_time = int(time.time())
     
     html_code = f"""
-    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL คืนค่าเสียง MP3 แท้พร้อมระบุ Type ป้องกันเบราว์เซอร์บล็อก MIME -->
+    <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Base64 ข้ามขีดจำกัด iframe Cross-Origin Sandbox ของ Streamlit Cloud -->
     <audio loop id="bg-music">
-        <source src="/app/static/{filename}" type="audio/mpeg">
+        <source src="data:audio/mp3;base64,{bg_music_b64}" type="audio/mpeg">
     </audio>
     <audio id="peter-speech">
-        <source src="/app/static/ai_analysis_fast.mp3?t={voice_time}" type="audio/mpeg">
+        <source src="data:audio/mp3;base64,{speech_b64}" type="audio/mpeg">
     </audio>
     
     <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
