@@ -76,10 +76,10 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     html_code = f"""
     <!-- เครื่องเล่นเพลงและเสียงพากย์ปีเตอร์แบบสตรีมผ่าน Static URL -->
     <audio loop id="bg-music">
-        <source src="/app/static/{filename}" type="audio/mp3">
+        <source src="/static/{filename}" type="audio/mp3">
     </audio>
     <audio id="peter-speech">
-        <source src="/app/static/ai_analysis_fast.webp?t={voice_time}" type="audio/mp3">
+        <source src="/static/ai_analysis_fast.webp?t={voice_time}" type="audio/mp3">
     </audio>
     
     <!-- แถบแจ้งเตือนสไตล์ Glassmorphism สุดหรูหราสีทอง/เขียวเรืองแสง สำหรับเปิดเล่นเสียงเมื่อเบราว์เซอร์บล็อก Autoplay -->
