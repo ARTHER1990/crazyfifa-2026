@@ -103,9 +103,10 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     import os
     import time
     
-    # ดึงไฟล์เสียงด้วยวิธีของเมื่อวานที่พิสูจน์แล้วว่าเล่นได้สำเร็จ 100% บน Streamlit Cloud ผ่านพาธ /app/static/...webp และ bypass ด้วย type="audio/mp3"
-    audio_url = "/app/static/stadium_crowd.webp"
+    # ดึงไฟล์เสียงเชียร์ขอบสนามจาก GitHub โดยตรง เพื่อหลบเลี่ยงปัญหา Tornado 404 และลด Payload ของ WebSocket บนคลาวด์
+    audio_url = "https://raw.githubusercontent.com/ARTHER1990/crazyfifa-2026/main/static/stadium_crowd.webp"
     
+    # ดึงเสียงพากย์ของปีเตอร์ AI อัปเดตล่าสุดที่สร้างใหม่จากดิสก์จริงบนเซิร์ฟเวอร์ ด้วยพาธ Static ท้องถิ่น
     voice_time = int(time.time())
     speech_url = f"/app/static/ai_analysis_fast.webp?t={voice_time}"
     
@@ -145,13 +146,13 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
 <div style="width: 3px; height: 30%; background: linear-gradient(to top, #00FF87, #60EFFF); border-radius: 2px; animation: peter-bounce-bar 0.7s infinite ease-in-out alternate 0.3s;"></div>
 </div>
 </div>
-<!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) -->
+<!-- เครื่องเล่นเสียงเพลงเชียร์เบื้องหลัง (Loop, Volume 15%) (ถอด type ออกเพื่อป้องกันปัญหา MIME Conflict และ nosniff ของคลาวด์) -->
 <audio loop id="bg-music" style="display:none; width:0; height:0;">
-<source src="{audio_url}" type="audio/mp3">
+<source src="{audio_url}">
 </audio>
-<!-- เครื่องเล่นเสียงพากย์ปีเตอร์ AI (No Loop, Volume 100%) -->
+<!-- เครื่องเล่นเสียงพากย์ปีเตอร์ AI (No Loop, Volume 100%) (ถอด type ออกเพื่อป้องกันปัญหา MIME Conflict และ nosniff ของคลาวด์) -->
 <audio id="peter-speech" style="display:none; width:0; height:0;">
-<source src="{speech_url}" type="audio/mp3">
+<source src="{speech_url}">
 </audio>
 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="(function(){{try{{var m=document.getElementById('bg-music');var s=document.getElementById('peter-speech');function startAudio_unlock(){{if(m){{var savedMTime=sessionStorage.getItem('peter_music_time');if(savedMTime){{var pMTime=parseFloat(savedMTime);if(!isNaN(pMTime)&&Math.abs(m.currentTime-pMTime)>2.0){{m.currentTime=pMTime;}}}}m.muted=false;m.volume=0.15;m.play().catch(function(e){{console.log('Music blocked, waiting user action:',e);}});}}if(s){{s.volume=1.0;s.playbackRate=1.18;s.muted=false;var currentSession='{session_audio_id}';var savedSession=sessionStorage.getItem('peter_speech_session');if(savedSession!==currentSession){{sessionStorage.setItem('peter_speech_session',currentSession);sessionStorage.removeItem('peter_speech_time');sessionStorage.removeItem('peter_speech_ended');}}var savedSTime=sessionStorage.getItem('peter_speech_time');var sEnded=sessionStorage.getItem('peter_speech_ended');if(sEnded!=='true'){{if(savedSTime){{var pSTime=parseFloat(savedSTime);if(!isNaN(pSTime)&&Math.abs(s.currentTime-pSTime)>2.0){{s.currentTime=pSTime;}}}}s.play().then(function(){{if(m)m.volume=0.15;}}).catch(function(e){{console.log('Speech blocked, waiting user action:',e);}});}}else{{if(m)m.volume=0.45;}}}}}}if(s){{s.onended=function(){{sessionStorage.setItem('peter_speech_ended','true');sessionStorage.removeItem('peter_speech_time');if(m){{var volInterval=setInterval(function(){{if(m.volume<0.45){{m.volume+=0.02;}}else{{m.volume=0.45;clearInterval(volInterval);}}}},100);}}}};}}startAudio_unlock();var unlockEvents=['click','touchstart','touchend','keydown'];function unlock_listener(){{startAudio_unlock();unlockEvents.forEach(function(ev){{document.removeEventListener(ev,unlock_listener,true);}});}}unlockEvents.forEach(function(ev){{document.addEventListener(ev,unlock_listener,true);}});if(!window.peterAudioTimer){{window.peterAudioTimer=setInterval(function(){{var music=document.getElementById('bg-music');var speech=document.getElementById('peter-speech');if(music&&!music.paused){{sessionStorage.setItem('peter_music_time',music.currentTime);}}if(speech){{if(!speech.paused&&!speech.ended){{sessionStorage.setItem('peter_speech_time',speech.currentTime);}}if(speech.ended){{sessionStorage.setItem('peter_speech_ended','true');}}}}}},100);}}}}catch(e){{console.error('Peter Audio Engine failure:',e);}}}})()" style="display:none; width:0; height:0; pointer-events:none;">
 </div>"""
