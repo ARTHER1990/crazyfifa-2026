@@ -109,6 +109,13 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
     if not audio_b64:
         return f"<!-- ข้อผิดพลาด: ไม่สามารถโหลดหรือแปลงไฟล์เสียงเป็น Base64 ได้ -->"
         
+    song_title = "กำลังบรรเลงเพลงขอบสนาม..."
+    song_subtitle = "ระดับเสียง 85% พรีเมี่ยม (ถอดรหัสตรง Base64 เสถียร)"
+    
+    if "stadium_crowd" in audio_path:
+        song_title = "🔊 บรรยากาศเสียงเชียร์ขอบสนาม..."
+        song_subtitle = "ระดับเสียง 85% พรีเมี่ยม (stadium_crowd.mp3)"
+        
     html_code = f"""
     <!-- แผงเครื่องเล่นเพลงบรรยากาศสนามบอลโลก 2026 สไตล์พรีเมี่ยมสุดหรูหรา -->
     <div style="display: flex; flex-direction: column; width: 100%; gap: 6px; padding: 5px 0;">
@@ -131,8 +138,8 @@ def get_audio_html(audio_path, session_audio_id="default_id"):
             <div style="display: flex; align-items: center; gap: 6px;">
                 <span style="font-size: 1.25rem;">🔊</span>
                 <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">กำลังบรรเลงเพลงขอบสนาม...</span>
-                    <span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">ระดับเสียง 85% พรีเมี่ยม (ถอดรหัสตรง Base64 เสถียร 100%)</span>
+                    <span style="font-size: 0.78rem; font-weight: 600; color: #00FF87; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">{song_title}</span>
+                    <span style="font-size: 0.65rem; color: #a0aec0; opacity: 0.8;">{song_subtitle}</span>
                 </div>
             </div>
             
@@ -2784,8 +2791,49 @@ if st.session_state.authenticated:
         key="main_navigation_menu"
     )
     
-    # ซ่อน/ถอดระบบบรรยากาศสนามชั่วคราวเพื่อเริ่มทำกันใหม่ทีละขั้นตามสั่งของคุณอาร์ต
-    st.session_state.music_saved_preference = False
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🎵 บรรยากาศสนาม")
+    
+    music_on = st.sidebar.toggle(
+        "เปิดเสียงเชียร์", 
+        value=st.session_state.music_saved_preference,
+        key="music_toggle_widget"
+    )
+    st.session_state.music_saved_preference = music_on
+    
+    music_placeholder = st.sidebar.empty()
+    
+    if music_on:
+        song_path = os.path.join(current_dir, "stadium_crowd.mp3")
+        
+        # ดึงแฮชของบทวิเคราะห์ปัจจุบันจากไฟล์แคชเป็นเวอร์ชันเสียงพากย์เพื่อล้าง session ที่จบลงแล้วโดยอัตโนมัติเมื่อเนื้อหาเปลี่ยน
+        current_voice_version = "default_v1"
+        try:
+            cache_path_sb = os.path.join(current_dir, "ai_cache.json")
+            if os.path.exists(cache_path_sb):
+                with open(cache_path_sb, "r", encoding="utf-8") as f_r_sb:
+                    import json
+                    c_data_sb = json.load(f_r_sb)
+                    current_voice_version = c_data_sb.get("hash_key", "default_v1")
+        except:
+            pass
+            
+        audio_html = get_audio_html(song_path, session_audio_id=current_voice_version)
+        with music_placeholder.container():
+            st.markdown(audio_html, unsafe_allow_html=True)
+        st.sidebar.caption("📻 กำลังบรรเลง: เสียงเชียร์สนามบอลโลก (สตรีมมิ่งไร้รอยต่อ)")
+    else:
+        with music_placeholder.container():
+            st.markdown("""
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
+                (function(){
+                    sessionStorage.removeItem('peter_music_time');
+                    sessionStorage.removeItem('peter_speech_time');
+                    sessionStorage.removeItem('peter_speech_ended');
+                    console.log('Peter AI Audio: Session storage cleared.');
+                })()
+            " style="display:none; width:0; height:0; pointer-events:none;">
+            """, unsafe_allow_html=True)
 
     # --- แถบสรุปผลการแข่งขันของวันนี้/วันล่าสุดย้อนหลัง 1 วันใน Sidebar ---
     st.sidebar.markdown("---")
