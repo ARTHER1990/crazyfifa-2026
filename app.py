@@ -1374,6 +1374,25 @@ footer {{visibility: hidden;}}
         display: inline !important;
         white-space: normal !important;
     }}
+
+
+/* 🛸 สไตล์ยานรบพิเศษสีเขียวนีออนเรืองแสงพรีเมี่ยมตามตัวอย่าง */
+.ufo-battle-element {{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 48px; /* ย่อขนาดลงตามที่คุณอาร์ตแจ้ง เพื่อไม่ให้ดูเต็มหน้าจอเกินไป */
+    height: 30px;
+    z-index: 1000000;
+    pointer-events: none;
+    filter: drop-shadow(0 0 12px #39FF14);
+    transition: transform 0.05s linear;
+    will-change: transform, filter;
+    display: none; /* ซ่อนไว้ก่อนโดยเริ่มต้น จะแสดงเมื่อมีการสั่งโจมตีเท่านั้น */
+}}
+.ufo-svg-ship {{
+    width: 100%;
+    height: 100%;
 }}
 </style>
 
@@ -1405,6 +1424,418 @@ footer {{visibility: hidden;}}
 </div>
 </header>
 """, unsafe_allow_html=True)
+
+# --- ติดตั้ง Canvas และสคริปต์ควบคุมจานบิน UFO พุ่งชนในเฟรมหลัก (Main Frame) บลัดพาส Sandbox ของ Sidebar 100% ---
+st.markdown("""
+    <!-- 🛸 ยานรบพิเศษ SVG พรีเมี่ยมเรืองแสงสำหรับล็อกเป้าถล่มไซด์บาร์โดยเฉพาะ (ถอดแบบ demo_sidebar_ufo.html) -->
+    <div class="ufo-battle-element" id="ufo-battle-ship">
+        <svg class="ufo-svg-ship" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 42 L15 60 L85 60 L70 42 Z" fill="url(#beamGradShip)" opacity="0.6"/>
+            <path d="M50 10 C38 10 32 18 32 26 L68 26 C68 18 62 10 50 10 Z" fill="#00FFCC" opacity="0.8"/>
+            <circle cx="50" cy="20" r="4" fill="#39FF14"/>
+            <ellipse cx="50" cy="32" rx="42" ry="12" fill="url(#metalGradShip)" stroke="#39FF14" stroke-width="1.5"/>
+            <circle cx="22" cy="32" r="2.5" fill="#39FF14"/>
+            <circle cx="36" cy="34" r="2.5" fill="#39FF14"/>
+            <circle cx="50" cy="35" r="3" fill="#39FF14"/>
+            <circle cx="64" cy="34" r="2.5" fill="#39FF14"/>
+            <circle cx="78" cy="32" r="2.5" fill="#39FF14"/>
+            <line x1="38" y1="44" x2="30" y2="48" stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+            <line x1="62" y1="44" x2="70" y2="48" stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+                <linearGradient id="metalGradShip" x1="0" y1="20" x2="100" y2="44" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#1A2035"/>
+                    <stop offset="50%" stop-color="#334460"/>
+                    <stop offset="100%" stop-color="#1A2035"/>
+                </linearGradient>
+                <linearGradient id="beamGradShip" x1="50" y1="42" x2="50" y2="60" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#39FF14" stop-opacity="0.8"/>
+                    <stop offset="100%" stop-color="#39FF14" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <canvas id="ufo-particle-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999; pointer-events: none;"></canvas>
+    <script>
+    (function() {
+        // --- 1. สเตตควบคุมของยานรบพิเศษ (UFO Battle Ship State) ---
+        // ใช้ของเดิมหากเคยสร้างไว้แล้ว เพื่อให้สถานะคงอยู่ข้าม Rerun ของ Streamlit
+        if (!window.ufoState) {
+            window.ufoState = {
+                particles: [],
+                isCharging: false,
+                isAttacking: false,
+                isFlyingIn: false,
+                isExploded: false,
+                targetElementId: 'welcomePanel',
+                animationFrameId: null,
+                // เริ่มต้นนอกจอขวาสุด (ทิศทางเดียวกับยานแบคกราวด์)
+                ufoX: window.innerWidth + 100,
+                ufoY: 120,
+                ufoVx: 0,
+                ufoVy: 0
+            };
+        } else {
+            if (window.ufoState.isFlyingIn === undefined) {
+                window.ufoState.isFlyingIn = false;
+            }
+        }
+
+        class NeonParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2.5;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 12 + 3;
+                this.speedX = Math.cos(angle) * speed;
+                this.speedY = Math.sin(angle) * speed;
+                this.gravity = 0.16;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.008;
+                this.friction = 0.97;
+            }
+            update() {
+                this.speedX *= this.friction;
+                this.speedY *= this.friction;
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= this.decay;
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function renderParticles() {
+            const canvas = document.getElementById('ufo-particle-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const s = window.ufoState;
+            
+            for (let i = s.particles.length - 1; i >= 0; i--) {
+                s.particles[i].update();
+                s.particles[i].draw(ctx);
+                if (s.particles[i].alpha <= 0) {
+                    s.particles.splice(i, 1);
+                }
+            }
+
+            if (s.particles.length > 0) {
+                s.animationFrameId = requestAnimationFrame(renderParticles);
+            } else {
+                s.animationFrameId = null;
+            }
+        }
+
+        // --- 2. ฟังก์ชันอัปเดตฟิสิกส์การลอยล่องและพุ่งชน (UFO Animation Loop) ---
+        function updateUfoPhysics() {
+            const s = window.ufoState;
+            const ufoElement = document.getElementById('ufo-battle-ship');
+            
+            if (!ufoElement) {
+                // หากหน้าจอเปลี่ยนหรือยังไม่เรนเดอร์ ให้วนลูปต่อเงียบๆ เพื่อรอเจอยานรบตัวใหม่
+                requestAnimationFrame(updateUfoPhysics);
+                return;
+            }
+
+            if (s.isExploded || (!s.isCharging && !s.isAttacking && !s.isFlyingIn)) {
+                ufoElement.style.display = 'none';
+                requestAnimationFrame(updateUfoPhysics);
+                return;
+            }
+
+            ufoElement.style.display = 'block';
+
+            if (s.isFlyingIn) {
+                // 🛸 เฟส 1: บินปรากฏตัวมาจากทิศขวา (ทิศเดียวกับแบคกราวด์) เข้ามายังพิกัดพร้อมชาร์จ
+                const targetInX = window.innerWidth - 250;
+                if (s.ufoX > targetInX) {
+                    s.ufoX -= 12; // บินโฉบเข้าอย่างรวดเร็ว
+                    ufoElement.style.transform = "translate(" + s.ufoX + "px, " + s.ufoY + "px) rotate(-15deg) scale(1)";
+                    ufoElement.style.filter = 'drop-shadow(0 0 15px #39FF14)';
+                } else {
+                    // เข้าสู่จุดประชิดตัว เริ่มสะสมประจุไฟฟ้าชาร์จพลัง
+                    s.isFlyingIn = false;
+                    s.isCharging = true;
+                    
+                    const attackBtn = document.getElementById('ufo-attack-btn');
+                    if (attackBtn) {
+                        attackBtn.innerHTML = '⚡ ยานรบพิเศษประชิดวงโคจร... ชาร์จประจุทำลายล้าง!';
+                    }
+                    
+                    setTimeout(() => {
+                        s.isCharging = false;
+                        if (attackBtn) {
+                            attackBtn.innerHTML = '🚀 ล็อกพิกัดป้ายยินดีต้อนรับ... ปล่อยยานพุ่งชน!';
+                        }
+                    }, 1000);
+                }
+            }
+            else if (s.isCharging) {
+                // ⚡ เฟส 2: โหมดชาร์จพลังสั่นสะท้านสะสมประจุทำลาย
+                const shakeX = s.ufoX + (Math.random() - 0.5) * 8;
+                const shakeY = s.ufoY + (Math.random() - 0.5) * 8;
+                ufoElement.style.transform = "translate(" + shakeX + "px, " + shakeY + "px) scale(1.15) rotate(" + (Math.sin(Date.now() / 8) * 12) + "deg)";
+                ufoElement.style.filter = 'drop-shadow(0 0 25px #FF007F) drop-shadow(0 0 10px #39FF14)';
+            }
+            else if (s.isAttacking) {
+                // 🎯 เฟส 3: โหมดพุ่งชนข้ามขอบจอทะลวงป้าย Sidebar ซ้าย
+                const target = document.getElementById('welcomePanel');
+                if (!target) {
+                    s.isAttacking = false;
+                    requestAnimationFrame(updateUfoPhysics);
+                    return;
+                }
+
+                const targetRect = target.getBoundingClientRect();
+                const targetX = targetRect.left + (targetRect.width / 2) - 24; // ชดเชยไซส์ใหม่ 48px / 2
+                const targetY = targetRect.top + (targetRect.height / 2) - 15;  // ชดเชยไซส์ใหม่ 30px / 2
+
+                const dx = targetX - s.ufoX;
+                const dy = targetY - s.ufoY;
+                const distance = Math.hypot(dx, dy);
+
+                if (distance > 12) {
+                    const speed = 18.5; // เร่งความเร็วพุ่งปรี๊ดเสมือนจริงสะกดสายตา
+                    s.ufoX += (dx / distance) * speed;
+                    s.ufoY += (dy / distance) * speed;
+
+                    // หันหัวยานดิ่งทิศทางเข้าชนป้ายเป้าหมาย
+                    const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                    ufoElement.style.transform = "translate(" + s.ufoX + "px, " + s.ufoY + "px) rotate(" + angle + "deg) scale(1.1)";
+                    ufoElement.style.filter = 'drop-shadow(0 0 20px #FF0844) drop-shadow(0 0 8px #FF007F)';
+                } else {
+                    // ชนปะทะเปรี้ยง! เกิดระเบิดละอองนีออนและเปลี่ยนสีป้ายต้อนรับ
+                    explodeWelcomePanel(ufoElement, targetRect);
+                }
+            }
+
+            requestAnimationFrame(updateUfoPhysics);
+        }
+
+        // คืนค่ารูปแบบของป้ายต้อนรับหากเกิดการ Rerun ขณะที่ระเบิดไปแล้ว (State Recovery)
+        function applyExplodedStateIfActive() {
+            const welcomeCard = document.getElementById('welcomePanel');
+            const welcomeFlag = document.getElementById('welcomeFlag');
+            const sidebarRip = document.getElementById('sidebarRip');
+            const attackBtn = document.getElementById('ufo-attack-btn');
+            const resetBtn = document.getElementById('ufo-reset-btn');
+            const s = window.ufoState;
+
+            if (s.isExploded) {
+                if (welcomeCard) {
+                    welcomeCard.style.background = 'linear-gradient(135deg, rgba(35, 12, 12, 0.9) 0%, rgba(15, 5, 5, 0.98) 100%)';
+                    welcomeCard.style.border = '1px solid rgba(255, 77, 77, 0.4)';
+                    welcomeCard.style.opacity = '0.75';
+                    welcomeCard.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.25) inset';
+                    welcomeCard.style.transform = 'scale(0.96)';
+                }
+                if (welcomeFlag) {
+                    welcomeFlag.style.transform = 'translateY(-50%) scale(0.35) rotate(145deg)';
+                    welcomeFlag.style.opacity = '0.12';
+                }
+                if (sidebarRip) {
+                    sidebarRip.style.display = 'block';
+                    sidebarRip.style.opacity = '1';
+                }
+                if (attackBtn) attackBtn.style.display = 'none';
+                if (resetBtn) resetBtn.style.display = 'block';
+            }
+        }
+
+        // เริ่มต้นฟิสิกส์แอนิเมชันโดยป้องกันการสร้าง Loop ซ้ำซ้อน
+        if (!window.ufoPhysicsLoopRunning) {
+            window.ufoPhysicsLoopRunning = true;
+            requestAnimationFrame(updateUfoPhysics);
+        }
+
+        // ตรวจสอบกู้คืนสถานะระเบิดเมื่อโหลด DOM สำเร็จ
+        setTimeout(applyExplodedStateIfActive, 100);
+        setTimeout(applyExplodedStateIfActive, 500); // เผื่อกรณี Streamlit วาด Sidebar ช้า
+
+        window.triggerRealUfoAttack = function() {
+            const s = window.ufoState;
+            if (s.isCharging || s.isAttacking || s.isFlyingIn || s.isExploded) return;
+
+            const welcomeCard = document.getElementById('welcomePanel');
+            const attackBtn = document.getElementById('ufo-attack-btn');
+            const canvas = document.getElementById('ufo-particle-canvas');
+
+            if (!welcomeCard) return;
+
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            // จุดเริ่มต้นนอกจอขวาสุด (ทิศทางเดียวกับพื้นหลัง)
+            s.ufoX = window.innerWidth + 100;
+            s.ufoY = 120 + Math.random() * 80; // บินประชิดระดับแบนเนอร์ด้านบน
+            s.isFlyingIn = true;
+            s.isAttacking = true;
+
+            if (attackBtn) {
+                attackBtn.disabled = true;
+                attackBtn.style.opacity = '0.7';
+                attackBtn.innerHTML = '🛸 เรียกยานรบพิเศษระดับพรีเมี่ยมเข้าสู่วงโคจร...';
+            }
+        };
+
+        function explodeWelcomePanel(ufoElement, targetRect) {
+            const s = window.ufoState;
+            s.isExploded = true;
+            s.isAttacking = false;
+            s.isFlyingIn = false;
+
+            ufoElement.style.display = 'none';
+
+            const welcomeCard = document.getElementById('welcomePanel');
+            const welcomeFlag = document.getElementById('welcomeFlag');
+            const sidebarRip = document.getElementById('sidebarRip');
+            const attackBtn = document.getElementById('ufo-attack-btn');
+            const resetBtn = document.getElementById('ufo-reset-btn');
+
+            if (welcomeCard) {
+                welcomeCard.style.background = 'linear-gradient(135deg, rgba(35, 12, 12, 0.9) 0%, rgba(15, 5, 5, 0.98) 100%)';
+                welcomeCard.style.border = '1px solid rgba(255, 77, 77, 0.4)';
+                welcomeCard.style.opacity = '0.75';
+                welcomeCard.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.25) inset';
+                welcomeCard.style.transform = 'scale(0.96)';
+
+                const sidebar = welcomeCard.closest('[data-testid="stSidebar"]') || document.querySelector('[data-testid="stSidebar"]');
+                if (sidebar) {
+                    sidebar.classList.add('shake-sidebar-ufo');
+                    setTimeout(() => {
+                        sidebar.classList.remove('shake-sidebar-ufo');
+                    }, 550);
+                }
+            }
+
+            if (welcomeFlag) {
+                welcomeFlag.style.transform = 'translateY(-50%) scale(0.35) rotate(145deg)';
+                welcomeFlag.style.opacity = '0.12';
+            }
+
+            const posX = targetRect.left + (targetRect.width / 2);
+            const posY = targetRect.top + (targetRect.height / 2);
+            const colors = ['#39FF14', '#FF007F', '#FF0844', '#00FFFF', '#FFFFFF', '#FFFF00'];
+            
+            s.particles = [];
+            for (let i = 0; i < 220; i++) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                s.particles.push(new NeonParticle(posX, posY, color));
+            }
+
+            if (s.animationFrameId) cancelAnimationFrame(s.animationFrameId);
+            s.animationFrameId = requestAnimationFrame(renderParticles);
+
+            setTimeout(() => {
+                if (sidebarRip) {
+                    sidebarRip.style.display = 'block';
+                    setTimeout(() => { sidebarRip.style.opacity = '1'; }, 50);
+                }
+                if (attackBtn) attackBtn.style.display = 'none';
+                if (resetBtn) resetBtn.style.display = 'block';
+            }, 400);
+        }
+
+        window.resetUfoAttackSystem = function() {
+            const s = window.ufoState;
+            s.isExploded = false;
+            s.isAttacking = false;
+            s.isCharging = false;
+            s.isFlyingIn = false;
+            s.particles = [];
+
+            const canvas = document.getElementById('ufo-particle-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
+            const welcomeCard = document.getElementById('welcomePanel');
+            const welcomeFlag = document.getElementById('welcomeFlag');
+            const sidebarRip = document.getElementById('sidebarRip');
+            const attackBtn = document.getElementById('ufo-attack-btn');
+            const resetBtn = document.getElementById('ufo-reset-btn');
+
+            if (welcomeCard) {
+                welcomeCard.style.background = '';
+                welcomeCard.style.border = '';
+                welcomeCard.style.opacity = '';
+                welcomeCard.style.boxShadow = '';
+                welcomeCard.style.transform = '';
+            }
+            if (welcomeFlag) {
+                welcomeFlag.style.transform = '';
+                welcomeFlag.style.opacity = '';
+            }
+            if (sidebarRip) {
+                sidebarRip.style.opacity = '0';
+                setTimeout(() => { sidebarRip.style.display = 'none'; }, 400);
+            }
+
+            if (attackBtn) {
+                attackBtn.disabled = false;
+                attackBtn.style.opacity = '1';
+                attackBtn.style.display = 'block';
+                attackBtn.innerHTML = '💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!';
+            }
+            if (resetBtn) resetBtn.style.display = 'none';
+
+            // ซ่อนตัวพร้อมกลับไปเตรียมพร้อมภายนอกจอขวา
+            s.ufoX = window.innerWidth + 100;
+            s.ufoY = 120;
+            s.ufoVx = 0;
+            s.ufoVy = 0;
+
+            const ufoElement = document.getElementById('ufo-battle-ship');
+            if (ufoElement) {
+                ufoElement.style.display = 'none';
+            }
+        };
+
+        // เพื่อความเสถียรสูงสุดใน Streamlit: ล้าง Handler ของเดิม และ Bind ตัวใหม่สดๆ เสมอเมื่อโหลดสคริปต์
+        const setupUfoEventListeners = function() {
+            document.removeEventListener('click', window.ufoSidebarRealAttackHandler);
+            
+            window.ufoSidebarRealAttackHandler = function(e) {
+                const attackBtn = e.target.closest('#ufo-attack-btn') || e.target.closest('.ufo-attack-btn');
+                if (attackBtn) {
+                    e.preventDefault();
+                    window.triggerRealUfoAttack();
+                    return;
+                }
+                const resetBtn = e.target.closest('#ufo-reset-btn') || e.target.closest('.ufo-reset-btn');
+                if (resetBtn) {
+                    e.preventDefault();
+                    window.resetUfoAttackSystem();
+                    return;
+                }
+            };
+            
+            document.addEventListener('click', window.ufoSidebarRealAttackHandler);
+        };
+        
+        setupUfoEventListeners();
+    })();
+    </script>
+""", unsafe_allow_html=True)
+
 
 # 1. ระบบผู้ใช้งาน (Sidebar)
 if 'username' not in st.session_state:
@@ -1600,6 +2031,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
         
         theme = TEAM_THEMES.get(predicted_team, default_theme)
         
+        # --- ระบบปล่อย UFO พุ่งถล่ม Sidebar ชนระเบิดอลังการจากยานจริงที่ลอยอยู่บนเว็บ ---
         st.sidebar.markdown(f"""
             <style>
             .custom-welcome-card {{
@@ -1613,12 +2045,13 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 font-weight: 500 !important;
                 line-height: 1.4 !important;
                 margin-top: 10px !important;
-                margin-bottom: 15px !important;
+                margin-bottom: 12px !important;
                 position: relative !important;
                 overflow: hidden !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: center !important;
+                transition: all 0.5s ease;
             }}
             .custom-welcome-card strong {{
                 font-weight: 700 !important;
@@ -1635,19 +2068,54 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 pointer-events: none !important;
                 user-select: none !important;
                 z-index: 1 !important;
+                transition: all 0.5s ease;
             }}
             .welcome-card-text {{
                 position: relative !important;
                 z-index: 2 !important;
             }}
+            
+            /* CSS สำหรับแรงสั่นสะเทือนเมื่อถูกถล่มชน */
+            @keyframes shake-sidebar-anim-ufo {{
+                0%, 100% {{ transform: translateX(0); }}
+                10% {{ transform: translateX(-6px) rotate(-0.5deg); }}
+                20% {{ transform: translateX(6px) rotate(0.5deg); }}
+                30% {{ transform: translateX(-5px); }}
+                40% {{ transform: translateX(5px); }}
+                50% {{ transform: translateX(-3px); }}
+                60% {{ transform: translateX(3px); }}
+            }}
+            .shake-sidebar-ufo {{
+                animation: shake-sidebar-anim-ufo 0.5s ease-in-out !important;
+            }}
             </style>
-            <div class="custom-welcome-card">
+            
+            <!-- การ์ดต้อนรับพร้อมระบุ ID สำหรับล็อกเป้าพุ่งชน -->
+            <div class="custom-welcome-card" id="welcomePanel">
                 <div class="welcome-card-text">
                     ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>
                     {f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.75; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก (โปรดกดปุ่มด้านล่าง)</div>'}
                 </div>
-                <div class="welcome-card-flag-bg">{theme['emoji']}</div>
+                <div class="welcome-card-flag-bg" id="welcomeFlag">{theme['emoji']}</div>
             </div>
+            
+            <!-- ป้ายหลุมศพเมื่อ Sidebar ถูก UFO บุกชนพินาศสิ้น -->
+            <div id="sidebarRip" style="display:none; opacity:0; text-align:center; font-family:'Kanit',sans-serif; margin-bottom:12px; padding:15px; background:rgba(0,0,0,0.7); border:1.5px solid #ff4d4d; border-radius:8px; color:#ff4d4d; font-size:14px; font-weight:bold; box-shadow:0 0 15px rgba(255, 0, 0, 0.35); transition:all 0.5s;">
+                🪦 ไซด์บาร์ต้อนรับถูกทำลายล้างโดย UFO เรียบร้อย!
+            </div>
+            
+            <!-- ปุ่มสั่งการแบบ Glassmorphism สีนีออนใต้ป้ายต้อนรับเพื่อความสะดวก -->
+            {f'''<div style="background: rgba(255, 0, 0, 0.08); border: 1px dashed rgba(255, 0, 0, 0.35); border-radius: 8px; padding: 10px; margin-bottom: 15px; text-align: center; font-family: 'Kanit', sans-serif;">
+                <div style="font-size: 12px; color: #ff9999; margin-bottom: 8px; line-height: 1.4;">
+                    🚨 ทีม {predicted_team} ของคุณตกรอบแล้ว! สั่งปล่อยจานบิน UFO ด้านหลังพุ่งชนป้ายต้อนรับเพื่อระบายความหัวร้อนสะใจกันเถอะครับ!
+                </div>
+                <button class="ufo-attack-btn" id="ufo-attack-btn" onclick="window.triggerRealUfoAttack ? window.triggerRealUfoAttack() : (parent.window.triggerRealUfoAttack ? parent.window.triggerRealUfoAttack() : console.error('UFO Attack system not ready yet'))" style="background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%) !important; border: 1px solid #ff3333; color: #ffffff !important; font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 0, 0, 0.25); width: 100%; transition: all 0.2s;">
+                    💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!
+                </button>
+                <button class="ufo-reset-btn" id="ufo-reset-btn" onclick="window.resetUfoAttackSystem ? window.resetUfoAttackSystem() : (parent.window.resetUfoAttackSystem ? parent.window.resetUfoAttackSystem() : console.error('UFO Reset system not ready yet'))" style="display: none; background: linear-gradient(135deg, #39FF14 0%, #17b300 100%) !important; border: 1px solid #39FF14; color: #000000 !important; font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 255, 0, 0.25); width: 100%; transition: all 0.2s;">
+                    🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์
+                </button>
+            </div>''' if predicted_team else ''}
         """, unsafe_allow_html=True)
         
         # ปุ่มเปิดหน้าต่างทำนายผลแชมป์โลก 2026 แบบพรีเมียมสีทองสว่าง
