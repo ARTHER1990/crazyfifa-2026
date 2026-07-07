@@ -97,7 +97,7 @@ def init_db():
         print(f"Error in init_db SQLite initialization: {e}")
 
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=15)
 def get_users_df():
     cols = ['username', 'total_score', 'pin']
     try:
@@ -113,7 +113,7 @@ def get_users_df():
         print(f"Error fetching users, returning local backup: {e}")
         return load_local_backup('users', cols)
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=15)
 def get_matches():
     cols = ['id', 'home_team', 'away_team', 'match_time', 'home_score', 'away_score', 'status', 'scorers', 'winner_qualify']
     try:
@@ -129,7 +129,7 @@ def get_matches():
         print(f"Error fetching matches, returning local backup: {e}")
         return load_local_backup('matches', cols)
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=15)
 def get_predictions_df():
     cols = ['username', 'match_id', 'pred_home', 'pred_away', 'pred_qualify', 'points_earned']
     try:
