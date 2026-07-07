@@ -3179,8 +3179,8 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             m_time = m_time.to_pydatetime()
         status = row['status']
         now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
-        # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง ตามสเปกความปลอดภัยสูงสุดของคุณอาร์ต
-        is_locked = now_th > (m_time - timedelta(hours=1)) or status == 'Finished'
+        # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง หรือเมื่อเกมเริ่มเตะ/แข่งจบแล้ว ตามสเปกความปลอดภัยสูงสุด
+        is_locked = now_th > (m_time - timedelta(hours=1)) or status in ['Finished', 'Live']
 
         has_pred = match_id in user_preds_cached
         preds_tuple = user_preds_cached.get(match_id, (0, 0, ""))
@@ -4682,8 +4682,8 @@ elif menu == "ประวัติการทายผล (My Predictions)":
                     m_time = row_m['match_dt'] if 'match_dt' in row_m and pd.notnull(row_m['match_dt']) else pd.to_datetime(row_m['match_time'])
                     if not isinstance(m_time, datetime):
                         m_time = m_time.to_pydatetime()
-                    # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง เพื่อป้องกันการลักไก่แก้ไขสกอร์หลังบอลใกล้เตะหรือเตะแล้ว
-                    is_locked = now_th > (m_time - timedelta(hours=1)) or row_m['status'] == 'Finished'
+                    # ปิดรับทายผลล่วงหน้าก่อนเวลาแข่งขันจริง 1 ชั่วโมง หรือเมื่อบอลกำลังเตะ/แข่งจบแล้ว เพื่อป้องกันการลักไก่แก้ไขสกอร์
+                    is_locked = now_th > (m_time - timedelta(hours=1)) or row_m['status'] in ['Finished', 'Live']
                     
                     if has_pred:
                         pred_h, pred_a, *extra = user_preds[safe_int(m_id)]

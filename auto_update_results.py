@@ -261,12 +261,12 @@ def main():
         print(f"❌ ไม่พบไฟล์ฐานข้อมูล SQLite ที่เส้นทาง {db_path}")
         return
 
-    # 2. ค้นหาแมตช์ที่เลยเวลาเตะแล้วแต่สถานะยังคงเป็น 'Upcoming' หรือแมตช์ที่แข่งเสร็จในรอบน็อกเอาต์แล้วแต่ไม่มีผู้เข้ารอบสะสม (ตรวจหาจาก Google Sheets โดยตรงเป็นแหล่งอ้างอิงสูงสุด)
+    # 2. ค้นหาแมตช์ที่เลยเวลาเตะแล้วแต่สถานะยังคงเป็น 'Upcoming'/'Live' หรือแมตช์ที่แข่งเสร็จในรอบน็อกเอาต์แล้วแต่ไม่มีผู้เข้ารอบสะสม (ตรวจหาจาก Google Sheets โดยตรงเป็นแหล่งอ้างอิงสูงสุด)
     try:
         df_m = db.get_matches()
         df_m['id_int'] = pd.to_numeric(df_m['id'], errors='coerce').fillna(0).astype(int)
         
-        mask_upcoming = df_m['status'] == 'Upcoming'
+        mask_upcoming = df_m['status'].isin(['Upcoming', 'Live'])
         mask_ko_empty = (df_m['status'] == 'Finished') & (df_m['id_int'] >= 68) & (df_m['winner_qualify'].fillna('').str.strip() == '')
         
         filtered_df = df_m[mask_upcoming | mask_ko_empty]
@@ -285,7 +285,7 @@ def main():
         return
 
     if not upcoming_matches:
-        print("😴 ไม่มีคู่แข่งขันที่มีสถานะ 'Upcoming' หรือน็อกเอาต์ที่ขาดผู้เข้ารอบสะสมในขณะนี้")
+        print("😴 ไม่มีคู่แข่งขันที่มีสถานะ 'Upcoming', 'Live' หรือน็อกเอาต์ที่ขาดผู้เข้ารอบสะสมในขณะนี้")
         return
 
     # บังคับใช้เวลาปัจจุบันเป็นเวลาไทย (UTC+7) เสมอ เพื่อแก้ปัญหาเมื่อรันบนเซิร์ฟเวอร์ GitHub Actions (UTC)
@@ -293,6 +293,8 @@ def main():
     
     # กรองเฉพาะคู่แข่งขันที่เลยเวลาเตะ/ถึงเวลาอัปเดตผลแล้วจริงๆ เพื่อนำมาทำเป็น Batch
     matches_to_query = []
+    any_live_updated = False
+    
     for m_id, home_team, away_team, match_time_str, m_status in upcoming_matches:
         try:
             match_time = datetime.strptime(match_time_str, '%Y-%m-%d %H:%M:%S')
@@ -300,16 +302,58 @@ def main():
             print(f"⚠️ รูปแบบเวลาของแมตช์ {m_id} ไม่ถูกต้อง ({match_time_str}): {e}")
             continue
 
-        if m_status == 'Upcoming':
+        if m_status in ['Upcoming', 'Live']:
             time_elapsed = now - match_time
-            if time_elapsed < timedelta(hours=2, minutes=30):
-                print(f"⏳ Match ID {m_id}: {home_team} vs {away_team} ({match_time_str}) ยังไม่แข่งหรือเพิ่งเริ่มเตะ (ผ่านไป {time_elapsed}) ข้ามการอัปเดตในรอบนี้")
+            
+            # ตรวจจับบอลเริ่มเตะแล้วแต่สถานะยังค้างเป็น 'Upcoming' -> ปรับเป็น 'Live' ทันที!
+            if m_status == 'Upcoming' and time_elapsed >= timedelta(seconds=0) and time_elapsed < timedelta(hours=2, minutes=30):
+                print(f"🔥 Match ID {m_id} ({home_team} vs {away_team}) บอลเริ่มเตะแล้ว! กำลังทำการแข่งขัน ปรับสถานะเป็น [Live] ทันทีเพื่อล็อกการทายผลและแสดงสถานะเรียลไทม์...")
+                
+                # --- อัปเดตเป็น Live ใน SQLite ---
+                try:
+                    conn = sqlite3.connect(db_path)
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE matches SET status='Live' WHERE id=?", (int(m_id),))
+                    conn.commit()
+                    conn.close()
+                    print(f"✅ SQLite อัปเดต ID {m_id} เป็น Live สำเร็จ!")
+                except Exception as e_sql:
+                    print(f"❌ SQLite อัปเดต ID {m_id} เป็น Live ล้มเหลว: {e_sql}")
+
+                # --- อัปเดตเป็น Live ใน Google Sheets ---
+                try:
+                    ws = db.get_worksheet('matches')
+                    data_check = ws.get_all_values()
+                    df_sheets = pd.DataFrame(data_check[1:], columns=data_check[0])
+                    mask_sheet = df_sheets['id'].astype(str) == str(m_id)
+                    if mask_sheet.any():
+                        idx = df_sheets.index[mask_sheet][0]
+                        df_sheets.at[idx, 'status'] = 'Live'
+                        ws.clear()
+                        ws.update([df_sheets.columns.values.tolist()] + df_sheets.astype(str).values.tolist())
+                        print(f"✅ Google Sheets อัปเดต ID {m_id} เป็น Live สำเร็จ!")
+                except Exception as e_sheet:
+                    print(f"❌ Google Sheets อัปเดต ID {m_id} เป็น Live ล้มเหลว: {e_sheet}")
+
+                any_live_updated = True
+                touch_app_py(home_team, away_team, "Live", "Live")
+                push_to_github()
+                continue
+                
+            elif time_elapsed < timedelta(hours=2, minutes=30):
+                if m_status == 'Upcoming':
+                    print(f"⏳ Match ID {m_id}: {home_team} vs {away_team} ({match_time_str}) ยังไม่เริ่มแข่ง (เหลืออีก {-time_elapsed}) ข้ามการอัปเดตในรอบนี้")
+                else:
+                    print(f"⏳ Match ID {m_id}: {home_team} vs {away_team} ({match_time_str}) อยู่ระหว่างการแข่งขัน [Live] (ผ่านไป {time_elapsed}) ข้ามการอัปเดตผลในรอบนี้")
                 continue
         
         matches_to_query.append((m_id, home_team, away_team, match_time_str, m_status))
 
     if not matches_to_query:
-        print("😴 ไม่มีคู่แข่งขันที่พร้อมสแกนหาผลคะแนนในรอบนี้ครับ")
+        if any_live_updated:
+            print("🎉 ทำการปรับปรุงคู่ที่กำลังเตะเป็นสถานะ Live และซิงค์ขึ้น GitHub เรียบร้อยแล้ว!")
+        else:
+            print("😴 ไม่มีคู่แข่งขันที่พร้อมสแกนหาผลคะแนนในรอบนี้ครับ")
         return
 
     print(f"🔍 พบคู่แข่งขันที่พร้อมอัปเดตผลจำนวน {len(matches_to_query)} คู่ (เข้าสู่โหมดการสืบค้นรวบยอด Batch)")

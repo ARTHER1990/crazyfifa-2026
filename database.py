@@ -207,8 +207,8 @@ def save_prediction(username, match_id, pred_home, pred_away, pred_qualify=""):
             m_time = pd.to_datetime(m_time_str)
             now_th = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
             
-            # ปิดรับทายผลล่วงหน้า 1 ชั่วโมง หรือเมื่อสถานะเป็น Finished
-            if now_th > (m_time - timedelta(hours=1)) or m_status == 'Finished':
+            # ปิดรับทายผลล่วงหน้า 1 ชั่วโมง หรือเมื่อสถานะเป็น Finished หรือ Live
+            if now_th > (m_time - timedelta(hours=1)) or m_status in ['Finished', 'Live']:
                 raise Exception("🚫 แมตช์นี้ปิดรับทายผลและล็อกคะแนนแล้ว ไม่สามารถแก้ไขได้ครับ")
     except Exception as e_lock:
         if "🚫" in str(e_lock):
