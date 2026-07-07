@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-08 06:44 (Auto updated: Switzerland 0-0 Colombia)
+# Last cache clear and match 100 update: 2026-07-08 06:54 (Manual update Match 100: Argentina vs Switzerland)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
