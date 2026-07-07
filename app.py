@@ -29,8 +29,8 @@ cleanup_git_icons()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# ตรรกะเปิดใช้งานระบบทำนายผลแชมป์โลก (ตั้งเป็น False ในวันนี้ตามที่คุณอาร์ตชะลอเปิด และแก้เป็น True ในวันพรุ่งนี้เพื่อเปิดระบบพร้อมกัน 100%)
-IS_CHAMPION_PRED_ACTIVE = False
+# ตรรกะเปิดใช้งานระบบทำนายผลแชมป์โลก (เปิดใช้งานทันทีหลังจากแก้ไขข้อมูลทีมรอบ 16 ทีมถูกต้องครบถ้วนตามความจริงของฟีฟ่า)
+IS_CHAMPION_PRED_ACTIVE = True
 
 # ฟังก์ชันสำหรับแปลงค่าตัวเลขอย่างปลอดภัย (ดักจับ None, NaN, ช่องว่าง)
 def safe_int(val, default=0):
@@ -463,17 +463,21 @@ def show_champion_dialog(username):
     TEAMS_LIST = [
         ("", "🏳️ กรุณาเลือกประเทศที่ต้องการทำนาย..."),
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
-        ("France", "🇫🇷 ฝรั่งเศส (France)"),
-        ("Spain", "🇪🇸 สเปน (Spain)"),
-        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
-        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
         ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
-        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
+        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
+        ("Canada", "🇨🇦 แคนาดา (Canada)"),
         ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
+        ("Egypt", "🇪🇬 อียิปต์ (Egypt)"),
+        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
+        ("France", "🇫🇷 ฝรั่งเศส (France)"),
+        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
+        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
         ("Norway", "🇳🇴 นอร์เวย์ (Norway)"),
-        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)"),
+        ("Paraguay", "🇵🇾 ปารากวัย (Paraguay)"),
+        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
+        ("Spain", "🇪🇸 สเปน (Spain)"),
         ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)"),
-        ("Egypt", "🇪🇬 อียิปต์ (Egypt)")
+        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)")
     ]
     
     existing_pred = db.get_user_champion_prediction(username)
@@ -2120,21 +2124,21 @@ if False:
     # รายชื่อทีมที่เข้ารอบ 16 ทีมสุดท้าย
     TEAMS_LIST = [
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
-        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
-        ("Germany", "🇩🇪 เยอรมนี (Germany)"),
-        ("France", "🇫🇷 ฝรั่งเศส (France)"),
-        ("Spain", "🇪🇸 สเปน (Spain)"),
-        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
-        ("Netherlands", "🇳🇱 เนเธอร์แลนด์ (Netherlands)"),
-        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
         ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
-        ("Uruguay", "🇺🇾 อุรุกวัย (Uruguay)"),
-        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
-        ("Japan", "🇯🇵 ญี่ปุ่น (Japan)"),
-        ("Senegal", "🇸🇳 เซเนกัล (Senegal)"),
-        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
+        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
+        ("Canada", "🇨🇦 แคนาดา (Canada)"),
         ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
-        ("Norway", "🇳🇴 นอร์เวย์ (Norway)")
+        ("Egypt", "🇪🇬 อียิปต์ (Egypt)"),
+        ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
+        ("France", "🇫🇷 ฝรั่งเศส (France)"),
+        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
+        ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
+        ("Norway", "🇳🇴 นอร์เวย์ (Norway)"),
+        ("Paraguay", "🇵🇾 ปารากวัย (Paraguay)"),
+        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
+        ("Spain", "🇪🇸 สเปน (Spain)"),
+        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)"),
+        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)")
     ]
     
     # แปลงชื่อทีมภาษาอังกฤษเป็นคำอ่านภาษาไทยเพื่อแสดงผลในหน้าล็อก
