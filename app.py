@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-07 07:49 (Reduced cache TTL to 15s for instant updates)
+# Last cache clear and score update: 2026-07-07 09:26 (Auto updated: United States 1-4 Belgium)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")

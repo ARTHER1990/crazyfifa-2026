@@ -302,7 +302,7 @@ def main():
 
         if m_status == 'Upcoming':
             time_elapsed = now - match_time
-            if time_elapsed < timedelta(hours=2, minutes=30):
+            if time_elapsed < timedelta(hours=2):
                 print(f"⏳ Match ID {m_id}: {home_team} vs {away_team} ({match_time_str}) ยังไม่แข่งหรือเพิ่งเริ่มเตะ (ผ่านไป {time_elapsed}) ข้ามการอัปเดตในรอบนี้")
                 continue
         
