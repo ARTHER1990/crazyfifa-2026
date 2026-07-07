@@ -464,20 +464,14 @@ def show_champion_dialog(username):
         ("", "🏳️ กรุณาเลือกประเทศที่ต้องการทำนาย..."),
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
         ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
-        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
-        ("Canada", "🇨🇦 แคนาดา (Canada)"),
         ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
         ("Egypt", "🇪🇬 อียิปต์ (Egypt)"),
         ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
         ("France", "🇫🇷 ฝรั่งเศส (France)"),
-        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
         ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
         ("Norway", "🇳🇴 นอร์เวย์ (Norway)"),
-        ("Paraguay", "🇵🇾 ปารากวัย (Paraguay)"),
-        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
         ("Spain", "🇪🇸 สเปน (Spain)"),
-        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)"),
-        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)")
+        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)")
     ]
     
     existing_pred = db.get_user_champion_prediction(username)
@@ -2121,24 +2115,18 @@ if False:
     # ดึงค่า Base64 สำหรับ ภาพ บอลโลก.png แบ็กกราวด์พรีเมียม
     worldcup_bg_b64 = worldcup_bg_base64 # ดึงจากที่โหลดไว้ตอนต้นไฟล์
     
-    # รายชื่อทีมที่เข้ารอบ 16 ทีมสุดท้าย
+    # รายชื่อทีมที่เข้ารอบ 10 ทีมสุดท้ายที่ยังอยู่ในเส้นทางลุ้นแชมป์โลก 2026
     TEAMS_LIST = [
         ("Argentina", "🇦🇷 อาร์เจนตินา (Argentina)"),
         ("Belgium", "🇧🇪 เบลเยียม (Belgium)"),
-        ("Brazil", "🇧🇷 บราซิล (Brazil)"),
-        ("Canada", "🇨🇦 แคนาดา (Canada)"),
         ("Colombia", "🇨🇴 โคลอมเบีย (Colombia)"),
         ("Egypt", "🇪🇬 อียิปต์ (Egypt)"),
         ("England", "🏴󠁧󠁢󠁥󠁮󠁧󠁿 อังกฤษ (England)"),
         ("France", "🇫🇷 ฝรั่งเศส (France)"),
-        ("Mexico", "🇲🇽 เม็กซิโก (Mexico)"),
         ("Morocco", "🇲🇦 โมร็อกโก (Morocco)"),
         ("Norway", "🇳🇴 นอร์เวย์ (Norway)"),
-        ("Paraguay", "🇵🇾 ปารากวัย (Paraguay)"),
-        ("Portugal", "🇵🇹 โปรตุเกส (Portugal)"),
         ("Spain", "🇪🇸 สเปน (Spain)"),
-        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)"),
-        ("United States", "🇺🇸 สหรัฐอเมริกา (United States)")
+        ("Switzerland", "🇨🇭 สวิตเซอร์แลนด์ (Switzerland)")
     ]
     
     # แปลงชื่อทีมภาษาอังกฤษเป็นคำอ่านภาษาไทยเพื่อแสดงผลในหน้าล็อก
