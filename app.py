@@ -1628,275 +1628,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
         
         theme = TEAM_THEMES.get(predicted_team, default_theme)
         
-        # --- ระบบปล่อย UFO พุ่งถล่ม Sidebar ชนระเบิดอลังการจากยานจริงที่ลอยอยู่บนเว็บ ---
-        # ตรวจสอบทริกเกอร์แอนิเมชันปล่อย UFO หรือไม่
-        play_ufo_anim = False
-        if st.session_state.get('trigger_ufo', False):
-            play_ufo_anim = True
-            st.session_state.trigger_ufo = False  # เคลียร์สถานะในฝั่ง Python ทันที เพื่อป้องกันไม่ให้แอนิเมชันรันซ้ำเมื่อ Rerun อื่นๆ
-            
-        if st.session_state.ufo_exploded_active:
-            if play_ufo_anim:
-                welcome_display = "flex"
-                welcome_opacity = "1"
-                rip_display = "none"
-                rip_opacity = "0"
-            else:
-                welcome_display = "none"
-                welcome_opacity = "0"
-                rip_display = "block"
-                rip_opacity = "1"
-        else:
-            welcome_display = "flex"
-            welcome_opacity = "1"
-            rip_display = "none"
-            rip_opacity = "0"
-
-        # เตรียมสคริปต์ JavaScript แอนิเมชันแบบสั่นและระเบิดสมจริง (เขียนชิดขอบซ้ายสุดเพื่อเลี่ยง Markdown Code block parser)
-        ufo_js_script = ""
-        if play_ufo_anim:
-            ufo_js_script = f"""<script>
-(function() {{
-setTimeout(() => {{
-const ufo = document.getElementById('ufoShip');
-const welcomePanel = document.getElementById('welcomePanel');
-const ripPanel = document.getElementById('sidebarRip');
-const canvas = document.getElementById('explosionCanvas');
-if (!ufo || !welcomePanel || !canvas) return;
-ufo.style.display = 'block';
-ufo.style.position = 'absolute';
-ufo.style.right = '-120px';
-ufo.style.top = '10px';
-ufo.style.transform = 'scale(1)';
-const welcomeWidth = welcomePanel.offsetWidth || 300;
-const welcomeHeight = welcomePanel.offsetHeight || 100;
-const startX = -120;
-const targetX = welcomeWidth / 2 - 24;
-const startY = 10;
-const targetY = welcomeHeight / 2 - 24;
-const duration = 900;
-const startTime = performance.now();
-function animateUfo(currentTime) {{
-const elapsed = currentTime - startTime;
-const progress = Math.min(elapsed / duration, 1);
-const t = progress;
-const easeProgress = t * t * (3 - 2 * t);
-const currentRight = startX + ( (startX * -1 + targetX) * easeProgress );
-const currentTop = startY + ( (targetY - startY) * easeProgress );
-ufo.style.right = currentRight + 'px';
-ufo.style.top = currentTop + 'px';
-const tilt = Math.sin(progress * Math.PI * 3) * 15;
-ufo.style.transform = `rotate(${{tilt}}deg) scale(${{1 + (1 - progress) * 0.15}})`;
-if (progress < 1) {{
-requestAnimationFrame(animateUfo);
-}} else {{
-triggerExplosion();
-}}
-}}
-requestAnimationFrame(animateUfo);
-function triggerExplosion() {{
-ufo.style.display = 'none';
-welcomePanel.classList.add('shake-sidebar-ufo');
-let parentEl = welcomePanel.parentElement;
-for (let i = 0; i < 8; i++) {{
-if (parentEl) {{
-if (parentEl.getAttribute('data-testid') === 'stSidebar' || parentEl.classList.contains('stSidebar')) {{
-parentEl.classList.add('shake-sidebar-ufo');
-setTimeout(() => {{
-parentEl.classList.remove('shake-sidebar-ufo');
-}}, 600);
-break;
-}}
-parentEl = parentEl.parentElement;
-}}
-}}
-setTimeout(() => {{
-welcomePanel.style.display = 'none';
-ripPanel.style.display = 'block';
-ripPanel.style.opacity = '1';
-ripPanel.classList.add('shake-sidebar-ufo');
-}}, 120);
-canvas.width = welcomeWidth;
-canvas.height = welcomeHeight;
-const ctx = canvas.getContext('2d');
-const particles = [];
-const particleCount = 75;
-const colors = ['#39FF14', '#00e5ff', '#ff0055', '#ff9900', '#FFE9A2', '#ffffff'];
-const explodeX = welcomeWidth / 2;
-const explodeY = welcomeHeight / 2;
-for (let i = 0; i < particleCount; i++) {{
-const angle = Math.random() * Math.PI * 2;
-const speed = Math.random() * 9 + 3;
-particles.push({{
-x: explodeX,
-y: explodeY,
-radius: Math.random() * 3 + 1.5,
-color: colors[Math.floor(Math.random() * colors.length)],
-speedX: Math.cos(angle) * speed,
-speedY: Math.sin(angle) * speed - 2.5,
-gravity: 0.16,
-alpha: 1,
-decay: Math.random() * 0.02 + 0.015
-}});
-}}
-function animateParticles() {{
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-let active = false;
-for (let i = 0; i < particles.length; i++) {{
-const p = particles[i];
-if (p.alpha <= 0) continue;
-active = true;
-p.x += p.speedX;
-p.y += p.speedY;
-p.speedY += p.gravity;
-p.alpha -= p.decay;
-ctx.save();
-ctx.globalAlpha = p.alpha;
-ctx.shadowBlur = 10;
-ctx.shadowColor = p.color;
-ctx.beginPath();
-ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-ctx.fillStyle = p.color;
-ctx.fill();
-ctx.restore();
-}}
-if (active) {{
-requestAnimationFrame(animateParticles);
-}} else {{
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-}}
-}}
-requestAnimationFrame(animateParticles);
-try {{
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-if (audioCtx) {{
-const osc1 = audioCtx.createOscillator();
-const gain1 = audioCtx.createGain();
-osc1.connect(gain1);
-gain1.connect(audioCtx.destination);
-osc1.type = 'triangle';
-osc1.frequency.setValueAtTime(160, audioCtx.currentTime);
-osc1.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.8);
-gain1.gain.setValueAtTime(0.35, audioCtx.currentTime);
-gain1.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
-osc1.start();
-osc1.stop(audioCtx.currentTime + 0.8);
-const osc2 = audioCtx.createOscillator();
-const gain2 = audioCtx.createGain();
-osc2.connect(gain2);
-gain2.connect(audioCtx.destination);
-osc2.type = 'sawtooth';
-osc2.frequency.setValueAtTime(400, audioCtx.currentTime);
-osc2.frequency.linearRampToValueAtTime(70, audioCtx.currentTime + 0.55);
-gain2.gain.setValueAtTime(0.18, audioCtx.currentTime);
-gain2.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.55);
-osc2.start();
-osc2.stop(audioCtx.currentTime + 0.55);
-}}
-}} catch(e) {{
-console.log("Audio API blocked or not supported: ", e);
-}}
-}}
-}}, 150);
-}});
-</script>"""
-
-        sidebar_html = f"""<style>
-.custom-welcome-card {{
-background: {theme['background']} !important;
-border: {theme['border']} !important;
-border-radius: 8px !important;
-padding: 12px 16px !important;
-color: {theme['text_color']} !important;
-font-family: 'Kanit', sans-serif !important;
-font-size: 15px !important;
-font-weight: 500 !important;
-line-height: 1.4 !important;
-position: relative !important;
-overflow: hidden !important;
-display: flex !important;
-flex-direction: column !important;
-justify-content: center !important;
-transition: all 0.5s ease;
-}}
-.custom-welcome-card strong {{
-font-weight: 700 !important;
-color: #FFFFFF !important;
-font-size: 16px !important;
-}}
-.welcome-card-flag-bg {{
-position: absolute !important;
-right: 12px !important;
-top: 50% !important;
-transform: translateY(-50%) !important;
-font-size: 58px !important;
-opacity: 0.65 !important;
-pointer-events: none !important;
-user-select: none !important;
-z-index: 1 !important;
-transition: all 0.5s ease;
-}}
-.welcome-card-text {{
-position: relative !important;
-z-index: 2 !important;
-}}
-@keyframes shake-sidebar-anim-ufo {{
-0%, 100% {{ transform: translateX(0); }}
-10% {{ transform: translateX(-6px) rotate(-0.5deg); }}
-20% {{ transform: translateX(6px) rotate(0.5deg); }}
-30% {{ transform: translateX(-5px); }}
-40% {{ transform: translateX(5px); }}
-50% {{ transform: translateX(-3px); }}
-60% {{ transform: translateX(3px); }}
-}}
-.shake-sidebar-ufo {{
-animation: shake-sidebar-anim-ufo 0.5s ease-in-out !important;
-}}
-.ufo-svg-ship {{
-position: absolute !important;
-z-index: 9999 !important;
-pointer-events: none !important;
-}}
-</style>
-<div id="ufoBattleWrapper" style="position: relative; overflow: visible; width: 100%; margin-top: 10px; margin-bottom: 12px;">
-<div class="custom-welcome-card" id="welcomePanel" style="display: {welcome_display} !important; opacity: {welcome_opacity} !important;">
-<div class="welcome-card-text">
-ยินดีต้อนรับคุณ <strong>{st.session_state.username}</strong>
-{f'<div style="font-size: 11px; opacity: 0.85; margin-top: 3px; font-weight: normal;">🔮 ทายแชมป์โลก: {theme["emoji"]} {predicted_team}</div>' if predicted_team else '<div style="font-size: 11px; opacity: 0.75; margin-top: 3px; font-weight: normal;">🔮 ยังไม่ได้ทายผลแชมป์โลก (โปรดกดปุ่มด้านล่าง)</div>'}
-</div>
-<div class="welcome-card-flag-bg" id="welcomeFlag">{theme['emoji']}</div>
-</div>
-<div id="sidebarRip" style="display: {rip_display}; opacity: {rip_opacity}; text-align: center; font-family: \'Kanit\', sans-serif; padding: 15px; background: rgba(0, 0, 0, 0.75); border: 1.5px solid #ff4d4d; border-radius: 8px; color: #ff4d4d; font-size: 14px; font-weight: bold; box-shadow: 0 0 15px rgba(255, 0, 0, 0.45); transition: all 0.5s;">
-🪦 ไซด์บาร์ต้อนรับถูกทำลายล้างโดย UFO เรียบร้อย!
-</div>
-<div id="ufoShip" class="ufo-svg-ship" style="display: none;">
-<svg viewBox="0 0 100 100" width="48" height="48" style="filter: drop-shadow(0 0 10px #39FF14);">
-<path d="M 50,15 C 35,15 30,30 30,40 L 70,40 C 70,30 65,15 50,15 Z" fill="#00e5ff" opacity="0.85" />
-<ellipse cx="50" cy="30" rx="10" ry="6" fill="#ffffff" opacity="0.6" />
-<ellipse cx="50" cy="48" rx="42" ry="14" fill="url(#ufoMetallic)" />
-<ellipse cx="50" cy="54" rx="35" ry="8" fill="#39FF14" opacity="0.9" />
-<circle cx="50" cy="54" r="5" fill="#ffffff" />
-<circle cx="20" cy="48" r="2.5" fill="#ff0055" />
-<circle cx="35" cy="51" r="2.5" fill="#FFE9A2" />
-<circle cx="50" cy="52" r="2.5" fill="#00e5ff" />
-<circle cx="65" cy="51" r="2.5" fill="#FFE9A2" />
-<circle cx="80" cy="48" r="2.5" fill="#ff0055" />
-<defs>
-<linearGradient id="ufoMetallic" x1="0%" y1="0%" x2="0%" y2="100%">
-<stop offset="0%" stop-color="#90a4ae" />
-<stop offset="50%" stop-color="#37474f" />
-<stop offset="100%" stop-color="#212121" />
-</linearGradient>
-</defs>
-</svg>
-</div>
-<canvas id="explosionCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; pointer-events: none;"></canvas>
-</div>
-{ufo_js_script}"""
-        st.sidebar.markdown(sidebar_html.replace('\n', ' '), unsafe_allow_html=True)
-
-
-        # ตรวจสอบว่าทีมที่เลือกตกรอบไปแล้วจริงๆ หรือไม่ (เฉพาะรอบ Knockout)
+        # --- ระบบตรวจสอบทีมตกรอบย้ายขึ้นมาทำงานด้านบน เพื่อป้องกันบั๊กสลับตัวแปร (NameError) ---
         is_team_eliminated = False
         if predicted_team:
             try:
@@ -1916,10 +1648,8 @@ pointer-events: none !important;
                 ]
                 
                 if not upcoming_ko.empty:
-                    # ถ้ายังมีแมตช์ค้างในรอบน็อกเอาต์ที่ยังไม่ได้แข่ง -> ยังไม่ตกรอบแน่นอน!
                     is_team_eliminated = False
                 else:
-                    # ถ้าไม่มีแมตช์รอแข่งแล้ว ให้มาเช็คแมตช์ที่แข่งเสร็จสิ้นแล้ว (Finished) ในรอบน็อกเอาต์ของทีมนี้
                     finished_ko = df_matches_check[
                         (df_matches_check['id_int'] >= 68) & 
                         (df_matches_check['status'] == 'Finished') & 
@@ -1930,69 +1660,606 @@ pointer-events: none !important;
                     ]
                     
                     if not finished_ko.empty:
-                        # หาแมตช์ล่าสุดที่แข่งเสร็จแล้ว (อิงตาม ID สูงสุด)
                         latest_match = finished_ko.sort_values(by='id_int', ascending=False).iloc[0]
                         w_qualify = str(latest_match.get('winner_qualify', '')).strip().lower()
                         
-                        # ถ้าในแมตช์น็อกเอาต์ล่าสุด ทีมนี้ไม่ได้เข้ารอบถัดไป (winner_qualify != predicted_team) -> ตกรอบแน่นอน
                         if w_qualify != "" and w_qualify != "nan" and w_qualify != pred_lower:
                             is_team_eliminated = True
             except Exception as e_check:
                 print(f"Error checking team elimination status: {e_check}")
 
+        theme = TEAM_THEMES.get(predicted_team, default_theme)
+        
+        # --- ระบบปล่อย UFO พุ่งถล่ม Sidebar ชนระเบิดอลังการจากยานจริงที่ลอยอยู่บนเว็บ ---
+        # ตรวจสอบทริกเกอร์แอนิเมชันปล่อย UFO หรือไม่
+        play_ufo_anim = False
+        if st.session_state.get('trigger_ufo', False):
+            play_ufo_anim = "true"
+            st.session_state.trigger_ufo = False  # เคลียร์สถานะในฝั่ง Python ทันที เพื่อป้องกันไม่ให้แอนิเมชันรันซ้ำเมื่อ Rerun อื่นๆ
+        else:
+            play_ufo_anim = "false"
+            
+        ufo_exploded_active_js = "true" if st.session_state.ufo_exploded_active else "false"
+        
+        # สกัดเอาเฉพาะค่าสี rgba(...) จากขอบดั้งเดิมของประเทศเพื่อป้องกัน Syntax CSS ซ้ำซ้อน
+        import re
+        border_style = theme['border']
+        border_color_match = re.search(r"rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d\.]+\s*\)", border_style)
+        if border_color_match:
+            border_color = border_color_match.group(0)
+        else:
+            border_color = "rgba(239, 43, 45, 0.85)"  # ค่า Fallback แดงสว่างนอร์เวย์
+        
+        # ขอบใช้สไตล์ดั้งเดิม 100% คมเข้มสว่างเรืองแสงสีประจำชาติ (เช่น สีแดงของนอร์เวย์) เด่นชัดตามต้นตำรับ
+        border_style_thin = border_style
+        
+        # คลาสการแสดงผลและลอจิกการ์ด (ปกติ vs RIP ไว้อาลัยขาวดำ)
+        welcome_class = "champion-prediction-panel"
+        if st.session_state.ufo_exploded_active:
+            if play_ufo_anim == "true":
+                welcome_class = "champion-prediction-panel"
+            else:
+                welcome_class = "champion-prediction-panel rip-active"
+
+        # ดีไซน์ป้ายสถานะของการ์ด
+        if not predicted_team:
+            card_border = "rgba(255, 233, 162, 0.3)"
+            status_color = "#FFE9A2"
+            status_bg = "rgba(255, 233, 162, 0.15)"
+            status_text = "🔮 รอร่วมทำนายแชมป์"
+            team_display_name = "ยังไม่ได้เลือกทีม"
+            name_color = "#FFE9A2"
+            flag_emoji = "⚽"
+        elif is_team_eliminated:
+            card_border = "rgba(239, 68, 68, 0.3)"
+            status_color = "#FF4D4D"
+            status_bg = "rgba(239, 68, 68, 0.15)"
+            status_text = "❌ ตกรอบเรียบร้อย"
+            team_display_name = f"{predicted_team}"
+            name_color = "#FF6688"
+            flag_emoji = theme['emoji']
+        else:
+            card_border = "rgba(57, 255, 20, 0.3)"
+            status_color = "#39FF14"
+            status_bg = "rgba(57, 255, 20, 0.15)"
+            status_text = "✅ ยังอยู่ในเส้นทาง"
+            team_display_name = f"{predicted_team}"
+            name_color = "#39FF14"
+            flag_emoji = theme['emoji']
+        
+        sidebar_html = f"""<style>
+/* 🌟 ดีไซน์ตัวการ์ดหลัก Glassmorphism ปรับแต่งโปร่งใสทะลุหลังบางเป็นพิเศษตามต้นตำรับ */
+.champion-prediction-panel {{
+    background: rgba(10, 16, 35, 0.28) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1.5px solid {border_color} !important;
+    border-radius: 20px !important;
+    padding: 16px 14px !important;
+    text-align: left !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 
+                inset 0 0 15px rgba(255, 255, 255, 0.03),
+                0 0 15px {border_color} !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+}}
+.champion-prediction-panel::before {{
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -150% !important;
+    width: 50% !important;
+    height: 100% !important;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%) !important;
+    transform: skewX(-25deg) !important;
+    transition: 0.85s !important;
+}}
+.champion-prediction-panel:hover::before {{
+    left: 150% !important;
+}}
+.champion-prediction-panel:hover {{
+    transform: translateY(-2px) scale(1.01) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45), 0 0 15px {border_color} !important;
+}}
+
+/* ลอจิกการสลับสเตตัสปกติ / RIP (ขาวดำไว้อาลัย) */
+.champion-prediction-panel .welcome-rip-content {{
+    display: none !important;
+}}
+.champion-prediction-panel .welcome-normal-content {{
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+}}
+
+/* สไตล์ขาวดำเมื่อโดนจานบินถล่มชน */
+.champion-prediction-panel.rip-active {{
+    filter: grayscale(100%) contrast(0.9) brightness(0.7) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65), inset 0 0 10px rgba(255, 255, 255, 0.02) !important;
+    background: rgba(20, 20, 20, 0.08) !important;
+}}
+.champion-prediction-panel.rip-active .welcome-normal-content {{
+    display: none !important;
+}}
+.champion-prediction-panel.rip-active .welcome-rip-content {{
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+}}
+
+.welcome-card-text {{
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    text-align: left !important;
+}}
+
+.welcome-title {{
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    font-family: 'Kanit', sans-serif !important;
+    letter-spacing: -0.2px !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}}
+
+.welcome-sub {{
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #ffffff !important;
+    opacity: 0.95 !important;
+    font-family: 'Kanit', sans-serif !important;
+    letter-spacing: -0.1px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}}
+
+.welcome-card-flag {{
+    font-size: 48px !important;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)) !important;
+    animation: flag-wave 3s ease-in-out infinite !important;
+    display: inline-block !important;
+    user-select: none !important;
+    pointer-events: none !important;
+    transform-origin: bottom center !important;
+}}
+
+@keyframes flag-wave {{
+    0%, 100% {{
+        transform: translateY(0) rotate(0deg) scale(1);
+    }}
+    50% {{
+        transform: translateY(-3px) rotate(-5deg) scale(1.04);
+    }}
+}}
+</style>
+<div id="ufoBattleWrapper" style="position: relative; overflow: visible; width: 100%; margin-top: 10px; margin-bottom: 12px;">
+<div class="{welcome_class}" id="welcomePanel">
+    <!-- เนื้อหาโหมดปกติ -->
+    <div class="welcome-normal-content">
+        <div class="welcome-card-text">
+            <div class="welcome-title">ยินดีต้อนรับคุณ {st.session_state.username}</div>
+            <div class="welcome-sub">🔮 ทายแชมป์โลก: {flag_emoji} {team_display_name}</div>
+        </div>
+        <div class="welcome-card-flag" id="welcomeFlag">{flag_emoji}</div>
+    </div>
+    
+    <!-- เนื้อหาโหมดไว้อาลัย RIP ขาวดำ -->
+    <div class="welcome-rip-content">
+        <div class="welcome-card-text">
+            <div class="welcome-title" style="color: #A4B2C5 !important; text-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;">⚰️ RIP {team_display_name}</div>
+            <div class="welcome-sub" style="color: #8A99AD !important; text-shadow: 0 1px 2px rgba(0,0,0,0.4) !important;">
+                บอร์ดส่วนทำนายผลถูกโจมตีทางอวกาศเสร็จสิ้นโดย UFO ลึกลับ! 🛸
+            </div>
+        </div>
+        <div class="welcome-card-flag" style="filter: grayscale(100%) brightness(0.65) !important; animation: none !important;">{flag_emoji}</div>
+    </div>
+</div>
+</div>"""
+        
+        st.sidebar.markdown(sidebar_html.replace('\n', ' '), unsafe_allow_html=True)
+        
+        # สร้าง JavaScript และ CSS ระดับ Global (พ่นด้วยสตริงธรรมดาของ Python หลีกเลี่ยง f-string formatting error)
+        global_ufo_and_physics_script = """<script>
+(function() {
+    // 1. ตรวจสอบและดักพ่นองค์ประกอบสไตล์ระดับ Global ไปแขวนไว้ที่ Parent Document Body (Streamlit Main Area)
+    var parentWin = (window.parent && window.parent.document) ? window.parent : window;
+    var doc = parentWin.document;
+    
+    // พ่น CSS สไตล์ Global UFO และแรงระเบิดสะท้านจอ
+    var styleId = 'global-ufo-style';
+    if (!doc.getElementById(styleId)) {
+        var styleEl = doc.createElement('style');
+        styleEl.id = styleId;
+        styleEl.innerHTML = `
+            .global-ufo-element {
+                position: fixed !important;
+                width: 85px !important;
+                height: 55px !important;
+                z-index: 999999 !important;
+                pointer-events: none !important;
+                filter: drop-shadow(0 0 15px #39FF14) !important;
+                transition: transform 0.05s linear !important;
+                display: none;
+            }
+            .global-ufo-svg {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            #globalExplosionCanvas {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                z-index: 999998 !important;
+                pointer-events: none !important;
+            }
+            @keyframes shake-sidebar-anim-ufo {
+                0%, 100% { transform: translateX(0); }
+                10% { transform: translateX(-8px) rotate(-1deg); }
+                20% { transform: translateX(8px) rotate(1deg); }
+                30% { transform: translateX(-6px) rotate(-0.5deg); }
+                40% { transform: translateX(6px) rotate(0.5deg); }
+                50% { transform: translateX(-4px); }
+                60% { transform: translateX(4px); }
+                70% { transform: translateX(-2px); }
+            }
+            .shake-sidebar-ufo {
+                animation: shake-sidebar-anim-ufo 0.5s ease-in-out !important;
+            }
+        `;
+        doc.head.appendChild(styleEl);
+    }
+
+    // สร้าง Canvas วาดประกายไฟเต็มบอร์ด
+    var canvas = doc.getElementById('globalExplosionCanvas');
+    if (!canvas) {
+        canvas = doc.createElement('canvas');
+        canvas.id = 'globalExplosionCanvas';
+        doc.body.appendChild(canvas);
+    }
+    
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+
+    function resizeCanvas() {
+        canvas.width = parentWin.innerWidth;
+        canvas.height = parentWin.innerHeight;
+    }
+    parentWin.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // สะเก็ดระเบิด (Particle Class)
+    class GlobalParticle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 5 + 3;
+            this.speedX = (Math.random() * 16) - 4; // พุ่งกระจายเอียงขวา
+            this.speedY = (Math.random() - 0.5) * 14 - 2;
+            this.gravity = 0.18;
+            this.color = color;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.012 + 0.008;
+        }
+        update() {
+            this.x += this.speedX;
+            this.speedY += this.gravity;
+            this.y += this.speedY;
+            this.alpha -= this.decay;
+        }
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = this.color;
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function handleParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].alpha <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+        if (particles.length > 0) {
+            requestAnimationFrame(handleParticles);
+        }
+    }
+
+    // สร้างหรือดึงยาน UFO ตัวแม่แบบ Global เปล่งประกายตามเดโมเดี่ยว 100%
+    var ufo = doc.getElementById('globalUfo');
+    if (!ufo) {
+        ufo = doc.createElement('div');
+        ufo.id = 'globalUfo';
+        ufo.className = 'global-ufo-element';
+        ufo.innerHTML = `
+            <svg class="global-ufo-svg" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M30 42 L15 60 L85 60 L70 42 Z" fill="url(#beamGradGlobal)" opacity="0.65"/>
+                <path d="M50 10 C38 10 32 18 32 26 L68 26 C68 18 62 10 50 10 Z" fill="#00FFCC" opacity="0.85"/>
+                <circle cx="50" cy="20" r="4.5" fill="#39FF14"/>
+                <ellipse cx="50" cy="32" rx="42" ry="12" fill="url(#metalGradGlobal)" stroke="#39FF14" stroke-width="1.8"/>
+                <circle cx="22" cy="32" r="3" fill="#39FF14"/>
+                <circle cx="36" cy="34" r="3" fill="#39FF14"/>
+                <circle cx="50" cy="35" r="3.5" fill="#39FF14"/>
+                <circle cx="64" cy="34" r="3" fill="#39FF14"/>
+                <circle cx="78" cy="32" r="3" fill="#39FF14"/>
+                <line x1="38" y1="44" x2="30" y2="48" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="62" y1="44" x2="70" y2="48" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="metalGradGlobal" x1="0" y1="20" x2="100" y2="44" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#1A2035"/>
+                        <stop offset="50%" stop-color="#334460"/>
+                        <stop offset="100%" stop-color="#1A2035"/>
+                    </linearGradient>
+                    <linearGradient id="beamGradGlobal" x1="50" y1="42" x2="50" y2="60" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#39FF14" stop-opacity="0.85"/>
+                        <stop offset="100%" stop-color="#39FF14" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        `;
+        doc.body.appendChild(ufo);
+    }
+
+    // กำหนดสถานะและตำแหน่งตั้งต้นของ UFO บน Main Area ฝั่งขวา
+    if (typeof parentWin.ufoState === 'undefined') {
+        parentWin.ufoState = {
+            x: parentWin.innerWidth - 320 - Math.random() * 200,
+            y: 120 + Math.random() * (parentWin.innerHeight - 300),
+            vx: (Math.random() - 0.5) * 1.8,
+            vy: (Math.random() - 0.5) * 1.8,
+            isCharging: false,
+            isAttacking: false,
+            isExploded: __EXPLODED_ACTIVE__,
+            animFrame: null
+        };
+    } else {
+        // อัปเดตสถานะระเบิดเมื่อมีการส่งค่ากู้คืนระบบหรือระเบิดสำเร็จ
+        parentWin.ufoState.isExploded = __EXPLODED_ACTIVE__;
+    }
+
+    var state = parentWin.ufoState;
+
+    // ระบบคืนชีพ UFO เมื่อผู้ใช้กด ซ่อมแซมระบบ
+    if (!state.isExploded) {
+        ufo.style.display = 'block';
+    } else {
+        ufo.style.display = 'none';
+    }
+
+    // สัญญาณทริกเกอร์แอนิเมชันโจมตีและชนข้ามฟากจากจอหลัก!
+    var triggerAttack = __TRIGGER_UFO__;
+
+    if (triggerAttack && !state.isCharging && !state.isAttacking) {
+        state.isExploded = false;
+        state.isCharging = true;
+        ufo.style.display = 'block';
+
+        // เอฟเฟกต์ประมวลผลระบบเสียงพรีเมียม (Web Audio API) ชาร์จเลเซอร์และสั่นสะกดวิญญาณ
+        try {
+            var audioCtx = new (parentWin.AudioContext || parentWin.webkitAudioContext)();
+            if (audioCtx) {
+                var osc1 = audioCtx.createOscillator();
+                var gain1 = audioCtx.createGain();
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(80, audioCtx.currentTime);
+                osc1.frequency.linearRampToValueAtTime(850, audioCtx.currentTime + 1.1);
+                gain1.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                gain1.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 1.1);
+                osc1.start();
+                osc1.stop(audioCtx.currentTime + 1.1);
+            }
+        } catch(e) { console.log(e); }
+
+        // หน่วงเวลาสั่นตัวชาร์จสะสมประจุไฟฟ้าก่อนพุ่งดิ่งชน 1.1 วินาที
+        setTimeout(function() {
+            state.isCharging = false;
+            state.isAttacking = true;
+        }, 1100);
+    }
+
+    function updatePhysics() {
+        if (state.isExploded) {
+            ufo.style.display = 'none';
+            return;
+        }
+
+        if (state.isCharging) {
+            // โหมดสั่นพลาสมาสะสมพลังงาน เรืองแสงสลับสีเขียวนีออนกับสีชมพูวูบวาบ
+            var shakeX = state.x + (Math.random() - 0.5) * 8;
+            var shakeY = state.y + (Math.random() - 0.5) * 8;
+            ufo.style.transform = `translate(${shakeX}px, ${shakeY}px) scale(1.35) rotate(${Math.sin(Date.now() / 15) * 15}deg)`;
+            ufo.style.filter = `drop-shadow(0 0 30px #FF007F) drop-shadow(0 0 10px #39FF14)`;
+        } 
+        else if (!state.isAttacking) {
+            // โหมดร่อนอิสระบน Main Area หน้าบอร์ดหลัก
+            state.x += state.vx;
+            state.y += state.vy;
+
+            // ตีกรอบเขตจำกัด (ไม่ให้บินร่อนทับแถบ Sidebar 350px ฝั่งซ้าย)
+            var minX = 360;
+            var maxX = parentWin.innerWidth - 90;
+            var minY = 40;
+            var maxY = parentWin.innerHeight - 80;
+
+            if (state.x <= minX || state.x >= maxX) {
+                state.vx *= -1;
+                state.x = Math.max(minX, Math.min(maxX, state.x));
+            }
+            if (state.y <= minY || state.y >= maxY) {
+                state.vy *= -1;
+                state.y = Math.max(minY, Math.min(maxY, state.y));
+            }
+
+            var angle = state.vx * 4.5;
+            ufo.style.transform = `translate(${state.x}px, ${state.y}px) rotate(${angle}deg) scale(1.0)`;
+            ufo.style.filter = `drop-shadow(0 0 15px #39FF14)`;
+        } 
+        else {
+            // โหมดพุ่งโจมตีข้ามฟากดิ่งชนกล่องทำนายแชมป์ใน Sidebar!
+            var welcomePanel = doc.getElementById('welcomePanel');
+            var targetX = 120; // ค่าพิกัดเสมือนใจกลาง Sidebar หากหา element ไม่เจอ
+            var targetY = parentWin.innerHeight / 2 - 50;
+
+            if (welcomePanel) {
+                var rect = welcomePanel.getBoundingClientRect();
+                targetX = rect.left + (rect.width / 2) - 42;
+                targetY = rect.top + (rect.height / 2) - 27;
+            }
+
+            var dx = targetX - state.x;
+            var dy = targetY - state.y;
+            var distance = Math.hypot(dx, dy);
+
+            if (distance > 12) {
+                // อัตราการเคลื่อนที่ดิ่งชนพรีเมียม มองทันสะใจ
+                var speed = 10.5;
+                state.x += (dx / distance) * speed;
+                state.y += (dy / distance) * speed;
+
+                var angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                ufo.style.transform = `translate(${state.x}px, ${state.y}px) rotate(${angle}deg) scale(1.28)`;
+            } else {
+                // ชนเปรี้ยง! เกิดระเบิดวินาศสันตะโร
+                state.isExploded = true;
+                state.isAttacking = false;
+                ufo.style.display = 'none';
+
+                // เล่นเสียงสังเคราะห์ระเบิดกระหึ่ม
+                try {
+                    var audioCtx = new (parentWin.AudioContext || parentWin.webkitAudioContext)();
+                    if (audioCtx) {
+                        var osc2 = audioCtx.createOscillator();
+                        var gain2 = audioCtx.createGain();
+                        osc2.connect(gain2);
+                        gain2.connect(audioCtx.destination);
+                        osc2.type = 'triangle';
+                        osc2.frequency.setValueAtTime(140, audioCtx.currentTime);
+                        osc2.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.95);
+                        gain2.gain.setValueAtTime(0.42, audioCtx.currentTime);
+                        gain2.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.95);
+                        osc2.start();
+                        osc2.stop(audioCtx.currentTime + 0.95);
+                    }
+                } catch(e) {}
+
+                // สลับสไตล์เปลี่ยนการ์ดให้กลายเป็นขาวดำ RIP ทันทีที่ชนวินาศสันตะโร!
+                if (welcomePanel) {
+                    welcomePanel.classList.add('shake-sidebar-ufo');
+                    welcomePanel.classList.add('rip-active');
+                }
+
+                // สั่นสะเทือนแถบ Sidebar ของ Streamlit ทั้งตัวบอร์ด!
+                var sidebar = doc.querySelector('[data-testid="stSidebar"]');
+                if (sidebar) {
+                    sidebar.classList.add('shake-sidebar-ufo');
+                    setTimeout(function() {
+                        sidebar.classList.remove('shake-sidebar-ufo');
+                    }, 550);
+                }
+
+                // เสกสร้างละอองระเบิดสีสันเทศกาล 200 เม็ดฟุ้งเต็มหน้าจอหลักพ่นกระจายข้ามเขต!
+                var colors = ['#39FF14', '#FF007F', '#FFE9A2', '#00FFFF', '#FFFFFF', '#FF3333'];
+                for (var i = 0; i < 200; i++) {
+                    var randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    particles.push(new GlobalParticle(targetX + 42, targetY + 27, randomColor));
+                }
+                handleParticles();
+            }
+        }
+
+        state.animFrame = requestAnimationFrame(updatePhysics);
+    }
+
+    // รันการเคลื่อนไหวของ UFO
+    if (state.animFrame) {
+        cancelAnimationFrame(state.animFrame);
+    }
+    state.animFrame = requestAnimationFrame(updatePhysics);
+
+})();
+</script>"""
+        global_ufo_and_physics_script = global_ufo_and_physics_script.replace('__EXPLODED_ACTIVE__', ufo_exploded_active_js).replace('__TRIGGER_UFO__', play_ufo_anim)
+        components.html(global_ufo_and_physics_script, height=0)
+
+        # แทรก CSS สำหรับปุ่ม Streamlit ให้เป็นสีนีออนเด่นตระการตาและมีไฮไลท์นุ่มนวล
+        st.sidebar.markdown("""
+            <style>
+            /* ปุ่มสั่งปล่อย UFO */
+            button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"] {
+                background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%) !important;
+                border: 1px solid #ff3333 !important;
+                color: #ffffff !important;
+                font-family: 'Kanit', sans-serif !important;
+                font-weight: 700 !important;
+                box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3) !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+            button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"]:hover {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 6px 20px rgba(255, 0, 0, 0.55), 0 0 10px rgba(255, 77, 77, 0.4) !important;
+                border-color: #ff6666 !important;
+            }
+            button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"]:active {
+                transform: translateY(1px) !important;
+                box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4) !important;
+            }
+
+            /* ปุ่มเก็บกู้ภัย */
+            button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"] {
+                background: linear-gradient(135deg, #39FF14 0%, #17b300 100%) !important;
+                border: 1px solid #39FF14 !important;
+                color: #000000 !important;
+                font-family: 'Kanit', sans-serif !important;
+                font-weight: 700 !important;
+                box-shadow: 0 4px 12px rgba(57, 255, 20, 0.3) !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+            button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"]:hover {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 6px 20px rgba(57, 255, 20, 0.6), 0 0 10px rgba(57, 255, 20, 0.4) !important;
+                border-color: #7cff62 !important;
+            }
+            button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"]:active {
+                transform: translateY(1px) !important;
+                box-shadow: 0 2px 8px rgba(57, 255, 20, 0.4) !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+
+        # กล่องข้อความและระบบสั่งปล่อย UFO ปรากฏเฉพาะคนทำนายทีมที่ "ตกรอบ" แล้วเท่านั้น (กิมมิกสุดพรีเมียมระบายความหัวร้อนสะใจ!)
         if predicted_team and is_team_eliminated:
-            # กล่องข้อความแสดงรายละเอียดการตกรอบพรีเมี่ยม
             st.sidebar.markdown(f"""
                 <div style="background: rgba(255, 0, 0, 0.08); border: 1px dashed rgba(255, 0, 0, 0.35); border-radius: 8px; padding: 10px; margin-bottom: 8px; text-align: center; font-family: 'Kanit', sans-serif;">
                     <div style="font-size: 12px; color: #ff9999; line-height: 1.4;">
                         🚨 ทีม {predicted_team} ของคุณตกรอบแล้ว! สั่งปล่อยจานบิน UFO ด้านหลังพุ่งชนป้ายต้อนรับเพื่อระบายความหัวร้อนสะใจกันเถอะครับ!
                     </div>
                 </div>
-            """, unsafe_allow_html=True)
-
-            # แทรก CSS สำหรับปุ่ม Streamlit ให้เป็นสีนีออนเด่นตระการตาและมีไฮไลท์นุ่มนวล
-            st.sidebar.markdown("""
-                <style>
-                /* ปุ่มสั่งปล่อย UFO */
-                button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"] {
-                    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%) !important;
-                    border: 1px solid #ff3333 !important;
-                    color: #ffffff !important;
-                    font-family: 'Kanit', sans-serif !important;
-                    font-weight: 700 !important;
-                    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3) !important;
-                    transition: all 0.2s ease-in-out !important;
-                }
-                button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"]:hover {
-                    transform: translateY(-1px) !important;
-                    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.55), 0 0 10px rgba(255, 77, 77, 0.4) !important;
-                    border-color: #ff6666 !important;
-                }
-                button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"]:active {
-                    transform: translateY(1px) !important;
-                    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4) !important;
-                }
-
-                /* ปุ่มเก็บกู้ภัย */
-                button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"] {
-                    background: linear-gradient(135deg, #39FF14 0%, #17b300 100%) !important;
-                    border: 1px solid #39FF14 !important;
-                    color: #000000 !important;
-                    font-family: 'Kanit', sans-serif !important;
-                    font-weight: 700 !important;
-                    box-shadow: 0 4px 12px rgba(57, 255, 20, 0.3) !important;
-                    transition: all 0.2s ease-in-out !important;
-                }
-                button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"]:hover {
-                    transform: translateY(-1px) !important;
-                    box-shadow: 0 6px 20px rgba(57, 255, 20, 0.6), 0 0 10px rgba(57, 255, 20, 0.4) !important;
-                    border-color: #7cff62 !important;
-                }
-                button[aria-label="🔧 ซ่อมแซมระบบและเก็บกู้ภัยไซด์บาร์"]:active {
-                    transform: translateY(1px) !important;
-                    box-shadow: 0 2px 8px rgba(57, 255, 20, 0.4) !important;
-                }
-                </style>
             """, unsafe_allow_html=True)
 
             if not st.session_state.ufo_exploded_active:
