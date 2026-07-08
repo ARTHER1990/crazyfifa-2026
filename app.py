@@ -1,4 +1,4 @@
-# Last cache clear and match 100 update: 2026-07-08 07:45 (Fix elimination status for Norway & force cache clear)
+# Last cache clear and match 100 update: 2026-07-08 07:50 (Show Argentina results in sidebar & force cache clear)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
@@ -3119,14 +3119,15 @@ if st.session_state.authenticated:
             # คำนวณวันปัจจุบัน (เวลาไทย UTC+7)
             now_th_sb = datetime.now(timezone(timedelta(hours=7))).replace(tzinfo=None)
             today_date_sb = now_th_sb.date()
+            yesterday_date_sb = today_date_sb - timedelta(days=1)
             
-            # กรองเฉพาะแมตช์ที่แข่งเสร็จในวันนี้จริง ๆ (ตามเวลาไทย UTC+7)
-            day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date == today_date_sb]
+            # กรองแมตช์ที่แข่งเสร็จในวันนี้และเมื่อวาน (ตามเวลาไทย UTC+7) เพื่อความต่อเนื่องพรีเมี่ยมครอบคลุมคู่ดึก
+            day_matches_sb = finished_sb[finished_sb['match_dt'].dt.date.isin([today_date_sb, yesterday_date_sb])]
             
-            st.sidebar.subheader("📅 สรุปผลแข่งวันนี้")
+            st.sidebar.subheader("📅 ผลการแข่งขันล่าสุด")
             
             if day_matches_sb.empty:
-                st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
+                st.sidebar.info("ไม่มีผลการแข่งขันล่าสุด")
             
             # ดึงประวัติการทายเพื่อประมวลผลความถูกต้องของผู้ใช้งานทั้งหมด
             predictions_sb = db.get_predictions_df()
@@ -3210,9 +3211,9 @@ if st.session_state.authenticated:
                         if m_id_int >= 68:
                             st.markdown("<div style='font-size:0.7rem; color: #888; margin-top:5px; padding-left:2px;'>💡 <i>รอบน็อกเอาต์: ทายฝั่งเข้ารอบถูก โบนัส +1 แต้ม (ผิด +0)</i></div>", unsafe_allow_html=True)
         else:
-            st.sidebar.info("ไม่มีสรุปผลแข่งของวันนี้")
+            st.sidebar.info("ไม่มีผลการแข่งขันล่าสุด")
     except Exception as sb_err:
-        st.sidebar.error(f"⚠️ เกิดข้อผิดพลาดในการสรุปผลวันนี้: {sb_err}")
+        st.sidebar.error(f"⚠️ เกิดข้อผิดพลาดในการสรุปผลล่าสุด: {sb_err}")
 
     st.sidebar.markdown("---")
 
