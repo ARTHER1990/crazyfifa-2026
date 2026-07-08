@@ -1,4 +1,4 @@
-# Last cache clear and match 100 update: 2026-07-08 06:55 (Manual update Match 100: Argentina vs Switzerland)
+# Last cache clear and match 100 update: 2026-07-08 07:40 (Fix elimination status & force cache clear)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
@@ -1896,7 +1896,30 @@ pointer-events: none !important;
         st.sidebar.markdown(sidebar_html.replace('\n', ' '), unsafe_allow_html=True)
 
 
+        # ตรวจสอบว่าทีมที่เลือกตกรอบไปแล้วจริงๆ หรือไม่ (เฉพาะรอบ Knockout)
+        is_team_eliminated = False
         if predicted_team:
+            try:
+                df_matches_check = db.get_matches()
+                df_matches_check['id_int'] = pd.to_numeric(df_matches_check['id'], errors='coerce').fillna(0).astype(int)
+                
+                # กรองเฉพาะคู่แข่งรอบน็อกเอาต์ (id >= 68) ที่แข่งจบแล้ว
+                ko_finished = df_matches_check[(df_matches_check['status'] == 'Finished') & (df_matches_check['id_int'] >= 68)]
+                
+                for _, match_row in ko_finished.iterrows():
+                    h_team = str(match_row.get('home_team', '')).strip()
+                    a_team = str(match_row.get('away_team', '')).strip()
+                    w_qualify = str(match_row.get('winner_qualify', '')).strip()
+                    
+                    # ถ้าทีมที่ทายลงเล่นในคู่นี้ แต่ไม่ได้เป็นผู้ชนะผ่านเข้ารอบถัดไป -> ตกรอบแน่นอน!
+                    if (h_team.lower() == predicted_team.lower() or a_team.lower() == predicted_team.lower()):
+                        if w_qualify != "" and w_qualify.lower() != "nan" and w_qualify.lower() != predicted_team.lower():
+                            is_team_eliminated = True
+                            break
+            except Exception as e_check:
+                print(f"Error checking team elimination status: {e_check}")
+
+        if predicted_team and is_team_eliminated:
             # กล่องข้อความแสดงรายละเอียดการตกรอบพรีเมี่ยม
             st.sidebar.markdown(f"""
                 <div style="background: rgba(255, 0, 0, 0.08); border: 1px dashed rgba(255, 0, 0, 0.35); border-radius: 8px; padding: 10px; margin-bottom: 8px; text-align: center; font-family: 'Kanit', sans-serif;">
