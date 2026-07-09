@@ -1,4 +1,4 @@
-# Last cache clear and match 100 update: 2026-07-08 07:50 (Show Argentina results in sidebar & force cache clear)
+# Last cache clear and score update: 2026-07-10 04:38 (Auto updated: Morocco Live-Live France)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
