@@ -1684,14 +1684,18 @@ elif selected_user != "เลือกชื่อของคุณ...":
         # สกัดเอาเฉพาะค่าสี rgba(...) จากขอบดั้งเดิมของประเทศเพื่อป้องกัน Syntax CSS ซ้ำซ้อน
         import re
         border_style = theme['border']
-        border_color_match = re.search(r"rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d\.]+\s*\)", border_style)
-        if border_color_match:
-            border_color = border_color_match.group(0)
-        else:
-            border_color = "rgba(239, 43, 45, 0.85)"  # ค่า Fallback แดงสว่างนอร์เวย์
         
-        # ขอบใช้สไตล์ดั้งเดิม 100% คมเข้มสว่างเรืองแสงสีประจำชาติ (เช่น สีแดงของนอร์เวย์) เด่นชัดตามต้นตำรับ
-        border_style_thin = border_style
+        # --- หากทีมตกรอบ บังคับกรอบและขอบการ์ดหลักเป็นสีแดงนีออนตามสเปก UFO ---
+        if is_team_eliminated:
+            border_color = "rgba(255, 51, 51, 0.95)"
+            border_style_thin = "1.5px solid rgba(255, 51, 51, 0.95)"
+        else:
+            border_color_match = re.search(r"rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d\.]+\s*\)", border_style)
+            if border_color_match:
+                border_color = border_color_match.group(0)
+            else:
+                border_color = "rgba(239, 43, 45, 0.85)"  # ค่า Fallback แดงสว่างนอร์เวย์
+            border_style_thin = border_style
         
         # คลาสการแสดงผลและลอจิกการ์ด (ปกติ vs RIP ไว้อาลัยขาวดำ)
         welcome_class = "champion-prediction-panel"
