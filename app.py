@@ -2206,6 +2206,51 @@ elif selected_user != "เลือกชื่อของคุณ...":
     }
     state.animFrame = requestAnimationFrame(updatePhysics);
 
+    // ระบบกระพริบปุ่มปล่อย UFO แดงนีออนเรืองแสงกระพริบสุดขีดข้ามมิติ
+    setInterval(function() {
+        var doc = (window.parent && window.parent.document) ? window.parent.document : document;
+        var buttons = doc.querySelectorAll('button');
+        
+        for (var i = 0; i < buttons.length; i++) {
+            var btn = buttons[i];
+            if (btn.textContent.includes('💥 สั่งปล่อย UFO') || btn.getAttribute('aria-label') === '💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!') {
+                if (!btn.classList.contains('ufo-flashing-red-active')) {
+                    btn.style.setProperty('background', 'linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%)', 'important');
+                    btn.style.setProperty('border', '1.5px solid #ff3333', 'important');
+                    btn.style.setProperty('color', '#ffffff', 'important');
+                    btn.style.setProperty('font-weight', '700', 'important');
+                    btn.style.setProperty('font-family', "'Kanit', sans-serif", 'important');
+                    
+                    var flashStyleId = 'ufo-flashing-btn-style';
+                    if (!doc.getElementById(flashStyleId)) {
+                        var flashStyle = doc.createElement('style');
+                        flashStyle.id = flashStyleId;
+                        flashStyle.innerHTML = `
+                            @keyframes ufo-flashing-red-anim {
+                                0%, 100% {
+                                    box-shadow: 0 0 12px rgba(255, 0, 0, 0.75), 0 0 22px rgba(255, 0, 0, 0.55) !important;
+                                    filter: brightness(1.0) !important;
+                                    transform: scale(1.0) !important;
+                                }
+                                50% {
+                                    box-shadow: 0 0 35px rgba(255, 0, 0, 1.0), 0 0 65px rgba(255, 0, 0, 0.8), 0 0 15px #ff3333 !important;
+                                    filter: brightness(1.3) !important;
+                                    transform: scale(1.04) !important;
+                                }
+                            }
+                            .ufo-flashing-red-active {
+                                animation: ufo-flashing-red-anim 0.8s ease-in-out infinite !important;
+                            }
+                        `;
+                        doc.head.appendChild(flashStyle);
+                    }
+                    
+                    btn.classList.add('ufo-flashing-red-active');
+                }
+            }
+        }
+    }, 350);
+
 })();
 </script>"""
         global_ufo_and_physics_script = global_ufo_and_physics_script.replace('__EXPLODED_ACTIVE__', ufo_exploded_active_js).replace('__TRIGGER_UFO__', play_ufo_anim)
@@ -2214,6 +2259,16 @@ elif selected_user != "เลือกชื่อของคุณ...":
         # แทรก CSS สำหรับปุ่ม Streamlit ให้เป็นสีนีออนเด่นตระการตาและมีไฮไลท์นุ่มนวล
         st.sidebar.markdown("""
             <style>
+            @keyframes ufo-flashing-red-local {
+                0%, 100% {
+                    box-shadow: 0 0 12px rgba(255, 0, 0, 0.75), 0 0 22px rgba(255, 0, 0, 0.55) !important;
+                    filter: brightness(1.0) !important;
+                }
+                50% {
+                    box-shadow: 0 0 35px rgba(255, 0, 0, 1.0), 0 0 65px rgba(255, 0, 0, 0.8), 0 0 15px #ff3333 !important;
+                    filter: brightness(1.3) !important;
+                }
+            }
             /* ปุ่มสั่งปล่อย UFO */
             button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"] {
                 background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%) !important;
@@ -2221,7 +2276,7 @@ elif selected_user != "เลือกชื่อของคุณ...":
                 color: #ffffff !important;
                 font-family: 'Kanit', sans-serif !important;
                 font-weight: 700 !important;
-                box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3) !important;
+                animation: ufo-flashing-red-local 0.8s ease-in-out infinite !important;
                 transition: all 0.2s ease-in-out !important;
             }
             button[aria-label="💥 สั่งปล่อย UFO ล็อกเป้าพุ่งชน!"]:hover {
