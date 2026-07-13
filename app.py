@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-13 07:40 (Auto updated: Brazil 1-2 Norway)
+# Last cache clear and score update: 2026-07-13 07:47 (Auto updated: France Upcoming-Upcoming Spain)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
