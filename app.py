@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-15 07:41 (Auto updated: Brazil 1-2 Norway)
+# Last cache clear and score update: 2026-07-15 08:33 (Auto updated: Brazil 1-2 Norway)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
@@ -2136,8 +2136,10 @@ elif selected_user != "เลือกชื่อของคุณ...":
 
             if (welcomePanel) {
                 var rect = welcomePanel.getBoundingClientRect();
-                targetX = rect.left + (rect.width / 2) - 42;
-                targetY = rect.top + (rect.height / 2) - 27;
+                if (rect.width > 0 && rect.height > 0 && rect.left > 0) {
+                    targetX = rect.left + (rect.width / 2) - 42;
+                    targetY = rect.top + (rect.height / 2) - 27;
+                }
             }
 
             var dx = targetX - state.x;
