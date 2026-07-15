@@ -501,7 +501,7 @@ def main():
         try:
             import subprocess
             print("\n🎙️ [AI Voice] เริ่มระบบสร้างบทวิเคราะห์และเสียงพากย์ปีเตอร์ AI ล่าสุดแบบอัตโนมัติ...")
-            subprocess.run(["python3", "generate_latest_ai.py"], cwd=BASE_DIR, check=True)
+            subprocess.run([sys.executable, "generate_latest_ai.py"], cwd=BASE_DIR, check=True)
             print("✅ [AI Voice] ปรับปรุงบทวิเคราะห์และสังเคราะห์เสียงใหม่สำเร็จ!")
         except Exception as e_voice:
             print(f"❌ [AI Voice] เกิดข้อผิดพลาดในการสังเคราะห์เสียงใหม่: {e_voice}")
