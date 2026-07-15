@@ -1,4 +1,4 @@
-# Last cache clear and score update: 2026-07-15 07:37 (Auto updated: Brazil 1-2 Norway)
+# Last cache clear and score update: 2026-07-15 07:41 (Auto updated: Brazil 1-2 Norway)
 import streamlit as st
 import mimetypes
 mimetypes.add_type("audio/mp3", ".mp3")
@@ -1667,6 +1667,10 @@ elif selected_user != "เลือกชื่อของคุณ...":
                             is_team_eliminated = True
             except Exception as e_check:
                 print(f"Error checking team elimination status: {e_check}")
+
+        if not is_team_eliminated:
+            st.session_state.ufo_exploded_active = False
+            st.session_state.trigger_ufo = False
 
         theme = TEAM_THEMES.get(predicted_team, default_theme)
         
