@@ -5789,7 +5789,7 @@
     "pred_home":"2",
     "pred_away":"3",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"ปีเตอร์ลิง",
@@ -5797,7 +5797,7 @@
     "pred_home":"1",
     "pred_away":"0",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"ปีเตอร์ลิง",
@@ -5813,7 +5813,7 @@
     "pred_home":"2",
     "pred_away":"2",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Art",
@@ -5821,7 +5821,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Art",
@@ -5837,7 +5837,7 @@
     "pred_home":"0",
     "pred_away":"2",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Robert B",
@@ -5853,7 +5853,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"NEU",
@@ -5885,7 +5885,7 @@
     "pred_home":"2",
     "pred_away":"2",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"NEU",
@@ -5909,7 +5909,7 @@
     "pred_home":"0",
     "pred_away":"2",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"FAII",
@@ -5917,7 +5917,7 @@
     "pred_home":"3",
     "pred_away":"2",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"FAII",
@@ -5933,7 +5933,7 @@
     "pred_home":"2",
     "pred_away":"1",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Nong",
@@ -5941,15 +5941,15 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Nong",
     "match_id":"97",
-    "pred_home":"0",
+    "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"Bow",
@@ -5973,7 +5973,7 @@
     "pred_home":"1",
     "pred_away":"1",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Bow",
@@ -5989,7 +5989,7 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"England",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Bow",
@@ -5997,7 +5997,7 @@
     "pred_home":"2",
     "pred_away":"1",
     "pred_qualify":"Winner Match 96",
-    "points_earned":"0"
+    "points_earned":"1"
   },
   {
     "username":"Tayshi",
@@ -6005,15 +6005,15 @@
     "pred_home":"1",
     "pred_away":"2",
     "pred_qualify":"France",
-    "points_earned":"0"
+    "points_earned":"2"
   },
   {
     "username":"Tayshi",
     "match_id":"98",
     "pred_home":"2",
-    "pred_away":"0",
+    "pred_away":"1",
     "pred_qualify":"Spain",
-    "points_earned":"0"
+    "points_earned":"4"
   },
   {
     "username":"Tayshi",
@@ -6029,6 +6029,238 @@
     "pred_home":"2",
     "pred_away":"1",
     "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"100",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"97",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"France",
+    "points_earned":"2"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"98",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"Spain",
+    "points_earned":"4"
+  },
+  {
+    "username":"Art",
+    "match_id":"100",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"FAII",
+    "match_id":"100",
+    "pred_home":"3",
+    "pred_away":"1",
+    "pred_qualify":"Argentina",
+    "points_earned":"4"
+  },
+  {
+    "username":"Nong",
+    "match_id":"100",
+    "pred_home":"1",
+    "pred_away":"0",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"Aim",
+    "match_id":"98",
+    "pred_home":"1",
+    "pred_away":"0",
+    "pred_qualify":"Spain",
+    "points_earned":"2"
+  },
+  {
+    "username":"Aim",
+    "match_id":"99",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"Norway",
+    "points_earned":"0"
+  },
+  {
+    "username":"Aim",
+    "match_id":"100",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"98",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Spain",
+    "points_earned":"2"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"99",
+    "pred_home":"0",
+    "pred_away":"2",
+    "pred_qualify":"England",
+    "points_earned":"2"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"100",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"100",
+    "pred_home":"2",
+    "pred_away":"0",
+    "pred_qualify":"Argentina",
+    "points_earned":"2"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"99",
+    "pred_home":"1",
+    "pred_away":"3",
+    "pred_qualify":"England",
+    "points_earned":"2"
+  },
+  {
+    "username":"ปีเตอร์ลิง",
+    "match_id":"100",
+    "pred_home":"1",
+    "pred_away":"1",
+    "pred_qualify":"Switzerland",
+    "points_earned":"0"
+  },
+  {
+    "username":"FAII",
+    "match_id":"101",
+    "pred_home":"3",
+    "pred_away":"2",
+    "pred_qualify":"France",
+    "points_earned":"0"
+  },
+  {
+    "username":"FAII",
+    "match_id":"102",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"101",
+    "pred_home":"3",
+    "pred_away":"1",
+    "pred_qualify":"France",
+    "points_earned":"0"
+  },
+  {
+    "username":"Tayshi",
+    "match_id":"102",
+    "pred_home":"1",
+    "pred_away":"1",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"101",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Spain",
+    "points_earned":"2"
+  },
+  {
+    "username":"Robert B",
+    "match_id":"102",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"101",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"France",
+    "points_earned":"0"
+  },
+  {
+    "username":"ต้องใจ",
+    "match_id":"102",
+    "pred_home":"2",
+    "pred_away":"3",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"101",
+    "pred_home":"1",
+    "pred_away":"0",
+    "pred_qualify":"France",
+    "points_earned":"0"
+  },
+  {
+    "username":"NOTE",
+    "match_id":"102",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Argentina",
+    "points_earned":"0"
+  },
+  {
+    "username":"Art",
+    "match_id":"101",
+    "pred_home":"1",
+    "pred_away":"1",
+    "pred_qualify":"Spain",
+    "points_earned":"1"
+  },
+  {
+    "username":"Art",
+    "match_id":"102",
+    "pred_home":"2",
+    "pred_away":"3",
+    "pred_qualify":"England",
+    "points_earned":"0"
+  },
+  {
+    "username":"Nong",
+    "match_id":"101",
+    "pred_home":"1",
+    "pred_away":"2",
+    "pred_qualify":"Spain",
+    "points_earned":"2"
+  },
+  {
+    "username":"Nong",
+    "match_id":"102",
+    "pred_home":"2",
+    "pred_away":"1",
+    "pred_qualify":"England",
     "points_earned":"0"
   }
 ]
