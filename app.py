@@ -3602,191 +3602,189 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
             # เพิ่มระยะห่างไม่ให้เบียดชิดกับป้ายแบนเนอร์ CRAZYFIFA 2026 หัวข้อหลักด้านบน
             st.markdown("<div style='height: 35px;'></div>", unsafe_allow_html=True)
             
-            # เรนเดอร์กล่องแสดงความยินดีกับแชมป์เปี้ยนและโพเดียม 3 มิติระดับพรีเมียม
+            # เรนเดอร์กล่องแสดงความยินดีกับแชมป์เปี้ยนและโพเดียม 3 มิติระดับพรีเมียม (ดีเดนท์ชิดซ้ายเพื่อป้องกัน Markdown Code Block Bug)
             st.markdown(
-                """
-                <div class="champion-wrap">
-                    <style>
-                        .champion-wrap {
-                            font-family: 'Kanit', sans-serif;
-                            background: linear-gradient(135deg, rgba(25, 20, 40, 0.8) 0%, rgba(10, 10, 20, 0.95) 100%);
-                            border: 2px solid rgba(255, 215, 0, 0.4);
-                            border-radius: 20px;
-                            padding: 35px 20px;
-                            text-align: center;
-                            box-shadow: 0 0 35px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
-                            backdrop-filter: blur(10px);
-                            margin-bottom: 30px;
-                            position: relative;
-                            overflow: hidden;
-                        }
-                        .champion-wrap::before {
-                            content: '';
-                            position: absolute;
-                            top: -50%;
-                            left: -50%;
-                            width: 200%;
-                            height: 200%;
-                            background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
-                            pointer-events: none;
-                        }
-                        .champ-badge {
-                            background: linear-gradient(90deg, #FFD700, #FFA500);
-                            color: #111;
-                            padding: 6px 20px;
-                            border-radius: 50px;
-                            font-weight: 800;
-                            font-size: 0.85rem;
-                            letter-spacing: 1px;
-                            display: inline-block;
-                            margin-bottom: 18px;
-                            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-                            text-transform: uppercase;
-                        }
-                        .champ-title {
-                            color: #ffffff;
-                            font-size: 2.2rem;
-                            font-weight: 800;
-                            margin: 5px 0 10px 0;
-                            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-                        }
-                        .champ-subtitle {
-                            color: #a0aec0;
-                            font-size: 0.95rem;
-                            margin-bottom: 35px;
-                        }
-                        /* Podium styles */
-                        .podium-container {
-                            display: flex;
-                            justify-content: center;
-                            align-items: flex-end;
-                            gap: 15px;
-                            margin: 20px auto 10px auto;
-                            max-width: 500px;
-                        }
-                        .podium-col {
-                            flex: 1;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                        }
-                        .podium-avatar {
-                            font-size: 2.5rem;
-                            margin-bottom: 8px;
-                            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-                        }
-                        .podium-name {
-                            font-size: 1rem;
-                            font-weight: 700;
-                            color: #e2e8f0;
-                            margin-bottom: 4px;
-                            text-align: center;
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            width: 100%;
-                        }
-                        .podium-score {
-                            font-size: 0.85rem;
-                            color: #FFD700;
-                            margin-bottom: 8px;
-                            font-weight: bold;
-                        }
-                        .podium-block {
-                            width: 100%;
-                            border-radius: 12px 12px 6px 6px;
-                            display: flex;
-                            flex-direction: column;
-                            justify-content: center;
-                            align-items: center;
-                            color: #fff;
-                            font-weight: 800;
-                            font-size: 1.8rem;
-                            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-                            position: relative;
-                        }
-                        /* First Place */
-                        .podium-1st .podium-block {
-                            height: 140px;
-                            background: linear-gradient(to top, rgba(212, 175, 55, 0.85), rgba(255, 215, 0, 0.45));
-                            border: 2px solid rgba(255, 215, 0, 0.6);
-                            box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
-                        }
-                        .podium-1st .podium-avatar {
-                            font-size: 3.5rem;
-                            animation: bounce 2s infinite ease-in-out;
-                        }
-                        .podium-1st .podium-name {
-                            font-size: 1.2rem;
-                            color: #FFF;
-                            font-weight: bold;
-                            text-shadow: 0 0 8px rgba(255,215,0,0.5);
-                        }
-                        /* Second Place */
-                        .podium-2nd .podium-block {
-                            height: 100px;
-                            background: linear-gradient(to top, rgba(140, 140, 140, 0.8), rgba(200, 200, 200, 0.3));
-                            border: 2px solid rgba(200, 200, 200, 0.4);
-                        }
-                        .podium-2nd .podium-score {
-                            color: #a0aec0;
-                        }
-                        /* Third Place */
-                        .podium-3rd .podium-block {
-                            height: 75px;
-                            background: linear-gradient(to top, rgba(140, 70, 35, 0.8), rgba(205, 127, 50, 0.3));
-                            border: 2px solid rgba(205, 127, 50, 0.4);
-                        }
-                        .podium-3rd .podium-score {
-                            color: #cd7f32;
-                        }
-                        @keyframes bounce {
-                            0%, 100% { transform: translateY(0); }
-                            50% { transform: translateY(-8px); }
-                        }
-                        .footer-congrat {
-                            margin-top: 25px;
-                            color: #718096;
-                            font-size: 0.8rem;
-                            font-style: italic;
-                        }
-                    </style>
-                    
-                    <div class="champ-badge">🏆 CRAZYFIFA 2026 OFFICIAL CHAMPION</div>
-                    <div class="champ-title">ขอแสดงความยินดีกับแชมป์เปี้ยนประจำลีก!</div>
-                    <div class="champ-subtitle">สิ้นสุดมหกรรมฟุตบอลโลก 2026 บันทึกเกียรติยศไว้ในตารางอันดับประวัติศาสตร์อย่างเป็นทางการ</div>
-                    
-                    <div class="podium-container">
-                        <!-- 2nd Place -->
-                        <div class="podium-col podium-2nd">
-                            <div class="podium-avatar">🥈</div>
-                            <div class="podium-name">Nong / Robert B</div>
-                            <div class="podium-score">112 แต้ม</div>
-                            <div class="podium-block">2</div>
-                        </div>
-                        
-                        <!-- 1st Place -->
-                        <div class="podium-col podium-1st">
-                            <div class="podium-avatar">👑</div>
-                            <div class="podium-name">NOTE</div>
-                            <div class="podium-score">118 แต้ม</div>
-                            <div class="podium-block">1</div>
-                        </div>
-                        
-                        <!-- 3rd Place -->
-                        <div class="podium-col podium-3rd">
-                            <div class="podium-avatar">🥉</div>
-                            <div class="podium-name">ต้องใจ</div>
-                            <div class="podium-score">105 แต้ม</div>
-                            <div class="podium-block">3</div>
-                        </div>
-                    </div>
-                    
-                    <div class="footer-congrat">
-                        *บันทึกไว้ในทำเนียบ Hall of Fame - CRAZYFIFA 2026 ณ วันที่ 20 กรกฎาคม 2026
-                    </div>
-                </div>
-                """,
+                """<div class="champion-wrap">
+<style>
+.champion-wrap {
+    font-family: 'Kanit', sans-serif;
+    background: linear-gradient(135deg, rgba(25, 20, 40, 0.85) 0%, rgba(10, 10, 20, 0.98) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 20px;
+    padding: 35px 20px;
+    text-align: center;
+    box-shadow: 0 0 35px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
+    backdrop-filter: blur(10px);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+.champion-wrap::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+.champ-badge {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    color: #111;
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+}
+.champ-title {
+    color: #ffffff;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 5px 0 10px 0;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+.champ-subtitle {
+    color: #a0aec0;
+    font-size: 0.95rem;
+    margin-bottom: 35px;
+}
+/* Podium styles */
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 15px;
+    margin: 20px auto 10px auto;
+    max-width: 500px;
+}
+.podium-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.podium-avatar {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+.podium-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 4px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+.podium-score {
+    font-size: 0.85rem;
+    color: #FFD700;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+.podium-block {
+    width: 100%;
+    border-radius: 12px 12px 6px 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.8rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    position: relative;
+}
+/* First Place */
+.podium-1st .podium-block {
+    height: 140px;
+    background: linear-gradient(to top, rgba(212, 175, 55, 0.85), rgba(255, 215, 0, 0.45));
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
+}
+.podium-1st .podium-avatar {
+    font-size: 3.5rem;
+    animation: bounce 2s infinite ease-in-out;
+}
+.podium-1st .podium-name {
+    font-size: 1.2rem;
+    color: #FFF;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(255,215,0,0.5);
+}
+/* Second Place */
+.podium-2nd .podium-block {
+    height: 100px;
+    background: linear-gradient(to top, rgba(140, 140, 140, 0.8), rgba(200, 200, 200, 0.3));
+    border: 2px solid rgba(200, 200, 200, 0.4);
+}
+.podium-2nd .podium-score {
+    color: #a0aec0;
+}
+/* Third Place */
+.podium-3rd .podium-block {
+    height: 75px;
+    background: linear-gradient(to top, rgba(140, 70, 35, 0.8), rgba(205, 127, 50, 0.3));
+    border: 2px solid rgba(205, 127, 50, 0.4);
+}
+.podium-3rd .podium-score {
+    color: #cd7f32;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.footer-congrat {
+    margin-top: 25px;
+    color: #718096;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+</style>
+
+<div class="champ-badge">🏆 CRAZYFIFA 2026 OFFICIAL CHAMPION</div>
+<div class="champ-title">ขอแสดงความยินดีกับแชมป์เปี้ยนประจำลีก!</div>
+<div class="champ-subtitle">สิ้นสุดมหกรรมฟุตบอลโลก 2026 บันทึกเกียรติยศไว้ในตารางอันดับประวัติศาสตร์อย่างเป็นทางการ</div>
+
+<div class="podium-container">
+    <!-- 2nd Place -->
+    <div class="podium-col podium-2nd">
+        <div class="podium-avatar">🥈</div>
+        <div class="podium-name">Nong / Robert B</div>
+        <div class="podium-score">112 แต้ม</div>
+        <div class="podium-block">2</div>
+    </div>
+    
+    <!-- 1st Place -->
+    <div class="podium-col podium-1st">
+        <div class="podium-avatar">👑</div>
+        <div class="podium-name">NOTE</div>
+        <div class="podium-score">118 แต้ม</div>
+        <div class="podium-block">1</div>
+    </div>
+    
+    <!-- 3rd Place -->
+    <div class="podium-col podium-3rd">
+        <div class="podium-avatar">🥉</div>
+        <div class="podium-name">ต้องใจ</div>
+        <div class="podium-score">105 แต้ม</div>
+        <div class="podium-block">3</div>
+    </div>
+</div>
+
+<div class="footer-congrat">
+    *บันทึกไว้ในทำเนียบ Hall of Fame - CRAZYFIFA 2026 ณ วันที่ 20 กรกฎาคม 2026
+</div>
+</div>""",
                 unsafe_allow_html=True
             )
             
