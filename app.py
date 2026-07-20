@@ -244,6 +244,10 @@ ball_base64 = get_base64_image(ball_path)
 worldcup_bg_path = os.path.join(current_dir, "บอลโลก_optimized.webp")
 worldcup_bg_base64 = get_base64_image(worldcup_bg_path)
 
+# โหลดรูปภาพการ์ดเกียรติยศแชมป์ The Oracles ซ้อนธงชาติสเปน
+oracle_banner_path = os.path.join(current_dir, "oracles_spain_flag_ui_1784512980223.jpg")
+oracle_banner_base64 = get_base64_image(oracle_banner_path)
+
 def safe_markdown(content):
     # ล้างบรรทัดว่าง (Blank lines) ออกทั้งหมดเพื่อป้องกัน Streamlit markdown parser ตีความผิดเป็นข้อความดิบ
     lines = [line for line in content.splitlines() if line.strip() != ""]
@@ -3849,21 +3853,28 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 <div class="footer-congrat">
 *บันทึกไว้ในทำเนียบ Hall of Fame - CRAZYFIFA 2026 ณ วันที่ 20 กรกฎาคม 2026
 </div>
-</div>
-<div class="oracle-wrap">
-<div class="oracle-header">🔮 THE ORACLES — ผู้ทำนายแชมป์โลกสเปนถูกต้อง 🔮</div>
-<div class="oracle-grid">
-<div class="oracle-card">
-<div class="oracle-icon">🔮</div>
-<div class="oracle-name">ปีเตอร์ลิง</div>
-<div class="oracle-badge">ทายผลถูกต้อง: สเปน 🇪🇸</div>
-</div>
-<div class="oracle-card">
-<div class="oracle-icon">🔮</div>
-<div class="oracle-name">Nong</div>
-<div class="oracle-badge">ทายผลถูกต้อง: สเปน 🇪🇸</div>
-</div>
-</div>
+</div>""",
+                unsafe_allow_html=True
+            )
+            
+            # เรนเดอร์กล่องรูปภาพเกียรติยศแชมป์ The Oracles ด้วยรูปภาพม็อคอัพจริงซ้อนธงชาติสเปนพรีเมียม
+            st.markdown(
+                f"""<div class="oracle-image-wrap">
+<style>
+.oracle-image-wrap {{
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}}
+.oracle-img {{
+    width: 100%;
+    max-width: 600px;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+}}
+</style>
+<img src="data:image/jpeg;base64,{oracle_banner_base64}" class="oracle-img" alt="The Oracles" />
 </div>""",
                 unsafe_allow_html=True
             )
