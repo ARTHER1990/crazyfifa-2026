@@ -3747,7 +3747,7 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 }
 .oracle-wrap {
     font-family: 'Kanit', sans-serif;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.98) 100%);
     border: 2px dashed rgba(255, 215, 0, 0.35);
     border-radius: 16px;
     padding: 25px 20px;
@@ -3757,6 +3757,18 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
     margin-bottom: 5px;
     margin-top: 20px;
     position: relative;
+    overflow: hidden;
+}
+.oracle-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(210, 38, 48, 0.08) 0%, rgba(210, 38, 48, 0.08) 33%, rgba(241, 181, 23, 0.12) 33%, rgba(241, 181, 23, 0.12) 67%, rgba(210, 38, 48, 0.08) 67%, rgba(210, 38, 48, 0.08) 100%);
+    pointer-events: none;
+    z-index: 0;
 }
 .oracle-header {
     font-size: 1.15rem;
@@ -3765,12 +3777,16 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
     letter-spacing: 0.5px;
     margin-bottom: 15px;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    position: relative;
+    z-index: 1;
 }
 .oracle-grid {
     display: flex;
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
 }
 .oracle-card {
     background: rgba(255, 255, 255, 0.03);
