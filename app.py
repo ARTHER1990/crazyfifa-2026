@@ -3745,6 +3745,67 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
     font-size: 0.8rem;
     font-style: italic;
 }
+.oracle-wrap {
+    font-family: 'Kanit', sans-serif;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.95) 100%);
+    border: 2px dashed rgba(255, 215, 0, 0.35);
+    border-radius: 16px;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    margin-bottom: 5px;
+    margin-top: 20px;
+    position: relative;
+}
+.oracle-header {
+    font-size: 1.15rem;
+    color: #FFD700;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+.oracle-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.oracle-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 15px 25px;
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
+    transition: all 0.3s ease;
+}
+.oracle-card:hover {
+    border-color: rgba(255, 215, 0, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.1);
+}
+.oracle-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 2px 5px rgba(255, 215, 0, 0.3));
+}
+.oracle-name {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+.oracle-badge {
+    font-size: 0.75rem;
+    color: #a0aec0;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
 </style>
 <div class="champ-badge">🏆 CRAZYFIFA 2026 OFFICIAL CHAMPION</div>
 <div class="champ-title">ขอแสดงความยินดีกับแชมป์เปี้ยนประจำลีก!</div>
@@ -3771,6 +3832,21 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 </div>
 <div class="footer-congrat">
 *บันทึกไว้ในทำเนียบ Hall of Fame - CRAZYFIFA 2026 ณ วันที่ 20 กรกฎาคม 2026
+</div>
+</div>
+<div class="oracle-wrap">
+<div class="oracle-header">🔮 THE ORACLES — ผู้ทำนายแชมป์โลกสเปนถูกต้อง 🔮</div>
+<div class="oracle-grid">
+<div class="oracle-card">
+<div class="oracle-icon">🔮</div>
+<div class="oracle-name">ปีเตอร์ลิง</div>
+<div class="oracle-badge">ทายผลถูกต้อง: สเปน 🇪🇸</div>
+</div>
+<div class="oracle-card">
+<div class="oracle-icon">🔮</div>
+<div class="oracle-name">Nong</div>
+<div class="oracle-badge">ทายผลถูกต้อง: สเปน 🇪🇸</div>
+</div>
 </div>
 </div>""",
                 unsafe_allow_html=True
