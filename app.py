@@ -244,8 +244,8 @@ ball_base64 = get_base64_image(ball_path)
 worldcup_bg_path = os.path.join(current_dir, "บอลโลก_optimized.webp")
 worldcup_bg_base64 = get_base64_image(worldcup_bg_path)
 
-# โหลดรูปภาพการ์ดเกียรติยศแชมป์ The Oracles ซ้อนธงชาติสเปน
-oracle_banner_path = os.path.join(current_dir, "oracles_spain_flag_ui_1784512980223.jpg")
+# โหลดรูปภาพการ์ดเกียรติยศแชมป์ The Oracles ซ้อนธงชาติสเปน (ฉบับไฟนอลแทนที่รูปคุณ Nong ตัวจริง)
+oracle_banner_path = os.path.join(current_dir, "oracles_final_ui.jpg")
 oracle_banner_base64 = get_base64_image(oracle_banner_path)
 
 def safe_markdown(content):
