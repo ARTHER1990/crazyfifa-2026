@@ -248,6 +248,10 @@ worldcup_bg_base64 = get_base64_image(worldcup_bg_path)
 oracle_banner_path = os.path.join(current_dir, "oracles_final_ui.jpg")
 oracle_banner_base64 = get_base64_image(oracle_banner_path)
 
+# โหลดรูปภาพแบคกราวด์หรูหลากมิติสำหรับแท่นโพเดียมแชมป์ลีกฟุตบอลโลก 2026
+podium_bg_path = os.path.join(current_dir, "worldcup_champion_bg.jpg")
+podium_bg_base64 = get_base64_image(podium_bg_path)
+
 def safe_markdown(content):
     # ล้างบรรทัดว่าง (Blank lines) ออกทั้งหมดเพื่อป้องกัน Streamlit markdown parser ตีความผิดเป็นข้อความดิบ
     lines = [line for line in content.splitlines() if line.strip() != ""]
@@ -3853,7 +3857,7 @@ if menu == "ศึกชิงแชมป์โลก 2026 (World Cup)":
 <div class="footer-congrat">
 *บันทึกไว้ในทำเนียบ Hall of Fame - CRAZYFIFA 2026 ณ วันที่ 20 กรกฎาคม 2026
 </div>
-</div>""",
+</div>""".replace('<div class="champion-wrap">', f'<div class="champion-wrap" style="background: linear-gradient(135deg, rgba(15, 10, 30, 0.88) 0%, rgba(5, 5, 10, 0.95) 100%), url(\'data:image/jpeg;base64,{podium_bg_base64}\') no-repeat center; background-size: cover;">'),
                 unsafe_allow_html=True
             )
             
