@@ -1107,7 +1107,7 @@
     "home_score":"0",
     "away_score":"2",
     "status":"Finished",
-    "scorers":"Mikel Oyarzabal (22) | Pedro Porro (58)",
+    "scorers":"| Oyarzabal (pen) (67) | Porro (75)",
     "winner_qualify":"Spain"
   },
   {
@@ -1115,10 +1115,32 @@
     "home_team":"England",
     "away_team":"Argentina",
     "match_time":"2026-07-16 02:00:00",
-    "home_score":"",
-    "away_score":"",
-    "status":"Upcoming",
-    "scorers":"",
-    "winner_qualify":""
+    "home_score":"1",
+    "away_score":"2",
+    "status":"Finished",
+    "scorers":"Gordon (55) | E. Fernandez (85) | Lautaro (90+2)",
+    "winner_qualify":"Argentina"
+  },
+  {
+    "id":"103",
+    "home_team":"England",
+    "away_team":"France",
+    "match_time":"2026-07-19 04:00:00",
+    "home_score":"6",
+    "away_score":"4",
+    "status":"Finished",
+    "scorers":"Declan Rice (3) | Kylian Mbappé (48), Bradley Barcola (54), Kylian Mbappé (66), Ousmane Dembélé (90+6)",
+    "winner_qualify":"England"
+  },
+  {
+    "id":"104",
+    "home_team":"Spain",
+    "away_team":"Argentina",
+    "match_time":"2026-07-20 02:00:00",
+    "home_score":"1",
+    "away_score":"0",
+    "status":"Finished",
+    "scorers":"Ferran Torres (106) |",
+    "winner_qualify":"Spain"
   }
 ]
